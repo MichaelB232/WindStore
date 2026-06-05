@@ -1,165 +1,247 @@
-# WindStore
+# 🐳 WindStore
 
-A full-stack e-commerce application built with React, Vite, Node.js, and Express.
+A full-stack e-commerce application built with:
 
-## Project Structure
+* ⚛️ React + TypeScript (Vite)
+* 🚀 Node.js + Express
+* 🐳 Docker + Docker Compose
 
-```text
+---
+
+# 📦 Project Structure
+
+```text id="s1"
 WindStore/
-├── client/          # React frontend (Vite)
-├── server/          # Express backend
+├── client/        # React + TypeScript frontend
+├── server/        # Express backend
+├── docker-compose.yml
 └── README.md
 ```
 
-## Prerequisites
+---
 
-Make sure you have installed:
+# ⚙️ Requirements
 
-* Node.js (v18 or newer recommended)
-* npm
+Before running this project, install:
 
-Check your versions:
+* [Docker Desktop](https://www.docker.com/products/docker-desktop?utm_source=chatgpt.com)
 
-```bash
-node -v
-npm -v
+No need to install Node.js or npm manually.
+
+---
+
+# 🚀 How to Run (Docker)
+
+## 1. Clone the repository
+
+```bash id="c1"
+git clone https://github.com/your-username/WindStore.git
+cd WindStore
 ```
 
 ---
 
-## Clone the Repository
+## 2. Start the project
 
-```bash
-git clone https://github.com/MichaelB232/E-Commerce.git
-cd E-Commerce
+```bash id="c2"
+docker compose up --build
 ```
 
 ---
 
-## Install Dependencies
+## 3. Open in browser
 
-### Frontend
+Frontend:
 
-```bash
-cd client
-npm install
+```text id="f1"
+http://localhost:5173
 ```
 
-### Backend
+Backend API:
 
-```bash
-cd ../server
-npm install
-```
-
----
-
-## Run the Backend
-
-From the `server` directory:
-
-```bash
-npm run dev
-```
-
-The API will start on:
-
-```text
+```text id="b1"
 http://localhost:5000
 ```
 
 ---
 
-## Run the Frontend
+## 4. Stop the project
 
-Open a new terminal and navigate to the `client` directory:
-
-```bash
-cd client
-npm run dev
-```
-
-The frontend will start on:
-
-```text
-http://localhost:5173
+```bash id="c3"
+docker compose down
 ```
 
 ---
 
-## Development Workflow
+# 🐳 Docker Setup
 
-Run the backend:
+## 📄 docker-compose.yml
 
-```bash
-cd server
-npm run dev
+```yaml id="dc1"
+version: "3.8"
+
+services:
+  server:
+    build: ./server
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+
+  client:
+    build: ./client
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+    depends_on:
+      - server
 ```
-
-Run the frontend:
-
-```bash
-cd client
-npm run dev
-```
-
-Keep both terminals running while developing.
 
 ---
 
-## Environment Variables
+## 📄 server/Dockerfile
 
-If environment variables are required, create a `.env` file inside the `server` folder.
+```dockerfile id="d1"
+FROM node:18
 
-Example:
+WORKDIR /app
 
-```env
-PORT=5000
+COPY package*.json ./
+RUN npm install
+
+COPY . .
+
+EXPOSE 5000
+
+CMD ["npm", "run", "dev"]
 ```
-
-Do not commit `.env` files to Git.
 
 ---
 
-## Contributing
+## 📄 client/Dockerfile
 
-1. Fork the repository
-2. Create a feature branch
+```dockerfile id="d2"
+FROM node:18
 
-```bash
-git checkout -b feature/your-feature-name
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm install
+
+COPY . .
+
+EXPOSE 5173
+
+CMD ["npm", "run", "dev", "--", "--host"]
 ```
-
-3. Commit your changes
-
-```bash
-git add .
-git commit -m "Add new feature"
-```
-
-4. Push your branch
-
-```bash
-git push origin feature/your-feature-name
-```
-
-5. Open a Pull Request
 
 ---
 
-## Tech Stack
+## 📄 .dockerignore (both client & server)
 
-### Frontend
+```text id="d3"
+node_modules
+dist
+build
+.env
+```
+
+---
+
+# 🔗 API Connection
+
+Frontend communicates with backend via:
+
+```text id="api1"
+http://server:5000/api
+```
+
+❗ NOT `localhost` when using Docker.
+
+---
+
+# 🧠 Tech Stack
+
+## Frontend
 
 * React
+* TypeScript
 * Vite
 
-### Backend
+## Backend
 
 * Node.js
 * Express
 
-### Version Control
+## DevOps
 
-* Git
-* GitHub
+* Docker
+* Docker Compose
+
+---
+
+# 👨‍💻 Development Workflow
+
+### Start everything:
+
+```bash id="wf1"
+docker compose up --build
+```
+
+### Rebuild after changes:
+
+```bash id="wf2"
+docker compose up --build
+```
+
+### Stop containers:
+
+```bash id="wf3"
+docker compose down
+```
+
+---
+
+# ⚡ Benefits of Docker Setup
+
+* No manual Node.js installation required
+* Same environment for all contributors
+* Works on Windows / Mac / Linux
+* Easy onboarding (1 command setup)
+* Production-ready foundation
+
+---
+
+# 🤝 Contributing
+
+1. Fork repo
+2. Create feature branch:
+
+```bash id="cb1"
+git checkout -b feature/your-feature
+```
+
+3. Commit changes:
+
+```bash id="cb2"
+git commit -m "Add feature"
+```
+
+4. Push branch:
+
+```bash id="cb3"
+git push origin feature/your-feature
+```
+
+5. Open Pull Request
+
+---
+
+# 📌 Notes
+
+* Make sure Docker is running before starting project
+* Backend runs on port `5000`
+* Frontend runs on port `5173`
