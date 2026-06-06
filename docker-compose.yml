@@ -8,6 +8,12 @@ services:
       - ./server:/app
       - /app/node_modules
 
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+
+    depends_on:
+      - postgres
+
   client:
     image: nicolausnl/windstore-client:latest
     build: ./client
@@ -18,3 +24,20 @@ services:
       - /app/node_modules
     depends_on:
       - server
+
+  postgres:
+    image: postgres:17
+    container_name: windstore-db
+
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password123
+      POSTGRES_DB: windstore
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+volumes:
+  postgres_data:

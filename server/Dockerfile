@@ -12,6 +12,7 @@ RUN npm install
 # Install node packages, install serve, build the app, and remove dependencies at the end
 COPY . .
 
+RUN npx prisma generate
 
 EXPOSE 5000
 
