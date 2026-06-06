@@ -1,6 +1,5 @@
 services:
   server:
-    image: nicolausnl/windstore-server:latest
     build: ./server
     ports:
       - "5001:5000"
@@ -9,13 +8,12 @@ services:
       - /app/node_modules
 
     environment:
-      DATABASE_URL: "postgresql://postgres:123@postgres:5432/windstore"
+      DATABASE_URL: ${DATABASE_URL}
 
     depends_on:
       - postgres
 
   client:
-    image: nicolausnl/windstore-client:latest
     build: ./client
     ports:
       - "5173:3000"
@@ -34,7 +32,7 @@ services:
 
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 123
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: windstore
 
     ports:
