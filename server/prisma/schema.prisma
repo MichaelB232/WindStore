@@ -12,9 +12,44 @@ datasource db {
   provider = "postgresql"
 }
 
-model users {
-  id Int @id @default(autoincrement())
-  email String @unique
-  password_hash String
-  created_at DateTime @default(now())
+// ─── Enums ───────────────────────────────────────────
+
+enum Role {
+  admin
+  customer
+}
+
+// ─── Models ──────────────────────────────────────────
+
+model User {
+  id           Int      @id @default(autoincrement())
+  email        String   @unique
+  passwordHash String   @map("password_hash") //Mapping ke nama kolom cammalCase vs snake_case
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  roles   UserRole[]
+  profile Profile?
+
+  @@map("users")
+}
+
+model UserRole {
+  id     Int  @id @default(autoincrement())
+  userId Int  @map("user_id")
+  role   Role
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade) //Relations (Foreign key)
+
+  @@map("user_roles") //Nama tabel cammalCase vs snake_case
+}
+
+model Profile {
+  userId      Int     @id @map("user_id")
+  displayName String  @map("display_name")
+  avatarUrl   String? @map("avatar_url")
+  phone       String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("profiles")
 }
