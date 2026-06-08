@@ -1,9 +1,10 @@
 import Image from "next/image";
+import Container from "@/src/components/layout/Container";
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <p>Hello World keren</p>
-    </div>
+    <>
+      <main className="h-[3000px] pt-16"></main>
+    </>
   );
 }
