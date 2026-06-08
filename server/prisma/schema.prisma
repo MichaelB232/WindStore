@@ -14,6 +14,13 @@ enum Role {
   customer
 }
 
+enum rulesType {
+  requires
+  forbids
+  maxQty   @map("max_qty")
+  maxSum   @map("max_sum")
+}
+
 // ─── Models ──────────────────────────────────────────
 
 model User {
@@ -22,8 +29,10 @@ model User {
   passwordHash String   @map("password_hash") //Mapping ke nama kolom cammalCase vs snake_case
   createdAt    DateTime @default(now()) @map("created_at")
 
-  roles   UserRole[]
-  profile Profile?
+  roles       UserRole[]
+  profile     Profile?
+  orders      Order[]
+  savedBuilds SavedBuild[]
 
   @@map("users")
 }
@@ -49,15 +58,122 @@ model Profile {
   @@map("profiles")
 }
 
-model Laptop {
-  id          Int      @id @default(autoincrement())
-  name        String
-  slug        String   @unique
-  description String
-  price       BigInt
-  imageUrl    String   @map("image_url")
-  isActive    Boolean  @map("is_active")
-  createdAt   DateTime @default(now()) @map("created_at")
+model LaptopModel {
+  id                 Int                 @id @default(autoincrement())
+  name               String
+  slug               String              @unique
+  description        String
+  price              BigInt
+  imageUrl           String              @map("image_url")
+  isActive           Boolean             @map("is_active")
+  createdAt          DateTime            @default(now()) @map("created_at")
+  modelSlots         ModelSlot[]
+  compatibilityRules CompatibilityRule[]
+  orderItems         OrderItem[]
+  savedBuilds        SavedBuild[]
 
-  @@map("Laptop")
+  @@map("laptop_models")
+}
+
+model Component {
+  id          Int          @id @default(autoincrement())
+  name        String
+  category    String
+  price       BigInt
+  stock       Int
+  specs       Json
+  imageUrl    String       @map("image_url")
+  isActive    Boolean      @map("is_active")
+  slotOptions SlotOption[]
+
+  @@map("components")
+}
+
+model ModelSlot {
+  id            Int     @id @default(autoincrement())
+  modelId       Int     @map("model_id")
+  category      String
+  label         String
+  isRequired    Boolean @map("is_required")
+  min_qty       Int
+  max_qty       Int
+  display_order Int
+
+  laptop             LaptopModel         @relation(fields: [modelId], references: [id], onDelete: Cascade)
+  slotOptions        SlotOption[]
+  compatibilityRules CompatibilityRule[]
+
+  @@map("model_slots")
+}
+
+model SlotOption {
+  id               Int     @id @default(autoincrement())
+  slot_id          Int // Fk to ModelSlots
+  componentId      Int     @map("component_id") //Fk to Component
+  isDefault        Boolean @map("is_default")
+  priceOverrideIdr BigInt? @map("price_override_idr")
+
+  // Relations
+  slot      ModelSlot @relation(fields: [slot_id], references: [id], onDelete: Cascade)
+  component Component @relation(fields: [componentId], references: [id], onDelete: Cascade)
+
+  @@map("slot_option")
+}
+
+model CompatibilityRule {
+  id        Int       @id @default(autoincrement())
+  model_id  Int
+  rulesType rulesType @map("rules_type")
+  condition Json
+  message   String
+
+  laptop      LaptopModel @relation(fields: [model_id], references: [id], onDelete: Cascade)
+  modelSlot   ModelSlot?  @relation(fields: [modelSlotId], references: [id])
+  modelSlotId Int?
+
+  @@map("compatibility_rules")
+}
+
+model Order {
+  id              Int      @id @default(autoincrement())
+  userId          Int      @map("user_id")
+  email           String
+  status          String
+  totalIdr        BigInt   @map("total_idr")
+  stripeSessionId String   @map("strip_session_id")
+  shippingAddress Json     @map("shipping_address")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  orderItems OrderItem[]
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id            Int    @id @default(autoincrement())
+  orderId       Int    @map("order_id")
+  modelId       Int    @map("model_id")
+  configuration Json
+  unitPriceIdr  BigInt
+  quantity      Int
+
+  laptopModel LaptopModel @relation(fields: [modelId], references: [id], onDelete: Cascade)
+  order       Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@map("order_items")
+}
+
+model SavedBuild {
+  id            Int      @id @default(autoincrement())
+  userId        Int      @map("user_id")
+  modelId       Int      @map("model_id")
+  name          String
+  configuration Json
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  laptopModel LaptopModel @relation(fields: [modelId], references: [id], onDelete: Cascade)
+
+  @@map("saved_builds")
 }
