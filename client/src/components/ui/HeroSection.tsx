@@ -60,6 +60,7 @@ export default function HeroSection() {
               src={slides[currentSlide].image}
               alt={slides[currentSlide].title}
               fill
+              priority
               className="w-full h-full object-cover opacity-60"
             />
             {/* Gradient Overlay */}
