@@ -1,6 +1,21 @@
 @import "tailwindcss";
 
 @theme inline {
+
+  /* Animation */
+  @keyframes marquee {
+  0% {
+    transform: translateX(0%);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+--animate-marquee: marquee 20s linear infinite;
+
+
   /* ── FONTS ─────────────────────────────────────────────────
      Reference the CSS variables injected by next/font in layout.tsx
      --font-bricolage, --font-geist-sans, --font-geist-mono
@@ -104,3 +119,5 @@
     box-shadow: var(--shadow-focus);
   }
 }
+
+
