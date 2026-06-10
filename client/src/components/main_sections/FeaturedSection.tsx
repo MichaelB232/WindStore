@@ -1,13 +1,12 @@
 import Container from "../layout/Container";
 import { products } from "@/src/lib/DataProducts";
 import { FeaturedCard } from "../ui/Card";
-import { ShoppingCart } from "lucide-react";
 
 export default function FeaturedSection() {
   return (
-    <section id="FeaturedSection">
+    <section id="FeaturedSection border-b border-border">
       <Container>
-        <div className="">
+        <div className="mb-10">
           <div className="flex-row mb-10">
             <h2 className="font-display text-4xl font-bold">Featured Builds</h2>
             <p className="text-xl text-text-muted">New Arrivals This Week</p>

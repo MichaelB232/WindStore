@@ -47,9 +47,9 @@ export default function Navbar() {
 
               <div className="shop">
                 <Link
-                  href="#"
+                  href="/shop"
                   className="text-xl text-text-dark-primary font-bold
-                  transition duration-300 ease-in-out 
+                  transition duration-300 ease-in-out
                   hover:text-text-dark-accent"
                 >
                   Shop
