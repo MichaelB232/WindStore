@@ -1,20 +1,18 @@
 @import "tailwindcss";
 
 @theme inline {
-
   /* Animation */
   @keyframes marquee {
-  0% {
-    transform: translateX(0%);
+    0% {
+      transform: translateX(0%);
+    }
+
+    100% {
+      transform: translateX(-50%);
+    }
   }
 
-  100% {
-    transform: translateX(-50%);
-  }
-}
-
---animate-marquee: marquee 20s linear infinite;
-
+  --animate-marquee: marquee 20s linear infinite;
 
   /* ── FONTS ─────────────────────────────────────────────────
      Reference the CSS variables injected by next/font in layout.tsx
@@ -63,6 +61,9 @@
   --color-border-strong: #d4d4d8;
   --color-border-dark: rgba(255, 255, 255, 0.07);
 
+  /* Card */
+  --color-glass-bg: rgba(255, 255, 255, 0.72);
+  --color-glass-border: rgba(255, 255, 255, 0.9);
   /* ── COLORS: STATUS ────────────────────────────────────── */
   --color-success: #10b981;
   --color-success-bg: #ecfdf5;
@@ -119,5 +120,3 @@
     box-shadow: var(--shadow-focus);
   }
 }
-
-
