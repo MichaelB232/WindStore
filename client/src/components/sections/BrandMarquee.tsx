@@ -16,8 +16,8 @@ export default function BrandMarquee() {
 
   return (
     <section id="brands ">
-      <div className="relative border-b-2 border-t-2 border-border">
-        <div className="text-center py-5">
+      <div className="relative border-b-2 border-t-2 border-border py-5">
+        <div className="text-center mb-5">
           <h3 className="font-display font-bold tracking-widest text-2xl">
             Trusted Brands
           </h3>
