@@ -9,7 +9,7 @@ export default function CategorySection() {
         <Container>
           <div className="mt-10">
             <div className="mb-10">
-              <h2 className="text-3xl font-display font-bold">Shop by Category</h2>
+              <h2 className="text-4xl font-display font-bold">Shop by Category</h2>
             </div>
 
             <ul className="grid grid-cols-4 mb-6">
