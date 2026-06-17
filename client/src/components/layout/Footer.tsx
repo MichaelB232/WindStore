@@ -190,7 +190,7 @@ export default function Footer() {
                   placeholder="Enter your email"
                   className="bg-white/5 border border-[--color-border-dark] rounded-[--radius-lg] py-2 px-4 text-sm text-[--color-text-inverse] focus:outline-none focus:border-[--color-accent]/50 w-full"
                 />
-                <button className="bg-[--color-accent] hover:bg-[--color-accent-hover] text-[--color-dark] p-2.5 rounded-[--radius-lg] transition-all duration-150 flex-shrink-0">
+                <button className="bg-[--color-accent] hover:bg-[--color-accent-hover] text-[--color-dark] p-2.5 rounded-[--radius-lg] transition-all duration-150 shrink-0">
                   <ArrowRight className="w-5 h-5" />
                 </button>
               </div>

@@ -97,6 +97,7 @@
     background-color: var(--color-page);
     color: var(--color-text-primary);
     font-family: var(--font-body);
+    scroll-behavior: smooth;
   }
 
   h1,
