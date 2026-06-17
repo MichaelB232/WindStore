@@ -1,6 +1,6 @@
 import { CategoryDatas } from "@/src/lib/DataCategory";
 import Container from "../layout/Container";
-import CategoryCard from "../ui/Card";
+import CategoryCard from "../ui/HomeCard";
 
 export default function CategorySection() {
   return (

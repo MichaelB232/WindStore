@@ -95,8 +95,7 @@ export default function HeroSection() {
                   {slides[currentSlide].subtitle}
                 </p>
 
-                <button className="bg-accent hover:bg-accent-hover text-text-inverse font-bold px-8 py-4 rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-focus">
-                  Explore Now
+                <button className="bg-accent hover:bg-accent-hover text-text-inverse font-bold px-8 py-4 rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-focus">Explore Now
                 </button>
               </motion.div>
             </div>
