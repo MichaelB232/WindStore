@@ -1,6 +1,6 @@
 import Container from "../layout/Container";
 import { products } from "@/src/lib/DataProducts";
-import { FeaturedCard } from "../ui/HomeCard";
+import { FeaturedCard } from "./HomeCard";
 
 export default function FeaturedSection() {
   return (

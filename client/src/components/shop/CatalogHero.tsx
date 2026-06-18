@@ -17,10 +17,10 @@ export default function CatalogHero() {
           leading Windows brands.
         </p>
         <div className="flex items-center gap-3">
-          <button className="px-5 py-2.5 bg-accent hover:bg-accent-hover text-white font-semibold text-sm rounded-xl transition-colors duration-150 cursor-pointer shadow-sm">
+          <button className="px-5 py-2.5 bg-accent text-white font-semibold text-sm rounded-xl transition-colors duration-150 cursor-default shadow-sm">
             Shop Now
           </button>
-          <button className="px-5 py-2.5 bg-transparent hover:bg-[--color-accent-muted] text-[--color-accent] font-semibold text-sm rounded-xl border border-[--color-accent] transition-colors duration-150 cursor-pointer">
+          <button className="px-5 py-2.5 bg-transparent hover:bg-[--color-accent-muted] text-[--color-accent] font-semibold text-sm rounded-xl border border-[--color-accent] transition-colors duration-150 cursor-default">
             Build Your Own Laptop
           </button>
         </div>

@@ -31,13 +31,9 @@ function Stars({ rating }: { rating: number }) {
 
 export default function CatalogCard({ product }: { product: Product }) {
   return (
-    /*
-     * h-full → semua card dalam satu grid row punya tinggi yang sama
-     * flex flex-col → body memakai flex-1 untuk push CTA ke bawah
-     */
     <div className="group h-full bg-surface border border-border rounded-2xl overflow-hidden flex flex-col shadow-card transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-card-hover hover:border-border-strong">
 
-      {/* Image area — tinggi FIXED dengan h-[170px], tidak dipengaruhi konten */}
+      {/* Image area */}
       <div
         className="relative bg-surface-alt flex items-center justify-center p-4 overflow-hidden shrink-0"
         style={{ height: "170px" }}
@@ -62,13 +58,13 @@ export default function CatalogCard({ product }: { product: Product }) {
         />
       </div>
 
-      {/* Body — flex-1 agar CTA selalu di bawah meskipun teks pendek */}
+      {/* Body*/}
       <div className="p-4 flex flex-col flex-1 min-h-0">
         <p className="font-mono text-[10px] text-accent uppercase tracking-widest mb-1 font-semibold">
           {product.brand}
         </p>
 
-        {/* Nama produk — min-height 2 baris agar grid row rata */}
+        {/* Nama produk */}
         <h3 className="font-display font-bold text-[15px] leading-snug text-text-primary mb-2 line-clamp-2 min-h-[2.4em]">
           {product.name}
         </h3>
@@ -80,12 +76,13 @@ export default function CatalogCard({ product }: { product: Product }) {
           </span>
         </div>
 
-        {/* Specs — min-height agar card tidak bergeser meski specs berbeda jumlah */}
+        {/* Specs*/}
         <div className="flex flex-wrap gap-1 mb-3 min-h-5.5">
+
           {product.specs.map((spec) => (
             <span
               key={spec}
-              className="font-mono text-[9px] bg-surface-alt text-text-secondary px-2 py-0.5 rounded"
+              className="font-mono text-[10px] bg-surface-alt text-text-secondary px-2 py-0.5 rounded"
             >
               {spec}
             </span>
@@ -106,12 +103,12 @@ export default function CatalogCard({ product }: { product: Product }) {
           </div>
 
           <div className="flex gap-2">
-            <Link href="#" className="flex-1 min-w-0">
+            <Link href={`/laptop/${product.slug}`} className="flex-1 min-w-0">
               <button className="w-full py-2 bg-accent hover:bg-accent-hover text-white font-semibold text-xs rounded-xl transition-colors duration-150 cursor-pointer">
                 Customize Build
               </button>
             </Link>
-            <button className="w-8 h-8 shrink-0 flex items-center justify-center border border-border text-accent hover:bg-[--color-accent-muted] hover:border-accent rounded-xl transition-all duration-150 cursor-pointer">
+            <button className="w-8 h-8 shrink-0 flex items-center justify-center border border-border text-accent hover:bg-accent-muted hover:border-accent rounded-xl transition-all duration-150 cursor-pointer">
               <ShoppingCart size={13} />
             </button>
           </div>
