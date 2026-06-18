@@ -5,8 +5,8 @@ import { catalogProducts } from "@/src/lib/DataCatalog";
 import CatalogSidebar, { FilterState } from "./CatalogSidebar";
 import CatalogHero from "./CatalogHero";
 import CatalogSortBar, { ViewMode } from "./CatalogSortBar";
-import CatalogCard from "../ui/CatalogCard";
-import CatalogListCard from "../ui/CatalogListCard";
+import CatalogCard from "./CatalogCard";
+import CatalogListCard from "./CatalogListCard";
 import Container from "../layout/Container";
 
 const PRICE_MIN = 499;

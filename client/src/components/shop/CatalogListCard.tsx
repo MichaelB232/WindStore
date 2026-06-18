@@ -99,7 +99,7 @@ export default function CatalogListCard({ product }: { product: Product }) {
           </div>
 
           <div className="flex flex-col gap-2 w-full">
-            <Link href="#" className="w-full">
+            <Link href={`/laptop/${product.slug}`} className="w-full">
               <button className="w-full py-2 bg-accent hover:bg-accent-hover text-white font-semibold text-sm rounded-xl transition-colors duration-150 cursor-pointer">
                 Customize Build
               </button>

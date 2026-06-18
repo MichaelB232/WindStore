@@ -467,44 +467,6 @@ Renders order confirmation
 
 ---
 
-## 14. Repo Structure
-
-```
-laptop-store/
-  apps/
-    web/              # Next.js frontend (App Router)
-    api/              # Express backend
-  packages/
-    shared/           # Shared types, Zod schemas, compatibility engine, formatIDR
-      configurator/   # validate(), Rule types, Violation types
-      schemas/        # Zod schemas used by both apps
-      utils/          # formatIDR and other pure helpers
-```
-
-### Backend Layout
-
-```
-api/
-  src/
-    index.ts                    # Express app bootstrap
-    middleware/                 # auth, error handler, rate limit, Zod validation
-    modules/
-      auth/                     # /auth/*
-      catalog/                  # /models, /components
-      configurator/             # /validate
-      cart/                     # logged-in users
-      orders/                   # /orders, /orders/:id
-      checkout/                 # /checkout/session
-      admin/                    # /admin/* — role-gated
-      webhooks/                 # /webhooks/stripe
-  db/
-    schema.prisma               # Prisma schema
-    migrations/                 # Migration files
-    seed.ts                     # Seed: 2–3 models, ~20 components, rules (IDR prices)
-```
-
----
-
 ## 15. Build Order
 
 This is the recommended implementation sequence to minimize integration pain.
