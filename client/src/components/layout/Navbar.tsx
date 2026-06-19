@@ -129,7 +129,7 @@ export default function Navbar() {
 
               {/* Cart Icon */}
               <div className="cart">
-                <Link href="#">
+                <Link href="/cart">
                   <ShoppingCart
                     className={`transition-colors duration-300
                       ${
