@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { Search, ShoppingCart } from "lucide-react";
 import Container from "@/src/components/layout/Container";
 import Link from "next/link";
+import UserMenu from "./UserMenu";
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -56,7 +57,6 @@ export default function Navbar() {
       >
         <Container>
           <div className="flex justify-between items-center h-20">
-
             {/* Logo / Brand */}
             <div className="left py-3">
               <h1 className="font-display text-2xl font-bold">
@@ -73,7 +73,6 @@ export default function Navbar() {
 
             {/* Right section: search, nav links, cart */}
             <div className="right flex items-center gap-7">
-
               {/* Search Bar */}
               <div
                 className={`group searchBar flex items-center gap-2 rounded-xl border px-3 h-10
@@ -118,7 +117,7 @@ export default function Navbar() {
                   className={`text-xl font-bold transition-colors duration-300
                     ${
                       isTransparent
-                        ? "text-white hover:text-white/70"
+                        ? "text-white hover:text-accent"
                         : "text-text-primary hover:text-accent"
                     }
                   `}
@@ -134,7 +133,7 @@ export default function Navbar() {
                     className={`transition-colors duration-300
                       ${
                         isTransparent
-                          ? "text-white hover:text-white/70"
+                          ? "text-white hover:text-accent"
                           : "text-text-primary hover:text-accent"
                       }
                     `}
@@ -142,6 +141,10 @@ export default function Navbar() {
                 </Link>
               </div>
 
+              {/* Profile */}
+              <div className="">
+                <UserMenu isHomePage ={isHomePage} scrolled = {scrolled}/>
+              </div>
             </div>
           </div>
         </Container>
