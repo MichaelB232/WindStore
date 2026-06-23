@@ -6,6 +6,7 @@ import { Search, ShoppingCart } from "lucide-react";
 import Container from "@/src/components/layout/Container";
 import Link from "next/link";
 import UserMenu from "./UserMenu";
+import { ROUTES } from "@/src/routes/routes";
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -61,7 +62,7 @@ export default function Navbar() {
             <div className="left py-3">
               <h1 className="font-display text-2xl font-bold">
                 <Link
-                  href="/"
+                  href={ROUTES.HOME}
                   className={`transition-colors duration-300
                     ${isTransparent ? "text-white" : "text-accent"}
                   `}
@@ -113,7 +114,7 @@ export default function Navbar() {
               {/* Shop Link */}
               <div className="shop">
                 <Link
-                  href="/shop"
+                  href={ROUTES.SHOP}
                   className={`text-xl font-bold transition-colors duration-300
                     ${
                       isTransparent
@@ -128,7 +129,7 @@ export default function Navbar() {
 
               {/* Cart Icon */}
               <div className="cart">
-                <Link href="/cart">
+                <Link href={ROUTES.CART}>
                   <ShoppingCart
                     className={`transition-colors duration-300
                       ${
