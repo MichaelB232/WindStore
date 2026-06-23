@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ShoppingCart, Heart } from "lucide-react";
 import { Product } from "@/src/lib/DataCatalog";
+import { ROUTES } from "@/src/routes/routes";
 
 const badgeClasses: Record<string, string> = {
   NEW: "bg-accent text-white",
@@ -103,7 +104,7 @@ export default function CatalogCard({ product }: { product: Product }) {
           </div>
 
           <div className="flex gap-2">
-            <Link href={`/laptop/${product.slug}`} className="flex-1 min-w-0">
+            <Link href={`${ROUTES.LAPTOP}/${product.slug}`} className="flex-1 min-w-0">
               <button className="w-full py-2 bg-accent hover:bg-accent-hover text-white font-semibold text-xs rounded-xl transition-colors duration-150 cursor-pointer">
                 Customize Build
               </button>
