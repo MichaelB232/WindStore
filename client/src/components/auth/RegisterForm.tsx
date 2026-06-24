@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Button } from "@/src/components/ui/button";
+import { Input } from "@/src/components/ui/input";
 import { User, Mail, Lock } from "lucide-react";
 import { useState } from "react";
 import { validateRegisterForm } from "@/src/services/validators/auth.validator";
