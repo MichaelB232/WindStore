@@ -3,17 +3,17 @@
 import Link from "next/link";
 import { Button } from "@/src/components/ui/button";
 import { Input } from "@/src/components/ui/input";
-import { Mail, Lock } from "lucide-react";
+import { User, Lock } from "lucide-react";
 import { useState } from "react";
 import { login } from "@/src/services/auth.service";
 import { validateLoginForm } from "@/src/services/validators/auth.validator";
 
 export default function LoginForm() {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({
-    email: "",
+    username: "",
     password: "",
     general: "",
   });
@@ -21,35 +21,32 @@ export default function LoginForm() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const validationErrors = validateLoginForm(email, password);
+    const validationErrors = validateLoginForm(username, password);
 
     setErrors(validationErrors);
 
-    if (validationErrors.email || validationErrors.password) {
+    if (validationErrors.username || validationErrors.password) {
       return;
     }
 
     try {
       setIsLoading(true);
-
-      await new Promise((resolve) => setTimeout(resolve, 3000));
-
       setErrors({
-        email: "",
+        username: "",
         password: "",
         general: "",
       });
 
-      await login({
-        email,
+      const result = await login({
+        username,
         password,
       });
 
-      console.log("Login berhasil");
+      console.log(result);
     } catch (error) {
       setErrors((prev) => ({
         ...prev,
-        general: "Login gagal",
+        general: error instanceof Error ? error.message : "Login gagal",
       }));
     } finally {
       setIsLoading(false);
@@ -66,23 +63,23 @@ export default function LoginForm() {
 
       {/* Form */}
       <form className="space-y-4" onSubmit={handleSubmit}>
-        {/* Email */}
+        {/* username */}
         <div className="space-y-1.5">
           <label className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-            Email Address
+            Username
           </label>
           <div className="relative">
-            <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              type="email"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              type="username"
               placeholder="name@example.com"
               className="pl-9"
             />
           </div>
-          {errors.email && (
-            <p className="text-sm text-danger">{errors.email}</p>
+          {errors.username && (
+            <p className="text-sm text-danger">{errors.username}</p>
           )}
         </div>
 
