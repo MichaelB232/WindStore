@@ -2,7 +2,7 @@ export const ROUTES = {
   HOME: "/",
   CART: "/cart",
   SHOP: "/shop",
-  LAPTOP: "/LAPTOP",
+  LAPTOP: "/laptop",
   PROFILE: "/profile",
   LOGIN: "/login",
   REGISTER: "/register",
