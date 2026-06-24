@@ -8,6 +8,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import Link from "next/link";
+import { ROUTES } from "@/src/routes/routes";
 
 type UserMenuProps = {
   isHomePage: boolean;
@@ -34,8 +36,12 @@ export default function UserMenu({ isHomePage, scrolled }: UserMenuProps) {
       {!isLogin ? (
         <DropdownMenuContent className="w-40" align="end">
           <DropdownMenuGroup>
-            <DropdownMenuItem>Login</DropdownMenuItem>
-            <DropdownMenuItem>Register</DropdownMenuItem>
+            <Link href={ROUTES.LOGIN}>
+              <DropdownMenuItem>Sign in</DropdownMenuItem>
+            </Link>
+            <Link href={ROUTES.REGISTER}>
+              <DropdownMenuItem>Sign up</DropdownMenuItem>
+            </Link>
           </DropdownMenuGroup>
         </DropdownMenuContent>
       ) : (
