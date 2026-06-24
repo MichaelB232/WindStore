@@ -1,31 +1,56 @@
-// components/auth/LoginForm.tsx
-
 "use client";
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Mail, Lock } from "lucide-react";
+import { useState } from "react";
+import { login } from "@/src/services/auth.service";
+import { validateLoginForm } from "@/src/services/validators/auth.validator";
 
 export default function LoginForm() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [errors, setErrors] = useState({
+    email: "",
+    password: "",
+    general: "",
+  });
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const validationErrors = validateLoginForm(email, password);
+
+    setErrors(validationErrors);
+
+    if (validationErrors.email || validationErrors.password) {
+      return;
+    }
+
+    try {
+      setErrors({
+        email: "",
+        password: "",
+        general: "",
+      });
+
+      await login({
+        email,
+        password,
+      });
+
+      console.log("Login berhasil");
+    } catch (error) {
+      setErrors((prev) => ({
+        ...prev,
+        general: "Login gagal",
+      }));
+    }
+  };
+
   return (
     <>
-      {/* Tab switcher */}
-      <div className="mb-8 flex rounded-full bg-muted p-1">
-        <Link
-          href="/login"
-          className="flex-1 rounded-full bg-accent py-2 text-center text-sm font-medium text-white"
-        >
-          Sign In
-        </Link>
-        <Link
-          href="/register"
-          className="flex-1 py-2 text-center text-sm font-medium text-muted-foreground"
-        >
-          Sign Up
-        </Link>
-      </div>
-
       {/* Heading */}
       <h2 className="mb-2 text-3xl font-bold tracking-tight">Welcome back</h2>
       <p className="mb-8 text-sm text-muted-foreground">
@@ -33,7 +58,7 @@ export default function LoginForm() {
       </p>
 
       {/* Form */}
-      <form className="space-y-4">
+      <form className="space-y-4" onSubmit={handleSubmit}>
         {/* Email */}
         <div className="space-y-1.5">
           <label className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
@@ -42,11 +67,16 @@ export default function LoginForm() {
           <div className="relative">
             <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               type="email"
               placeholder="name@example.com"
               className="pl-9"
             />
           </div>
+          {errors.email && (
+            <p className="text-sm text-danger">{errors.email}</p>
+          )}
         </div>
 
         {/* Password */}
@@ -60,8 +90,13 @@ export default function LoginForm() {
               type="password"
               placeholder="••••••••"
               className="pl-9"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
             />
           </div>
+          {errors.password && (
+            <p className="text-sm text-danger">{errors.password}</p>
+          )}
         </div>
 
         {/* Remember me + Forgot password */}
@@ -73,16 +108,21 @@ export default function LoginForm() {
             />
             Remember me
           </label>
-          <Link
-            href="/"
-            className="text-sm text-accent hover:underline"
-          >
+          <Link href="/" className="text-sm text-accent hover:underline">
             Forgot password?
           </Link>
         </div>
 
         {/* Submit */}
-        <Button className="w-full bg-accent hover:bg-accent-hover">
+        {errors.general && (
+          <div className="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-600">
+            {errors.general}
+          </div>
+        )}
+        <Button
+          className="w-full bg-accent hover:bg-accent-hover"
+          type="submit"
+        >
           Sign In
         </Button>
       </form>
@@ -99,8 +139,8 @@ export default function LoginForm() {
       {/* OAuth buttons */}
       {/* <div className="grid grid-cols-2 gap-3">
         <Button variant="outline" type="button" className="gap-2"> */}
-          {/* Google icon */}
-          {/* <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden="true">
+      {/* Google icon */}
+      {/* <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden="true">
             <path
               d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
               fill="#4285F4"
@@ -121,9 +161,9 @@ export default function LoginForm() {
           Google
         </Button> */}
 
-        {/* <Button variant="outline" type="button" className="gap-2"> */}
-          {/* Microsoft icon */}
-          {/* <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden="true">
+      {/* <Button variant="outline" type="button" className="gap-2"> */}
+      {/* Microsoft icon */}
+      {/* <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden="true">
             <path d="M11.4 11.4H0V0h11.4v11.4z" fill="#F25022" />
             <path d="M24 11.4H12.6V0H24v11.4z" fill="#7FBA00" />
             <path d="M11.4 24H0V12.6h11.4V24z" fill="#00A4EF" />
