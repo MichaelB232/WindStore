@@ -1,4 +1,5 @@
 # Product Requirements Document
+
 ## Custom Laptop E-Commerce — Configurator Store
 
 **Version:** 1.0.0
@@ -45,16 +46,16 @@ Generic laptop stores offer fixed SKUs. Power users and enthusiasts want to cust
 
 ### Scope
 
-| Area | Included |
-|---|---|
-| Frontend (Next.js App Router) | ✅ |
-| Backend REST API (Express) | ✅ |
-| Database (PostgreSQL via Prisma) | ✅ |
-| Shared Compatibility Engine | ✅ |
-| Stripe Checkout (test mode, IDR) | ✅ |
-| Admin Panel | ✅ |
-| Animations (Framer Motion + MagicUI) | ✅ |
-| Real payments, multi-currency, email notifications | ❌ (v2) |
+| Area                                               | Included |
+| -------------------------------------------------- | -------- |
+| Frontend (Next.js App Router)                      | ✅       |
+| Backend REST API (Express)                         | ✅       |
+| Database (PostgreSQL via Prisma)                   | ✅       |
+| Shared Compatibility Engine                        | ✅       |
+| Stripe Checkout (test mode, IDR)                   | ✅       |
+| Admin Panel                                        | ✅       |
+| Animations (Framer Motion + MagicUI)               | ✅       |
+| Real payments, multi-currency, email notifications | ❌ (v2)  |
 
 ---
 
@@ -68,38 +69,38 @@ Generic laptop stores offer fixed SKUs. Power users and enthusiasts want to cust
 
 ### Success Metrics
 
-| Metric | Target |
-|---|---|
-| Configurator renders with live price update | < 100ms per selection |
-| Compatibility violations surface to user | Instant (client-side engine) |
-| Checkout session creation to Stripe redirect | < 2s |
-| Webhook order confirmation end-to-end | < 5s after Stripe fires |
-| Admin CRUD operations (models, components, rules) | All covered |
-| Mobile-responsive pages | All public pages |
+| Metric                                            | Target                       |
+| ------------------------------------------------- | ---------------------------- |
+| Configurator renders with live price update       | < 100ms per selection        |
+| Compatibility violations surface to user          | Instant (client-side engine) |
+| Checkout session creation to Stripe redirect      | < 2s                         |
+| Webhook order confirmation end-to-end             | < 5s after Stripe fires      |
+| Admin CRUD operations (models, components, rules) | All covered                  |
+| Mobile-responsive pages                           | All public pages             |
 
 ---
 
 ## 3. Tech Stack
 
-| Layer | Technology |
-|---|---|
-| Frontend | React 18, Next.js 14 (App Router), Tailwind CSS, shadcn/ui |
-| Backend | Node.js, Express (REST API) |
-| Database | PostgreSQL — Prisma ORM (recommended) |
-| Auth | JWT — access token (15 min) + refresh token (7 days), httpOnly Secure cookies |
-| Payments | Stripe Checkout (test mode), IDR currency |
-| State Management | Zustand (cart), TanStack Query (server state) |
-| Animations | Framer Motion, MagicUI components |
-| Shared Logic | `packages/shared` — Zod schemas, compatibility engine, IDR formatter |
-| Deploy (later) | Frontend: Vercel · Backend: Railway/Render/Fly · DB: Neon/Supabase/Railway |
+| Layer            | Technology                                                                    |
+| ---------------- | ----------------------------------------------------------------------------- |
+| Frontend         | React 18, Next.js 14 (App Router), Tailwind CSS, shadcn/ui                    |
+| Backend          | Node.js, Express (REST API)                                                   |
+| Database         | PostgreSQL — Prisma ORM (recommended)                                         |
+| Auth             | JWT — access token (15 min) + refresh token (7 days), httpOnly Secure cookies |
+| Payments         | Stripe Checkout (test mode), IDR currency                                     |
+| State Management | Zustand (cart), TanStack Query (server state)                                 |
+| Animations       | Framer Motion, MagicUI components                                             |
+| Shared Logic     | `packages/shared` — Zod schemas, compatibility engine, IDR formatter          |
+| Deploy (later)   | Frontend: Vercel · Backend: Railway/Render/Fly · DB: Neon/Supabase/Railway    |
 
 ### Currency Helper (Single Source of Truth)
 
 ```ts
 export const formatIDR = (n: number) =>
-  new Intl.NumberFormat('id-ID', {
-    style: 'currency',
-    currency: 'IDR',
+  new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
     maximumFractionDigits: 0,
   }).format(n); // → "Rp 12.500.000"
 ```
@@ -112,11 +113,11 @@ All prices stored as **integers** (bigint) in the database. All display formatti
 
 ### Roles
 
-| Role | Description |
-|---|---|
-| `guest` | Unauthenticated visitor. Can browse, configure, and checkout (email only). Cart stored in localStorage. |
-| `customer` | Registered and logged-in user. Can save builds, view order history, sync cart to DB. |
-| `admin` | Elevated role (separate `user_roles` table). Full access to admin panel. |
+| Role       | Description                                                                                             |
+| ---------- | ------------------------------------------------------------------------------------------------------- |
+| `guest`    | Unauthenticated visitor. Can browse, configure, and checkout (email only). Cart stored in localStorage. |
+| `customer` | Registered and logged-in user. Can save builds, view order history, sync cart to DB.                    |
+| `admin`    | Elevated role (separate `user_roles` table). Full access to admin panel.                                |
 
 > **Security Note:** Roles are stored in a **separate `user_roles` table** — never on `users` or `profiles`. This prevents privilege escalation via profile editing.
 
@@ -132,87 +133,87 @@ All prices stored as **integers** (bigint) in the database. All display formatti
 
 ### 5.1 Authentication
 
-| # | Requirement |
-|---|---|
-| AUTH-01 | Users can register with email + password. Password hashed with bcrypt (cost 12). |
-| AUTH-02 | Login returns access JWT (15 min) + refresh JWT (7 days) as httpOnly Secure cookies. |
-| AUTH-03 | `/auth/refresh` issues a new access token using a valid refresh token. |
-| AUTH-04 | `/auth/logout` clears both cookies server-side. |
-| AUTH-05 | `/auth/me` returns current user ID, email, display name, and role. Cached client-side. |
+| #       | Requirement                                                                                                                                       |
+| ------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| AUTH-01 | Users can register with email + password. Password hashed with bcrypt (cost 12).                                                                  |
+| AUTH-02 | Login returns access JWT (15 min) + refresh JWT (7 days) as httpOnly Secure cookies.                                                              |
+| AUTH-03 | `/auth/refresh` issues a new access token using a valid refresh token.                                                                            |
+| AUTH-04 | `/auth/logout` clears both cookies server-side.                                                                                                   |
+| AUTH-05 | `/auth/me` returns current user ID, email, display name, and role. Cached client-side.                                                            |
 | AUTH-06 | On 401, the frontend TanStack Query layer calls `/auth/refresh` once, retries the original request; if refresh fails, redirects to `/auth/login`. |
-| AUTH-07 | Next.js `middleware.ts` checks the auth cookie and redirects unauthenticated users away from protected routes. |
+| AUTH-07 | Next.js `middleware.ts` checks the auth cookie and redirects unauthenticated users away from protected routes.                                    |
 
 ### 5.2 Catalog
 
-| # | Requirement |
-|---|---|
+| #      | Requirement                                                                                                          |
+| ------ | -------------------------------------------------------------------------------------------------------------------- |
 | CAT-01 | Public endpoint `GET /models` returns a paginated list of active laptop base models (name, slug, base price, image). |
 | CAT-02 | `GET /models/:slug` returns full model detail including all slots, slot options, and applicable compatibility rules. |
-| CAT-03 | `GET /components` returns all active components with category, specs, price, and stock. |
-| CAT-04 | Inactive models and components are hidden from public endpoints. |
+| CAT-03 | `GET /components` returns all active components with category, specs, price, and stock.                              |
+| CAT-04 | Inactive models and components are hidden from public endpoints.                                                     |
 
 ### 5.3 Configurator
 
-| # | Requirement |
-|---|---|
-| CFG-01 | Two-column layout: sticky left panel (laptop image + live summary), right panel (slot accordions). |
-| CFG-02 | Each slot displays option cards with name, specs chips, price delta (e.g., "+Rp 500.000"), and a stock badge. |
-| CFG-03 | Selecting a component triggers live price recalculation and image crossfade. |
-| CFG-04 | The shared compatibility engine runs client-side on every selection. Invalid options are dimmed with a tooltip explaining the violation. |
-| CFG-05 | "Add to Cart" is **disabled** until the configuration is valid and all required slots are filled. |
+| #      | Requirement                                                                                                                                                               |
+| ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| CFG-01 | Two-column layout: sticky left panel (laptop image + live summary), right panel (slot accordions).                                                                        |
+| CFG-02 | Each slot displays option cards with name, specs chips, price delta (e.g., "+Rp 500.000"), and a stock badge.                                                             |
+| CFG-03 | Selecting a component triggers live price recalculation and image crossfade.                                                                                              |
+| CFG-04 | The shared compatibility engine runs client-side on every selection. Invalid options are dimmed with a tooltip explaining the violation.                                  |
+| CFG-05 | "Add to Cart" is **disabled** until the configuration is valid and all required slots are filled.                                                                         |
 | CFG-06 | Before adding to cart, the frontend calls `POST /configurator/validate` and waits for server confirmation. The client-side check is UX only; the server is the authority. |
-| CFG-07 | Out-of-stock components are shown as disabled and cannot be selected. |
-| CFG-08 | The live summary shows: total price (with count-up animation), total wattage, total weight, and a validity banner. |
+| CFG-07 | Out-of-stock components are shown as disabled and cannot be selected.                                                                                                     |
+| CFG-08 | The live summary shows: total price (with count-up animation), total wattage, total weight, and a validity banner.                                                        |
 
 ### 5.4 Cart & Checkout
 
-| # | Requirement |
-|---|---|
-| CART-01 | Guests: cart stored in localStorage. |
-| CART-02 | Logged-in users: cart synced to the database. On login, guest cart is merged. |
-| CART-03 | Cart items display: model name, component summary, unit price (IDR), quantity, and a remove button. |
-| CHK-01 | Checkout prompts for email (guest) or uses account email (logged-in). |
-| CHK-02 | User enters Indonesian shipping address: provinsi, kota/kabupaten, kecamatan, kode pos. |
-| CHK-03 | Frontend calls `POST /checkout/session`. Express re-validates each line item (price, stock, compatibility) before creating a Stripe Checkout Session. |
-| CHK-04 | Stripe session is created in IDR. Each configured laptop is one line item: e.g., `"Aurora 14 Pro — i9 / 32GB / 1TB"`. |
-| CHK-05 | After Stripe payment, the webhook `POST /webhooks/stripe` is the **only** source of truth for marking an order as `paid`. Stock is decremented atomically in a DB transaction. |
-| CHK-06 | The success page polls `GET /orders/:id` until status = `paid`, then renders the confirmation. |
-| CHK-07 | Test card: `4242 4242 4242 4242`. |
+| #       | Requirement                                                                                                                                                                    |
+| ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| CART-01 | Guests: cart stored in localStorage.                                                                                                                                           |
+| CART-02 | Logged-in users: cart synced to the database. On login, guest cart is merged.                                                                                                  |
+| CART-03 | Cart items display: model name, component summary, unit price (IDR), quantity, and a remove button.                                                                            |
+| CHK-01  | Checkout prompts for email (guest) or uses account email (logged-in).                                                                                                          |
+| CHK-02  | User enters Indonesian shipping address: provinsi, kota/kabupaten, kecamatan, kode pos.                                                                                        |
+| CHK-03  | Frontend calls `POST /checkout/session`. Express re-validates each line item (price, stock, compatibility) before creating a Stripe Checkout Session.                          |
+| CHK-04  | Stripe session is created in IDR. Each configured laptop is one line item: e.g., `"Aurora 14 Pro — i9 / 32GB / 1TB"`.                                                          |
+| CHK-05  | After Stripe payment, the webhook `POST /webhooks/stripe` is the **only** source of truth for marking an order as `paid`. Stock is decremented atomically in a DB transaction. |
+| CHK-06  | The success page polls `GET /orders/:id` until status = `paid`, then renders the confirmation.                                                                                 |
+| CHK-07  | Test card: `4242 4242 4242 4242`.                                                                                                                                              |
 
 ### 5.5 Orders & Saved Builds
 
-| # | Requirement |
-|---|---|
-| ORD-01 | Authenticated users can view order history at `/account`. |
-| ORD-02 | Each order shows: ID, date, status, items, and total IDR. |
-| BLD-01 | Authenticated users can save a configuration as a named build. |
+| #      | Requirement                                                                                |
+| ------ | ------------------------------------------------------------------------------------------ |
+| ORD-01 | Authenticated users can view order history at `/account`.                                  |
+| ORD-02 | Each order shows: ID, date, status, items, and total IDR.                                  |
+| BLD-01 | Authenticated users can save a configuration as a named build.                             |
 | BLD-02 | Saved builds are listed at `/account/builds` and can be loaded back into the configurator. |
 
 ### 5.6 Admin Panel
 
 All admin routes are gated behind `requireRole('admin')` middleware.
 
-| # | Requirement |
-|---|---|
-| ADM-01 | Dashboard: summary of recent orders, total revenue (IDR), and low-stock components. |
+| #      | Requirement                                                                                                                 |
+| ------ | --------------------------------------------------------------------------------------------------------------------------- |
+| ADM-01 | Dashboard: summary of recent orders, total revenue (IDR), and low-stock components.                                         |
 | ADM-02 | Models CRUD: create, edit, activate/deactivate laptop base models. Manage slots (category, label, required, display order). |
-| ADM-03 | Components CRUD: create, edit, set price (IDR), update stock, activate/deactivate. |
-| ADM-04 | Rules Builder: visual UI (dropdowns) to create and delete compatibility rules per model without editing JSON. |
-| ADM-05 | Orders: list all orders, view details, update order status (e.g., `processing → shipped → delivered`). |
+| ADM-03 | Components CRUD: create, edit, set price (IDR), update stock, activate/deactivate.                                          |
+| ADM-04 | Rules Builder: visual UI (dropdowns) to create and delete compatibility rules per model without editing JSON.               |
+| ADM-05 | Orders: list all orders, view details, update order status (e.g., `processing → shipped → delivered`).                      |
 
 ---
 
 ## 6. Non-Functional Requirements
 
-| Category | Requirement |
-|---|---|
-| **Performance** | Configurator price recalculation < 100ms. API responses (catalog) < 300ms (DB indexed). |
-| **Security** | All JWT cookies are httpOnly + Secure + SameSite=Strict. Stripe webhook signature verified on every call. All request bodies validated with Zod before DB access. CORS restricted to frontend origin only. Auth and checkout endpoints are rate-limited. |
-| **Reliability** | Webhook handler is idempotent — replaying the same `payment_intent.succeeded` event does not double-decrement stock or double-mark an order. |
-| **Accessibility** | All animations respect `prefers-reduced-motion`. Interactive elements have keyboard focus styles. Color contrast meets WCAG AA. |
-| **Scalability** | Database indexes on `orders.status`, `components.category`, `model_slots.model_id`. |
-| **Error Handling** | All API errors return `{ error: { code, message } }`. Frontend shows user-friendly toasts for API errors. |
-| **Mobile** | All public-facing pages are responsive. Admin panel: desktop-first but not broken on tablet. |
+| Category           | Requirement                                                                                                                                                                                                                                              |
+| ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Performance**    | Configurator price recalculation < 100ms. API responses (catalog) < 300ms (DB indexed).                                                                                                                                                                  |
+| **Security**       | All JWT cookies are httpOnly + Secure + SameSite=Strict. Stripe webhook signature verified on every call. All request bodies validated with Zod before DB access. CORS restricted to frontend origin only. Auth and checkout endpoints are rate-limited. |
+| **Reliability**    | Webhook handler is idempotent — replaying the same `payment_intent.succeeded` event does not double-decrement stock or double-mark an order.                                                                                                             |
+| **Accessibility**  | All animations respect `prefers-reduced-motion`. Interactive elements have keyboard focus styles. Color contrast meets WCAG AA.                                                                                                                          |
+| **Scalability**    | Database indexes on `orders.status`, `components.category`, `model_slots.model_id`.                                                                                                                                                                      |
+| **Error Handling** | All API errors return `{ error: { code, message } }`. Frontend shows user-friendly toasts for API errors.                                                                                                                                                |
+| **Mobile**         | All public-facing pages are responsive. Admin panel: desktop-first but not broken on tablet.                                                                                                                                                             |
 
 ---
 
@@ -251,6 +252,7 @@ saved_builds        id, user_id (fk), model_id (fk), name,
 ```
 
 **Notes:**
+
 - Prices stored as integers (bigint). IDR has no decimal places.
 - Roles in a **separate table** — never colocated with `users` or `profiles`.
 - Use Prisma migrations or plain SQL files under `api/db/migrations/`.
@@ -262,56 +264,56 @@ saved_builds        id, user_id (fk), model_id (fk), name,
 
 ### Auth — `/auth`
 
-| Method | Path | Auth | Description |
-|---|---|---|---|
-| POST | `/auth/register` | — | Register user, return tokens |
-| POST | `/auth/login` | — | Login, return tokens |
-| POST | `/auth/refresh` | refresh cookie | Issue new access token |
-| POST | `/auth/logout` | — | Clear cookies |
-| GET | `/auth/me` | access token | Return current user + role |
+| Method | Path             | Auth           | Description                  |
+| ------ | ---------------- | -------------- | ---------------------------- |
+| POST   | `/auth/register` | —              | Register user, return tokens |
+| POST   | `/auth/login`    | —              | Login, return tokens         |
+| POST   | `/auth/refresh`  | refresh cookie | Issue new access token       |
+| POST   | `/auth/logout`   | —              | Clear cookies                |
+| GET    | `/auth/me`       | access token   | Return current user + role   |
 
 ### Catalog — `/catalog`
 
-| Method | Path | Auth | Description |
-|---|---|---|---|
-| GET | `/models` | — | Paginated list of active models |
-| GET | `/models/:slug` | — | Model detail: slots, options, rules |
-| GET | `/components` | — | All active components |
+| Method | Path            | Auth | Description                         |
+| ------ | --------------- | ---- | ----------------------------------- |
+| GET    | `/models`       | —    | Paginated list of active models     |
+| GET    | `/models/:slug` | —    | Model detail: slots, options, rules |
+| GET    | `/components`   | —    | All active components               |
 
 ### Configurator — `/configurator`
 
-| Method | Path | Auth | Description |
-|---|---|---|---|
-| POST | `/configurator/validate` | — | Server-side compatibility + price validation |
+| Method | Path                     | Auth | Description                                  |
+| ------ | ------------------------ | ---- | -------------------------------------------- |
+| POST   | `/configurator/validate` | —    | Server-side compatibility + price validation |
 
 ### Orders — `/orders`
 
-| Method | Path | Auth | Description |
-|---|---|---|---|
-| GET | `/orders` | customer | List user's orders |
-| GET | `/orders/:id` | customer | Order detail (polled by success page) |
+| Method | Path          | Auth     | Description                           |
+| ------ | ------------- | -------- | ------------------------------------- |
+| GET    | `/orders`     | customer | List user's orders                    |
+| GET    | `/orders/:id` | customer | Order detail (polled by success page) |
 
 ### Checkout — `/checkout`
 
-| Method | Path | Auth | Description |
-|---|---|---|---|
-| POST | `/checkout/session` | optional | Create Stripe Checkout Session |
+| Method | Path                | Auth     | Description                    |
+| ------ | ------------------- | -------- | ------------------------------ |
+| POST   | `/checkout/session` | optional | Create Stripe Checkout Session |
 
 ### Webhooks — `/webhooks`
 
-| Method | Path | Auth | Description |
-|---|---|---|---|
-| POST | `/webhooks/stripe` | Stripe signature | Handle `payment_intent.succeeded` |
+| Method | Path               | Auth             | Description                       |
+| ------ | ------------------ | ---------------- | --------------------------------- |
+| POST   | `/webhooks/stripe` | Stripe signature | Handle `payment_intent.succeeded` |
 
 ### Admin — `/admin` (role=admin required)
 
-| Method | Path | Description |
-|---|---|---|
-| GET/POST/PUT/DELETE | `/admin/models` | CRUD laptop models |
-| GET/POST/PUT/DELETE | `/admin/components` | CRUD components + stock |
-| GET/POST/DELETE | `/admin/rules` | CRUD compatibility rules |
-| GET/PATCH | `/admin/orders` | List + update order status |
-| GET | `/admin/dashboard` | Revenue + low-stock summary |
+| Method              | Path                | Description                 |
+| ------------------- | ------------------- | --------------------------- |
+| GET/POST/PUT/DELETE | `/admin/models`     | CRUD laptop models          |
+| GET/POST/PUT/DELETE | `/admin/components` | CRUD components + stock     |
+| GET/POST/DELETE     | `/admin/rules`      | CRUD compatibility rules    |
+| GET/PATCH           | `/admin/orders`     | List + update order status  |
+| GET                 | `/admin/dashboard`  | Revenue + low-stock summary |
 
 ---
 
@@ -323,10 +325,10 @@ Located in `packages/shared/configurator/`. Pure functions — no side effects. 
 
 ```ts
 type Rule =
-  | { type: 'requires'; if: ComponentId; then: ComponentId }
-  | { type: 'forbids';  if: ComponentId; with: ComponentId }
-  | { type: 'max_sum';  field: 'wattage'; categories: Category[]; max: number }
-  | { type: 'max_qty';  category: Category; max: number };
+  | { type: "requires"; if: ComponentId; then: ComponentId }
+  | { type: "forbids"; if: ComponentId; with: ComponentId }
+  | { type: "max_sum"; field: "wattage"; categories: Category[]; max: number }
+  | { type: "max_qty"; category: Category; max: number };
 ```
 
 ### Validate Function
@@ -334,8 +336,8 @@ type Rule =
 ```ts
 function validate(
   config: Record<SlotId, ComponentId[]>,
-  rules: Rule[]
-): { valid: boolean; violations: Violation[] }
+  rules: Rule[],
+): { valid: boolean; violations: Violation[] };
 ```
 
 - `requires` — if component A is selected, component B must also be selected.
@@ -353,15 +355,15 @@ The admin UI builds rules via dropdowns (component A → relation → component 
 
 ### Visual Style
 
-| Token | Value |
-|---|---|
-| Background | `#FAFAFA` |
-| Text | `#0A0A0A` |
-| Accent | `#4F46E5` |
-| Border | Neutral gray |
-| Font | Inter (tight tracking for headings, comfortable body line-height) |
-| Radius | 8px |
-| Shadow | Soft / medium elevation |
+| Token      | Value                                                             |
+| ---------- | ----------------------------------------------------------------- |
+| Background | `#FAFAFA`                                                         |
+| Text       | `#0A0A0A`                                                         |
+| Accent     | `#4F46E5`                                                         |
+| Border     | Neutral gray                                                      |
+| Font       | Inter (tight tracking for headings, comfortable body line-height) |
+| Radius     | 8px                                                               |
+| Shadow     | Soft / medium elevation                                           |
 
 ### Component Library
 
@@ -371,33 +373,33 @@ shadcn/ui defaults with generous padding. Photography: clean laptop renders on n
 
 **Public**
 
-| Route | Description |
-|---|---|
-| `/` | Landing page |
-| `/laptops` | Grid of base models |
-| `/laptops/[slug]` | Configurator |
-| `/cart` | Cart review |
-| `/checkout` | Shipping + payment |
-| `/checkout/success` | Order confirmation |
-| `/auth/login` | Login |
-| `/auth/register` | Register |
+| Route               | Description         |
+| ------------------- | ------------------- |
+| `/`                 | Landing page        |
+| `/laptops`          | Grid of base models |
+| `/laptops/[slug]`   | Configurator        |
+| `/cart`             | Cart review         |
+| `/checkout`         | Shipping + payment  |
+| `/checkout/success` | Order confirmation  |
+| `/auth/login`       | Login               |
+| `/auth/register`    | Register            |
 
 **Authenticated**
 
-| Route | Description |
-|---|---|
-| `/account` | Profile + order history |
-| `/account/builds` | Saved configurations |
+| Route             | Description             |
+| ----------------- | ----------------------- |
+| `/account`        | Profile + order history |
+| `/account/builds` | Saved configurations    |
 
 **Admin (role=admin)**
 
-| Route | Description |
-|---|---|
-| `/admin` | Dashboard |
-| `/admin/models` | CRUD models + slots |
-| `/admin/components` | CRUD components + stock |
-| `/admin/rules` | Compatibility rules per model |
-| `/admin/orders` | View + update order status |
+| Route               | Description                   |
+| ------------------- | ----------------------------- |
+| `/admin`            | Dashboard                     |
+| `/admin/models`     | CRUD models + slots           |
+| `/admin/components` | CRUD components + stock       |
+| `/admin/rules`      | Compatibility rules per model |
+| `/admin/orders`     | View + update order status    |
 
 ---
 
@@ -405,14 +407,14 @@ shadcn/ui defaults with generous padding. Photography: clean laptop renders on n
 
 All animations use Framer Motion + MagicUI. All animations must respect `prefers-reduced-motion`.
 
-| Page / Component | Animation |
-|---|---|
-| **Landing hero** | Headline words fade up in sequence (Aurora Text / Text Animate). Subheadline blur-fades in. CTA = Shimmer Button. Grid Pattern or Particles background. Feature sections reveal on scroll (Blur Fade, 80ms stagger). |
-| **Laptops grid** | Cards stagger-fade from below (50ms delay each). Hover lifts card with scale + shadow. Image gently zooms inside card. |
-| **Configurator** | Laptop image crossfades on component change. Price count-up animation. Accordion smooth height + opacity. Selecting an option pulses a checkmark. Invalid options fade-dim + shake on click attempt. |
-| **Cart** | Line items slide in from right. Remove = slide out + height collapse. |
-| **Page transitions** | Every route fades + slides up 8px on mount (200ms). |
-| **Micro-interactions** | Buttons hover-scale 1.02. Story-link underline grow. Success toasts scale-in. |
+| Page / Component       | Animation                                                                                                                                                                                                            |
+| ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Landing hero**       | Headline words fade up in sequence (Aurora Text / Text Animate). Subheadline blur-fades in. CTA = Shimmer Button. Grid Pattern or Particles background. Feature sections reveal on scroll (Blur Fade, 80ms stagger). |
+| **Laptops grid**       | Cards stagger-fade from below (50ms delay each). Hover lifts card with scale + shadow. Image gently zooms inside card.                                                                                               |
+| **Configurator**       | Laptop image crossfades on component change. Price count-up animation. Accordion smooth height + opacity. Selecting an option pulses a checkmark. Invalid options fade-dim + shake on click attempt.                 |
+| **Cart**               | Line items slide in from right. Remove = slide out + height collapse.                                                                                                                                                |
+| **Page transitions**   | Every route fades + slides up 8px on mount (200ms).                                                                                                                                                                  |
+| **Micro-interactions** | Buttons hover-scale 1.02. Story-link underline grow. Success toasts scale-in.                                                                                                                                        |
 
 ---
 
@@ -452,18 +454,18 @@ Renders order confirmation
 
 ## 13. Security & Access Control
 
-| Control | Implementation |
-|---|---|
-| Password hashing | bcrypt, cost factor 12 |
-| JWT storage | httpOnly, Secure, SameSite=Strict cookies |
-| Role enforcement | Separate `user_roles` table; never on `users` or `profiles` |
-| Route guard (frontend) | Next.js `middleware.ts` — checks auth cookie, redirects |
-| Route guard (backend) | `requireAuth` middleware (verify JWT) → `requireRole('admin')` for admin routes |
-| Input validation | Zod on every request body and route param before DB access |
-| CORS | Restricted to frontend origin; `credentials: true` |
-| Rate limiting | Applied to `/auth/*` and `/checkout/*` endpoints |
-| Stripe webhook | Raw body parsing; `stripe.webhooks.constructEvent` signature verification |
-| Idempotency | Webhook handler checks existing order status before processing to prevent duplicate fulfillment |
+| Control                | Implementation                                                                                  |
+| ---------------------- | ----------------------------------------------------------------------------------------------- |
+| Password hashing       | bcrypt, cost factor 12                                                                          |
+| JWT storage            | httpOnly, Secure, SameSite=Strict cookies                                                       |
+| Role enforcement       | Separate `user_roles` table; never on `users` or `profiles`                                     |
+| Route guard (frontend) | Next.js `middleware.ts` — checks auth cookie, redirects                                         |
+| Route guard (backend)  | `requireAuth` middleware (verify JWT) → `requireRole('admin')` for admin routes                 |
+| Input validation       | Zod on every request body and route param before DB access                                      |
+| CORS                   | Restricted to frontend origin; `credentials: true`                                              |
+| Rate limiting          | Applied to `/auth/*` and `/checkout/*` endpoints                                                |
+| Stripe webhook         | Raw body parsing; `stripe.webhooks.constructEvent` signature verification                       |
+| Idempotency            | Webhook handler checks existing order status before processing to prevent duplicate fulfillment |
 
 ---
 
@@ -509,41 +511,41 @@ api/
 
 This is the recommended implementation sequence to minimize integration pain.
 
-| Phase | Description |
-|---|---|
-| **1** | Init monorepo + Tailwind + shadcn/ui + Express skeleton + Postgres + Prisma |
-| **2** | Database schema + migrations + seed script (2–3 models, ~20 components, rules, IDR prices) |
-| **3** | Auth module (register / login / refresh / me) + role middleware |
-| **4** | Catalog endpoints + frontend: landing page, laptop grid, laptop detail (read-only) |
-| **5** | Configurator interactivity + shared compatibility engine + `/validate` endpoint |
-| **6** | Cart (localStorage for guests, synced to DB after login, merge on login) |
-| **7** | Checkout + Stripe integration + webhook handler + order persistence |
-| **8** | Account pages (order history, saved builds) |
-| **9** | Admin panel (models → components → rules → orders) |
-| **10** | Animations pass, empty / loading / error states, SEO meta per route, 404 page |
+| Phase  | Description                                                                                |
+| ------ | ------------------------------------------------------------------------------------------ |
+| **1**  | Init monorepo + Tailwind + shadcn/ui + Express skeleton + Postgres + Prisma                |
+| **2**  | Database schema + migrations + seed script (2–3 models, ~20 components, rules, IDR prices) |
+| **3**  | Auth module (register / login / refresh / me) + role middleware                            |
+| **4**  | Catalog endpoints + frontend: landing page, laptop grid, laptop detail (read-only)         |
+| **5**  | Configurator interactivity + shared compatibility engine + `/validate` endpoint            |
+| **6**  | Cart (localStorage for guests, synced to DB after login, merge on login)                   |
+| **7**  | Checkout + Stripe integration + webhook handler + order persistence                        |
+| **8**  | Account pages (order history, saved builds)                                                |
+| **9**  | Admin panel (models → components → rules → orders)                                         |
+| **10** | Animations pass, empty / loading / error states, SEO meta per route, 404 page              |
 
 ---
 
 ## 16. Out of Scope (v1)
 
-| Feature | Notes |
-|---|---|
-| Real payments | Stripe test mode only |
-| Multi-language / multi-currency | IDR only |
-| Product reviews & ratings | v2 |
-| Email notifications | Add later via Resend or Nodemailer |
-| Advanced inventory management | Simple stock integer decrement only |
-| Shipping cost calculation | Flat fee or free shipping for v1 |
+| Feature                         | Notes                               |
+| ------------------------------- | ----------------------------------- |
+| Real payments                   | Stripe test mode only               |
+| Multi-language / multi-currency | IDR only                            |
+| Product reviews & ratings       | v2                                  |
+| Email notifications             | Add later via Resend or Nodemailer  |
+| Advanced inventory management   | Simple stock integer decrement only |
+| Shipping cost calculation       | Flat fee or free shipping for v1    |
 
 ---
 
 ## Appendix A — Seed Data Outline
 
-| Model | Base Price (IDR) |
-|---|---|
-| Aurora 14 Pro | Rp 12.000.000 |
-| Nova 15 Creator | Rp 18.500.000 |
-| Apex 16 Gaming | Rp 22.000.000 |
+| Model           | Base Price (IDR) |
+| --------------- | ---------------- |
+| Aurora 14 Pro   | Rp 12.000.000    |
+| Nova 15 Creator | Rp 18.500.000    |
+| Apex 16 Gaming  | Rp 22.000.000    |
 
 Seed includes ~20 components across categories: CPU, RAM, SSD, GPU, Display, OS, Warranty. Each model has at least one `requires` rule and one `max_sum` wattage rule. All prices in integers (IDR, no decimals).
 
@@ -561,4 +563,4 @@ Seed includes ~20 components across categories: CPU, RAM, SSD, GPU, Display, OS,
 
 ---
 
-*End of Document — v1.0.0*
+_End of Document — v1.0.0_

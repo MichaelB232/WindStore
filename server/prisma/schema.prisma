@@ -58,8 +58,17 @@ model Profile {
   @@map("profiles")
 }
 
+model Brand {
+  id           Int           @id @default(autoincrement())
+  brand        String        @unique
+  laptopModels LaptopModel[]
+
+  @@map("brand")
+}
+
 model LaptopModel {
   id                 Int                 @id @default(autoincrement())
+  brandId            Int                 @map("brand_id")
   name               String
   slug               String              @unique
   description        String
@@ -71,6 +80,7 @@ model LaptopModel {
   compatibilityRules CompatibilityRule[]
   orderItems         OrderItem[]
   savedBuilds        SavedBuild[]
+  brand              Brand               @relation(fields: [brandId], references: [id], onDelete: Cascade)
 
   @@map("laptop_models")
 }
