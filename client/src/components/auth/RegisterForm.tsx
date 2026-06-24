@@ -14,6 +14,7 @@ export default function RegisterForm() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [acceptedTerms, setAcceptedTerms] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [errors, setErrors] = useState({
     name: "",
@@ -48,6 +49,10 @@ export default function RegisterForm() {
     }
 
     try {
+      setIsLoading(true);
+
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+
       await register({
         name,
         email,
@@ -60,6 +65,8 @@ export default function RegisterForm() {
         ...prev,
         general: "Register gagal",
       }));
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -180,8 +187,12 @@ export default function RegisterForm() {
             {errors.general}
           </div>
         )}
-        <Button className="w-full bg-accent hover:bg-indigo-700" type="submit">
-          Create Account
+        <Button
+          className="w-full bg-accent hover:bg-indigo-700"
+          type="submit"
+          disabled={isLoading}
+        >
+          {isLoading ? "Creating your account..." : "Create Account"}
         </Button>
       </form>
     </>

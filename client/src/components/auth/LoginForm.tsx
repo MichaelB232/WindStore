@@ -11,6 +11,7 @@ import { validateLoginForm } from "@/src/services/validators/auth.validator";
 export default function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({
     email: "",
     password: "",
@@ -29,6 +30,10 @@ export default function LoginForm() {
     }
 
     try {
+      setIsLoading(true);
+
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+
       setErrors({
         email: "",
         password: "",
@@ -46,6 +51,8 @@ export default function LoginForm() {
         ...prev,
         general: "Login gagal",
       }));
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -122,8 +129,9 @@ export default function LoginForm() {
         <Button
           className="w-full bg-accent hover:bg-accent-hover"
           type="submit"
+          disabled={isLoading}
         >
-          Sign In
+          {isLoading ? "Signing in..." : "Sign In"}
         </Button>
       </form>
 
