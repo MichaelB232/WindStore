@@ -1,31 +1,70 @@
-// components/auth/RegisterForm.tsx
-
 "use client";
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { User, Mail, Lock } from "lucide-react";
+import { useState } from "react";
+import { validateRegisterForm } from "@/src/services/validators/auth.validator";
+import { register } from "@/src/services/auth.service";
 
 export default function RegisterForm() {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
+
+  const [errors, setErrors] = useState({
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    terms: "",
+    general: "",
+  });
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const validationErrors = validateRegisterForm(
+      name,
+      email,
+      password,
+      confirmPassword,
+      acceptedTerms,
+    );
+
+    setErrors(validationErrors);
+
+    if (
+      validationErrors.name ||
+      validationErrors.email ||
+      validationErrors.password ||
+      validationErrors.confirmPassword ||
+      validationErrors.terms
+    ) {
+      return;
+    }
+
+    try {
+      await register({
+        name,
+        email,
+        password,
+      });
+
+      console.log("Register berhasil");
+    } catch (error) {
+      setErrors((prev) => ({
+        ...prev,
+        general: "Register gagal",
+      }));
+    }
+  };
+
   return (
     <>
-      {/* Tab switcher */}
-      <div className="mb-8 flex rounded-full bg-muted p-1">
-        <Link
-          href="/login"
-          className="flex-1 py-2 text-center text-sm font-medium text-muted-foreground"
-        >
-          Sign In
-        </Link>
-        <Link
-          href="/register"
-          className="flex-1 rounded-full bg-accent py-2 text-center text-sm font-medium text-white"
-        >
-          Sign Up
-        </Link>
-      </div>
-
       {/* Heading */}
       <h2 className="mb-2 text-3xl font-bold tracking-tight">
         Create your account
@@ -35,7 +74,7 @@ export default function RegisterForm() {
       </p>
 
       {/* Form */}
-      <form className="space-y-4">
+      <form className="space-y-4" onSubmit={handleSubmit}>
         {/* Full Name */}
         <div className="space-y-1.5">
           <label className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
@@ -44,11 +83,14 @@ export default function RegisterForm() {
           <div className="relative">
             <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
+              value={name}
+              onChange={(e) => setName(e.target.value)}
               type="text"
               placeholder="Jane Doe"
               className="pl-9"
             />
           </div>
+          {errors.name && <p className="text-sm text-danger">{errors.name}</p>}
         </div>
 
         {/* Email */}
@@ -59,11 +101,16 @@ export default function RegisterForm() {
           <div className="relative">
             <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               type="email"
               placeholder="name@example.com"
               className="pl-9"
             />
           </div>
+          {errors.email && (
+            <p className="text-sm text-danger">{errors.email}</p>
+          )}
         </div>
 
         {/* Password */}
@@ -74,11 +121,16 @@ export default function RegisterForm() {
           <div className="relative">
             <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               type="password"
               placeholder="••••••••"
               className="pl-9"
             />
           </div>
+          {errors.password && (
+            <p className="text-sm text-danger">{errors.password}</p>
+          )}
         </div>
 
         <div className="space-y-1.5">
@@ -88,17 +140,24 @@ export default function RegisterForm() {
           <div className="relative">
             <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
               type="password"
               placeholder="••••••••"
               className="pl-9"
             />
           </div>
+          {errors.confirmPassword && (
+            <p className="text-sm text-danger">{errors.confirmPassword}</p>
+          )}
         </div>
 
         {/* Terms */}
         <label className="flex cursor-pointer items-start gap-2 text-sm text-muted-foreground">
           <input
             type="checkbox"
+            checked={acceptedTerms}
+            onChange={(e) => setAcceptedTerms(e.target.checked)}
             className="mt-0.5 h-4 w-4 shrink-0 rounded border-gray-300 accent-accent"
           />
           <span>
@@ -113,9 +172,15 @@ export default function RegisterForm() {
             .
           </span>
         </label>
+        {errors.terms && <p className="text-sm text-danger">{errors.terms}</p>}
 
         {/* Submit */}
-        <Button className="w-full bg-accent hover:bg-indigo-700">
+        {errors.general && (
+          <div className="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-600">
+            {errors.general}
+          </div>
+        )}
+        <Button className="w-full bg-accent hover:bg-indigo-700" type="submit">
           Create Account
         </Button>
       </form>
