@@ -3,6 +3,7 @@ import * as AuthService from "../services/user.service";
 import { generateToken } from "../lib/jwt";
 import bcrypt from "bcrypt";
 import { Prisma } from "@prisma/client";
+import { AuthRequest } from "../middlewares/auth.middlewares";
 
 export const login = async (req: Request, res: Response) => {
   try {
@@ -32,6 +33,13 @@ export const login = async (req: Request, res: Response) => {
       username: user.username,
       role: user.role,
     });
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+    });
+
     res.status(200).json({
       success: true,
       message: "Login Successful",
@@ -40,7 +48,6 @@ export const login = async (req: Request, res: Response) => {
         username: user.username,
         email: user.email,
         role: user.role,
-        token,
       },
     });
   } catch (error) {
@@ -78,4 +85,41 @@ export const register = async (req: Request, res: Response) => {
     console.error(error);
     res.status(500).json({ success: false, message: "Server Error" });
   }
+};
+
+export const me = async (req: AuthRequest, res: Response) => {
+  const userId = req.user.id;
+
+  const user = await AuthService.getUserById(userId);
+
+  if (!user) {
+    return res.status(404).json({
+      success: false,
+      message: "User not found",
+    });
+  }
+
+  res.status(200).json({
+    success: true,
+    isLoggedIn: true,
+    user: {
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      role: user.role,
+    },
+  });
+};
+
+export const logout = (req: Request, res: Response) => {
+  res.clearCookie("token", {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+  });
+
+  return res.status(200).json({
+    success: true,
+    message: "Logged out",
+  });
 };

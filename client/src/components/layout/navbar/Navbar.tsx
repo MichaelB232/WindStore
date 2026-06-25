@@ -12,33 +12,15 @@ export default function Navbar() {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
 
-  // Deteksi apakah user sedang berada di homepage
   const isHomePage = pathname === "/";
-
-  // Navbar transparan hanya aktif di homepage dan belum di-scroll
   const isTransparent = isHomePage && !scrolled;
-
-  // Satu effect untuk mengelola scroll listener dan reset state saat route berubah
   useEffect(() => {
-    // Jika bukan homepage, tidak perlu pasang listener
-    // scrolled otomatis tidak berpengaruh karena isTransparent = isHomePage && !scrolled
     if (!isHomePage) return;
-
-    // Saat pertama masuk homepage, pastikan posisi scroll dibaca dari kondisi aktual window
-    // bukan dari state lama (misalnya user pindah halaman lalu kembali ke homepage)
     const checkScroll = () => setScrolled(window.scrollY > 50);
-
-    // Jalankan sekali saat effect mount untuk sinkronisasi awal
     checkScroll();
-
-    // Pasang listener untuk update berkelanjutan saat user scroll
     window.addEventListener("scroll", checkScroll, { passive: true });
-
-    // Cleanup listener saat komponen unmount atau route berubah keluar dari homepage
     return () => {
       window.removeEventListener("scroll", checkScroll);
-      // Reset scrolled ke false saat meninggalkan homepage,
-      // dilakukan di cleanup agar tidak trigger render tambahan di body effect
       setScrolled(false);
     };
   }, [isHomePage]);
@@ -144,7 +126,7 @@ export default function Navbar() {
 
               {/* Profile */}
               <div className="">
-                <UserMenu isHomePage ={isHomePage} scrolled = {scrolled}/>
+                <UserMenu isHomePage={isHomePage} scrolled={scrolled} />
               </div>
             </div>
           </div>

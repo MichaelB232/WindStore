@@ -7,11 +7,17 @@ import { User, Lock } from "lucide-react";
 import { useState } from "react";
 import { login } from "@/src/services/auth.service";
 import { validateLoginForm } from "@/src/services/validators/auth.validator";
+import {ROUTES} from "@/src/routes/routes";
+import { useRouter } from "next/navigation";
+import { useAuthRedirect } from "@/src/hooks/useAuthRedirect";
 
 export default function LoginForm() {
+  useAuthRedirect();
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
   const [errors, setErrors] = useState({
     username: "",
     password: "",
@@ -37,12 +43,12 @@ export default function LoginForm() {
         general: "",
       });
 
-      const result = await login({
+      await login({
         username,
         password,
       });
 
-      console.log(result);
+      router.replace(ROUTES.HOME);
     } catch (error) {
       setErrors((prev) => ({
         ...prev,
