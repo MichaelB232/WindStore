@@ -1,15 +1,33 @@
+"use client";
 import Link from "next/link";
 import Image from "next/image";
 import { ROUTES } from "@/src/routes/routes";
 import AuthTabs from "@/src/components/auth/AuthTabs";
 import AuthContentTransition from "@/src/components/auth/AuthContentTransition";
+import { useAuth } from "@/src/hooks/useAuth";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 interface AuthLayoutProps {
   children: React.ReactNode;
 }
 
-export default function AuthLayout({
-  children,
-}: AuthLayoutProps) {
+export default function AuthLayout({ children }: AuthLayoutProps) {
+  const { user, loading } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!loading && user) {
+      router.replace(ROUTES.HOME);
+    }
+  }, [user, loading, router]);
+
+  if (loading) {
+    return null;
+  }
+
+  if (user) {
+    return null;
+  }
   return (
     <div className="grid min-h-screen lg:grid-cols-2">
       {/* Left */}
@@ -17,9 +35,7 @@ export default function AuthLayout({
         <div className="w-full max-w-md">
           {/* Header */}
           <div className="mb-12 flex items-center justify-between">
-            <h1 className="text-xl font-bold text-accent">
-              WindStore
-            </h1>
+            <h1 className="text-xl font-bold text-accent">WindStore</h1>
 
             <Link
               href={ROUTES.HOME}
@@ -32,9 +48,7 @@ export default function AuthLayout({
           <AuthTabs />
 
           <div className="min-h-155">
-            <AuthContentTransition>
-              {children}
-            </AuthContentTransition>
+            <AuthContentTransition>{children}</AuthContentTransition>
           </div>
         </div>
       </div>

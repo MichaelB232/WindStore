@@ -1,5 +1,3 @@
-"use client";
-
 import { User } from "lucide-react";
 import {
   DropdownMenu,
@@ -12,16 +10,8 @@ import {
 } from "@/src/components/ui/dropdown-menu";
 import Link from "next/link";
 import { ROUTES } from "@/src/routes/routes";
-import { useState, useEffect } from "react";
-import { getCurrentUser, logoutUser } from "@/src/services/auth.service";
+import { useAuth } from "@/src/hooks/useAuth";
 import { useRouter } from "next/navigation";
-
-type UserProps = {
-  id: number;
-  username: string;
-  email: string;
-  role: string;
-};
 
 type UserMenuProps = {
   isHomePage: boolean;
@@ -30,9 +20,8 @@ type UserMenuProps = {
 
 export default function UserMenu({ isHomePage, scrolled }: UserMenuProps) {
   const isTransparent = isHomePage && !scrolled;
-  const [user, setUser] = useState<UserProps | null>(null);
-  const [loading, setLoading] = useState(true);
   const router = useRouter();
+  const { user, loading, logout } = useAuth();
   const userIcon = (
     <User
       className={`transition-colors duration-300
@@ -45,23 +34,10 @@ export default function UserMenu({ isHomePage, scrolled }: UserMenuProps) {
     />
   );
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      const user = await getCurrentUser();
-
-      setUser(user);
-      setLoading(false);
-    };
-
-    fetchUser();
-  }, []);
-
   const handleLogout = async () => {
     try {
-      await logoutUser();
-      setUser(null);
-      router.push("/"); // redirect setelah logout
-      router.refresh(); // optional: refresh auth state
+      await logout();
+      router.push(ROUTES.LOGIN);
     } catch (err) {
       console.error(err);
     }
