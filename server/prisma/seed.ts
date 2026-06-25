@@ -124,7 +124,9 @@ async function main() {
         battery: "90Wh",
         os: "Windows 11 Home",
       },
-      imageUrl: "https://example.com/rog-strix-g16.jpg",
+
+      imageUrl:
+        "https://images.unsplash.com/photo-1511385348-a52b4a160dc2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixlib=rb-4.1.0&q=80&w=600",
       stock: 15,
       isActive: true,
     },
@@ -150,7 +152,9 @@ async function main() {
         battery: "57Wh",
         os: "Windows 11 Pro",
       },
-      imageUrl: "https://example.com/thinkpad-x1.jpg",
+
+      imageUrl:
+        "https://images.unsplash.com/photo-1511385348-a52b4a160dc2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixlib=rb-4.1.0&q=80&w=600",
       stock: 10,
       isActive: true,
     },
@@ -176,7 +180,9 @@ async function main() {
         battery: "86Wh",
         os: "Windows 11 Home",
       },
-      imageUrl: "https://example.com/dell-xps-15.jpg",
+
+      imageUrl:
+        "https://images.unsplash.com/photo-1511385348-a52b4a160dc2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixlib=rb-4.1.0&q=80&w=600",
       stock: 8,
       isActive: true,
     },
@@ -236,25 +242,33 @@ async function main() {
     data: [
       {
         productId: rog.id,
-        imageUrl: "https://example.com/rog-1.jpg",
+
+        imageUrl:
+          "https://images.unsplash.com/photo-1511385348-a52b4a160dc2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixlib=rb-4.1.0&q=80&w=600",
         isPrimary: true,
         displayOrder: 1,
       },
       {
         productId: rog.id,
-        imageUrl: "https://example.com/rog-2.jpg",
+
+        imageUrl:
+          "https://images.unsplash.com/photo-1511385348-a52b4a160dc2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixlib=rb-4.1.0&q=80&w=600",
         isPrimary: false,
         displayOrder: 2,
       },
       {
         productId: thinkpad.id,
-        imageUrl: "https://example.com/thinkpad-1.jpg",
+
+        imageUrl:
+          "https://images.unsplash.com/photo-1511385348-a52b4a160dc2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixlib=rb-4.1.0&q=80&w=600",
         isPrimary: true,
         displayOrder: 1,
       },
       {
         productId: xps.id,
-        imageUrl: "https://example.com/xps-1.jpg",
+
+        imageUrl:
+          "https://images.unsplash.com/photo-1511385348-a52b4a160dc2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixlib=rb-4.1.0&q=80&w=600",
         isPrimary: true,
         displayOrder: 1,
       },
