@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import * as AuthService from "../services/user.service";
 import { generateToken } from "../lib/jwt";
 import bcrypt from "bcrypt";
+import { Prisma } from "@prisma/client";
 
 export const login = async (req: Request, res: Response) => {
   try {
@@ -31,7 +32,7 @@ export const login = async (req: Request, res: Response) => {
       username: user.username,
       role: user.role,
     });
-    res.status(400).json({
+    res.status(201).json({
       success: true,
       message: "Login Successful",
       data: {
@@ -66,6 +67,7 @@ export const register = async (req: Request, res: Response) => {
     }
     if (!role) {
       res.status(400).json({ successs: false, message: "Role is required" });
+      return;
     }
 
     const passwordHash = await bcrypt.hash(password, 10);
@@ -77,6 +79,16 @@ export const register = async (req: Request, res: Response) => {
     });
     res.status(201).json({ success: true, message: "" });
   } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === "P2002") {
+        res.status(409).json({
+          success: false,
+          message: "Username or email already exists",
+        });
+        return;
+      }
+    }
+    console.log("Error : ", error);
     res.status(500).json({ success: false, message: "Server Error" });
   }
 };

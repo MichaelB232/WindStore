@@ -2,9 +2,9 @@
 
 A full-stack e-commerce application built with:
 
-* ⚛️ React + TypeScript (Vite)
-* 🚀 Node.js + Express
-* 🐳 Docker + Docker Compose
+- ⚛️ React + TypeScript (Vite)
+- 🚀 Node.js + Express
+- 🐳 Docker + Docker Compose
 
 ---
 
@@ -24,7 +24,7 @@ WindStore/
 
 Before running this project, install:
 
-* [Docker Desktop](https://www.docker.com/products/docker-desktop?utm_source=chatgpt.com)
+- [Docker Desktop](https://www.docker.com/products/docker-desktop?utm_source=chatgpt.com)
 
 No need to install Node.js or npm manually.
 
@@ -167,19 +167,19 @@ http://server:5000/api
 
 ## Frontend
 
-* React
-* TypeScript
-* Vite
+- React
+- TypeScript
+- Vite
 
 ## Backend
 
-* Node.js
-* Express
+- Node.js
+- Express
 
 ## DevOps
 
-* Docker
-* Docker Compose
+- Docker
+- Docker Compose
 
 ---
 
@@ -207,11 +207,11 @@ docker compose down
 
 # ⚡ Benefits of Docker Setup
 
-* No manual Node.js installation required
-* Same environment for all contributors
-* Works on Windows / Mac / Linux
-* Easy onboarding (1 command setup)
-* Production-ready foundation
+- No manual Node.js installation required
+- Same environment for all contributors
+- Works on Windows / Mac / Linux
+- Easy onboarding (1 command setup)
+- Production-ready foundation
 
 ---
 
@@ -242,6 +242,6 @@ git push origin feature/your-feature
 
 # 📌 Notes
 
-* Make sure Docker is running before starting project
-* Backend runs on port `5000`
-* Frontend runs on port `5173`
+- Make sure Docker is running before starting project
+- Backend runs on port `5000`
+- Frontend runs on port `5173`
