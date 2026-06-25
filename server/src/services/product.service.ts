@@ -1,3 +1,4 @@
+import { title } from "node:process";
 import prisma from "../lib/prisma";
 
 export const getAllProducts = async () => {
@@ -96,4 +97,18 @@ export const getUniqueProcessors = async () => {
     .filter(Boolean);
 
   return [...new Set(processors)];
+};
+
+export const getProductBySlug = async (slug: string) => {
+  return await prisma.product.findFirst({
+    where: { slug },
+    include: {
+      brand: { select: { name: true } },
+      productFeatures: { select: { title: true, description: true } },
+      productImages: { select: { imageUrl: true } },
+      productConfigs: {
+        select: { configName: true, configType: true, priceModifier: true },
+      },
+    },
+  });
 };

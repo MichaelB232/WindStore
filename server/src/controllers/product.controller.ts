@@ -27,3 +27,20 @@ export const getProductsByCategory = async (req: Request, res: Response) => {
     res.status(500).json({ success: false, message: "Server Error" });
   }
 };
+export const getProductBySlug = async (req: Request, res: Response) => {
+  try {
+    const { slug } = req.params;
+    if (!slug) {
+      res.status(400).json({ success: false, message: "Slug is required" });
+      return;
+    }
+    const product = await ProductService.getProductBySlug(slug as string);
+    if (!product) {
+      res.status(404).json({ success: false, message: "Product not found" });
+      return;
+    }
+    res.status(200).json({ success: true, data: product });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Server Error" });
+  }
+};
