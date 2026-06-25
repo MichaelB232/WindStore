@@ -1,5 +1,5 @@
 import Container from "../layout/Container";
-import { products } from "@/src/lib/DataProducts";
+import { catalogProducts } from "@/src/lib/DataCatalog";
 import { FeaturedCard } from "./HomeCard";
 
 export default function FeaturedSection() {
@@ -14,7 +14,7 @@ export default function FeaturedSection() {
 
           <div className="">
             <ul className="grid grid-flow-col auto-cols-80 gap-2 overflow-x-auto py-4">
-              {products.map((product, idx) => (
+              {catalogProducts.map((product, idx) => (
                 <li
                   key={idx}
                   className="relative shrink-0 w-80 border border-border bg-glass-bg  rounded-2xl transition-all duration-200 hover:border-accent hover:shadow-card-hover hover:-translate-y-2"

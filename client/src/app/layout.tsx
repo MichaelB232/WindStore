@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Bricolage_Grotesque } from "next/font/google";
-import { AuthProvider } from "../services/providers/AuthProviders";
+import { AuthProvider } from "../services/auth/providers/AuthProviders";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -34,7 +34,9 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} ${bricolageGrotesque.variable}`}
     >
       <body className="min-h-full flex flex-col">
-        <AuthProvider>{children}</AuthProvider>
+        <AuthProvider>
+         {children}
+        </AuthProvider>
       </body>
     </html>
   );

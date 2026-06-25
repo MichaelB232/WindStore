@@ -7,7 +7,7 @@ type CategoryCardProps = {
 type FeaturedCardProps = {
   brand: string;
   name: string;
-  specs: string;
+  specs:string[];
   price: string;
   badge?: string;
 };
@@ -95,8 +95,8 @@ export function FeaturedCard({
             </p>
           </div>
 
-          <div className="specs line-clamp-1 mb-3" title={specs}>
-            {specs}
+          <div className="specs line-clamp-1 mb-3">
+            {specs[0]}
           </div>
 
           <div className="font-mono font-bold text-2xl mb-5">{price}</div>

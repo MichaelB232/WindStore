@@ -1,18 +1,21 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { catalogProducts } from "@/src/lib/DataCatalog";
 import CatalogSidebar, { FilterState } from "./CatalogSidebar";
 import CatalogHero from "./CatalogHero";
 import CatalogSortBar, { ViewMode } from "./CatalogSortBar";
 import CatalogCard from "./CatalogCard";
 import CatalogListCard from "./CatalogListCard";
 import Container from "../layout/Container";
+import { CatalogClientProps } from "@/src/lib/producttype/ProductType";
 
-const PRICE_MIN = 499;
-const PRICE_MAX = 3999;
+const PRICE_MIN = 0;
+const PRICE_MAX = 50_000_000;
 
-export default function CatalogClient() {
+export default function CatalogClient({
+  products,
+  brands,
+}: CatalogClientProps) {
   const [filters, setFilters] = useState<FilterState>({
     category: "",
     brands: [],
@@ -24,32 +27,44 @@ export default function CatalogClient() {
   const [viewMode, setViewMode] = useState<ViewMode>("grid");
   const [visibleCount, setVisibleCount] = useState(8);
 
+  const categories = useMemo(
+    () => [...new Set(products.map((p) => p.category.name))],
+    [products],
+  );
+
+  const processors = useMemo(
+    () => [...new Set(products.map((p) => p.specs.processor))],
+    [products],
+  );
+
   const filtered = useMemo(() => {
-    return catalogProducts.filter((p) => {
-      if (filters.category && p.category !== filters.category) return false;
-      if (filters.brands.length > 0 && !filters.brands.includes(p.brand))
+    return products.filter((p) => {
+      if (filters.category && p.category.name !== filters.category)
         return false;
+
+      if (filters.brands.length > 0 && !filters.brands.includes(p.brand.name))
+        return false;
+
       if (filters.processors.length > 0) {
         const match = filters.processors.some((proc) =>
-          p.specs.some((spec) =>
-            spec.toLowerCase().includes(proc.toLowerCase()),
-          ),
+          p.specs.processor.toLowerCase().includes(proc.toLowerCase()),
         );
         if (!match) return false;
       }
-      const price = parseFloat(p.price.replace(/[$,]/g, ""));
+
+      const price = parseFloat(p.basePrice);
       if (price < filters.priceMin || price > filters.priceMax) return false;
+
       return true;
     });
-  }, [filters]);
+  }, [products, filters]);
 
   const sorted = useMemo(() => {
     return [...filtered].sort((a, b) => {
-      const pa = parseFloat(a.price.replace(/[$,]/g, ""));
-      const pb = parseFloat(b.price.replace(/[$,]/g, ""));
+      const pa = parseFloat(a.basePrice);
+      const pb = parseFloat(b.basePrice);
       if (sortBy === "price-asc") return pa - pb;
       if (sortBy === "price-desc") return pb - pa;
-      if (sortBy === "rating") return b.rating - a.rating;
       return 0;
     });
   }, [filtered, sortBy]);
@@ -62,8 +77,14 @@ export default function CatalogClient() {
       <Container>
         <div className="flex gap-6 shrink-0 items-start">
           {/* SIDEBAR */}
-          <div className="hidden lg:block w-55  self-start sticky top-20">
-            <CatalogSidebar filters={filters} onFilterChange={setFilters} />
+          <div className="hidden lg:block w-55 self-start sticky top-20">
+            <CatalogSidebar
+              filters={filters}
+              onFilterChange={setFilters}
+              brands={brands}
+              categories={categories}
+              processors={processors}
+            />
           </div>
 
           {/* MAIN COLUMN */}
@@ -80,10 +101,9 @@ export default function CatalogClient() {
               onViewChange={setViewMode}
             />
 
-            {/* PRODUCT AREA  */}
+            {/* PRODUCT AREA */}
             <div className="flex-1">
               {visible.length === 0 ? (
-                /* Empty state */
                 <div className="flex flex-col items-center justify-center py-24 text-center">
                   <span className="material-symbols-outlined text-5xl text-text-muted mb-3">
                     search_off
@@ -110,14 +130,12 @@ export default function CatalogClient() {
                   </button>
                 </div>
               ) : viewMode === "grid" ? (
-                /* Grid view */
                 <div className="grid grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
                   {visible.map((p) => (
                     <CatalogCard key={p.id} product={p} />
                   ))}
                 </div>
               ) : (
-                /* List view */
                 <div className="flex flex-col gap-3 w-full">
                   {visible.map((p) => (
                     <CatalogListCard key={p.id} product={p} />
@@ -131,7 +149,7 @@ export default function CatalogClient() {
               <div className="mt-10 flex justify-center">
                 <button
                   onClick={() => setVisibleCount((c) => c + 8)}
-                  className="px-8 py-3 bg-surface border border-border text-text-secondary font-semibold text-sm rounded-xl hover:bg-accent-muted] hover:border-accent hover:text-accent transition-all duration-150 shadow-card cursor-pointer"
+                  className="px-8 py-3 bg-surface border border-border text-text-secondary font-semibold text-sm rounded-xl hover:bg-accent-muted hover:border-accent hover:text-accent transition-all duration-150 shadow-card cursor-pointer"
                 >
                   Load More Products
                 </button>

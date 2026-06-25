@@ -1,7 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { brands, categories, processors } from "@/src/lib/DataCatalog";
+import { Brands } from "@/src/lib/producttype/ProductType";
+import { formatPrice } from "@/src/utils/utils";
+import {
+  Gamepad2,
+  Sun,
+  Palette,
+  BriefcaseBusiness,
+  GraduationCap,
+} from "lucide-react";
 
 export type FilterState = {
   category: string;
@@ -14,12 +22,29 @@ export type FilterState = {
 type CatalogSidebarProps = {
   filters: FilterState;
   onFilterChange: (filters: FilterState) => void;
+  brands: Brands[];
+  categories: string[];
+  processors: string[];
 };
 
-const PRICE_MIN = 499;
-const PRICE_MAX = 3999;
+const PRICE_MIN = 0;
+const PRICE_MAX = 50_000_000;
 
-export default function CatalogSidebar({ filters, onFilterChange }: CatalogSidebarProps) {
+const CATEGORY_ICONS = {
+  Gaming: Gamepad2,
+  Ultrabook: Sun,
+  CreativePro: Palette,
+  Business: BriefcaseBusiness,
+  Student: GraduationCap,
+};
+
+export default function CatalogSidebar({
+  filters,
+  onFilterChange,
+  brands,
+  categories,
+  processors,
+}: CatalogSidebarProps) {
   const [localMax, setLocalMax] = useState(filters.priceMax ?? PRICE_MAX);
 
   const toggleBrand = (brand: string) => {
@@ -37,12 +62,21 @@ export default function CatalogSidebar({ filters, onFilterChange }: CatalogSideb
   };
 
   const setCategory = (cat: string) => {
-    onFilterChange({ ...filters, category: filters.category === cat ? "" : cat });
+    onFilterChange({
+      ...filters,
+      category: filters.category === cat ? "" : cat,
+    });
   };
 
   const clearAll = () => {
     setLocalMax(PRICE_MAX);
-    onFilterChange({ category: "", brands: [], processors: [], priceMin: PRICE_MIN, priceMax: PRICE_MAX });
+    onFilterChange({
+      category: "",
+      brands: [],
+      processors: [],
+      priceMin: PRICE_MIN,
+      priceMax: PRICE_MAX,
+    });
   };
 
   const applyFilters = () => {
@@ -50,31 +84,34 @@ export default function CatalogSidebar({ filters, onFilterChange }: CatalogSideb
   };
 
   const hasActiveFilters =
-    !!filters.category || filters.brands.length > 0 || filters.processors.length > 0 || localMax < PRICE_MAX;
+    !!filters.category ||
+    filters.brands.length > 0 ||
+    filters.processors.length > 0 ||
+    localMax < PRICE_MAX;
 
-  // Slider fill percentage
   const fillPct = ((localMax - PRICE_MIN) / (PRICE_MAX - PRICE_MIN)) * 100;
 
   return (
-    <aside className="hidden lg:flex flex-col w-55 shrink-0 sticky top-20 max-h-[calc(100vh-100px)] bg-surface border border-border rounded-2xl overflow-hidden shadow=card">
-
+    <aside className="hidden lg:flex flex-col w-55 shrink-0 sticky top-20 max-h-[calc(100vh-100px)] bg-surface border border-border rounded-2xl overflow-hidden shadow-card">
       {/* Header */}
       <div className="px-5 py-4 border-b border-border">
-        <h2 className="font-display font-bold text-text-primary text-base">Filters</h2>
+        <h2 className="font-display font-bold text-text-primary text-base">
+          Filters
+        </h2>
         <p className="text-xs text-text-muted mt-0.5">Refine your search</p>
       </div>
 
       {/* Scrollable body */}
       <div className="flex-1 overflow-y-auto">
-
         {/* Category */}
         <div className="px-4 py-4 border-b border-border">
           <p className="font-mono text-[10px] uppercase tracking-widest text-text-muted mb-3">
             Category
           </p>
           <div className="flex flex-col gap-0.5">
-            {categories.map(({ label, icon }) => {
+            {categories.map((label) => {
               const active = filters.category === label;
+              const Icon = CATEGORY_ICONS[label as keyof typeof CATEGORY_ICONS];
               return (
                 <button
                   key={label}
@@ -85,14 +122,12 @@ export default function CatalogSidebar({ filters, onFilterChange }: CatalogSideb
                       : "text-text-secondary hover:bg-surface-alt hover:text-text-primary"
                   }`}
                 >
-                  <span
-                    className="material-symbols-outlined text-[17px]"
-                    style={{ fontVariationSettings: active ? "'FILL' 1" : "'FILL' 0" }}
-                  >
-                    {icon}
-                  </span>
-                  {label === "Gaming" ? "Gaming Laptops" :
-                   label === "Student" ? "Student Essentials" : label}
+                  <Icon size={20} />
+                  {label === "Gaming"
+                    ? "Gaming Laptops"
+                    : label === "Student"
+                      ? "Student Essentials"
+                      : label}
                 </button>
               );
             })}
@@ -104,7 +139,6 @@ export default function CatalogSidebar({ filters, onFilterChange }: CatalogSideb
           <p className="font-mono text-[10px] uppercase tracking-widest text-text-muted mb-3">
             Price Range
           </p>
-          {/* Slider */}
           <div className="relative h-1.5 rounded-full bg-surface-alt mb-3">
             <div
               className="absolute left-0 top-0 h-full rounded-full bg-accent"
@@ -114,21 +148,20 @@ export default function CatalogSidebar({ filters, onFilterChange }: CatalogSideb
               type="range"
               min={PRICE_MIN}
               max={PRICE_MAX}
-              step={50}
+              step={500_000}
               value={localMax}
               onChange={(e) => setLocalMax(Number(e.target.value))}
               className="absolute inset-0 w-full opacity-0 cursor-pointer h-full"
               style={{ zIndex: 10 }}
             />
-            {/* Thumb visual */}
             <div
               className="absolute top-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-accent border-2 border-white shadow-md pointer-events-none"
               style={{ left: `calc(${fillPct}% - 8px)` }}
             />
           </div>
           <div className="flex justify-between text-xs font-mono text-text-secondary">
-            <span>${PRICE_MIN.toLocaleString('en-US')}</span>
-            <span>${localMax.toLocaleString('en-US')}</span>
+            <span>{formatPrice(PRICE_MIN)}</span>
+            <span>{formatPrice(localMax)}</span>
           </div>
         </div>
 
@@ -138,19 +171,19 @@ export default function CatalogSidebar({ filters, onFilterChange }: CatalogSideb
             Brand
           </p>
           <div className="flex flex-wrap gap-1.5">
-            {brands.slice(0, 6).map((brand) => {
-              const active = filters.brands.includes(brand);
+            {brands.map(({ name }) => {
+              const active = filters.brands.includes(name);
               return (
                 <button
-                  key={brand}
-                  onClick={() => toggleBrand(brand)}
+                  key={name}
+                  onClick={() => toggleBrand(name)}
                   className={`text-xs px-3 py-1 rounded-full border font-medium transition-all duration-150 cursor-pointer ${
                     active
                       ? "bg-accent border-accent text-white"
                       : "bg-transparent border-border text-text-secondary hover:border-accent hover:text-accent"
                   }`}
                 >
-                  {brand}
+                  {name}
                 </button>
               );
             })}
@@ -179,7 +212,9 @@ export default function CatalogSidebar({ filters, onFilterChange }: CatalogSideb
                     }`}
                   >
                     {active && (
-                      <span className="material-symbols-outlined text-white text-[11px]"></span>
+                      <span className="material-symbols-outlined text-white text-[11px]">
+                        check
+                      </span>
                     )}
                   </span>
                   <span className="text-xs text-text-secondary group-hover:text-text-primary transition-colors">
@@ -205,7 +240,9 @@ export default function CatalogSidebar({ filters, onFilterChange }: CatalogSideb
             onClick={clearAll}
             className="flex items-center justify-center gap-1.5 w-full py-1.5 text-text-muted hover:text-accent transition-colors text-xs cursor-pointer"
           >
-            <span className="material-symbols-outlined text-[14px]">refresh</span>
+            <span className="material-symbols-outlined text-[14px]">
+              refresh
+            </span>
             Clear All
           </button>
         )}
