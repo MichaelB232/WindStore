@@ -9,7 +9,7 @@ import { validateRegisterForm } from "@/src/services/validators/auth.validator";
 import { register } from "@/src/services/auth.service";
 
 export default function RegisterForm() {
-  const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -17,7 +17,7 @@ export default function RegisterForm() {
   const [isLoading, setIsLoading] = useState(false);
 
   const [errors, setErrors] = useState({
-    name: "",
+    username: "",
     email: "",
     password: "",
     confirmPassword: "",
@@ -29,7 +29,7 @@ export default function RegisterForm() {
     e.preventDefault();
 
     const validationErrors = validateRegisterForm(
-      name,
+      username,
       email,
       password,
       confirmPassword,
@@ -39,7 +39,7 @@ export default function RegisterForm() {
     setErrors(validationErrors);
 
     if (
-      validationErrors.name ||
+      validationErrors.username ||
       validationErrors.email ||
       validationErrors.password ||
       validationErrors.confirmPassword ||
@@ -51,19 +51,17 @@ export default function RegisterForm() {
     try {
       setIsLoading(true);
 
-      await new Promise((resolve) => setTimeout(resolve, 3000));
-
-      await register({
-        name,
+      const result = await register({
+        username,
         email,
         password,
       });
 
-      console.log("Register berhasil");
+      console.log(result);
     } catch (error) {
       setErrors((prev) => ({
         ...prev,
-        general: "Register gagal",
+        general: error instanceof Error ? error.message : "Register gagal",
       }));
     } finally {
       setIsLoading(false);
@@ -82,22 +80,22 @@ export default function RegisterForm() {
 
       {/* Form */}
       <form className="space-y-4" onSubmit={handleSubmit}>
-        {/* Full Name */}
+        {/* Username */}
         <div className="space-y-1.5">
           <label className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-            Full Name
+            Username
           </label>
           <div className="relative">
             <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               type="text"
               placeholder="Jane Doe"
               className="pl-9"
             />
           </div>
-          {errors.name && <p className="text-sm text-danger">{errors.name}</p>}
+          {errors.username && <p className="text-sm text-danger">{errors.username}</p>}
         </div>
 
         {/* Email */}

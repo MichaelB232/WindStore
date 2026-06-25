@@ -5,7 +5,7 @@ export const createUser = async (data: {
   username: string;
   email: string;
   passwordHash: string;
-  role: "admin" | "customer";
+  role: "customer";
 }) => {
   return await prisma.user.create({ data });
 };

@@ -32,7 +32,7 @@ export const login = async (req: Request, res: Response) => {
       username: user.username,
       role: user.role,
     });
-    res.status(201).json({
+    res.status(200).json({
       success: true,
       message: "Login Successful",
       data: {
@@ -50,7 +50,7 @@ export const login = async (req: Request, res: Response) => {
 
 export const register = async (req: Request, res: Response) => {
   try {
-    const { username, password, email, role } = req.body;
+    const { username, password, email } = req.body;
     if (!username) {
       res
         .status(400)
@@ -65,30 +65,17 @@ export const register = async (req: Request, res: Response) => {
       res.status(400).json({ success: false, message: "Email is required" });
       return;
     }
-    if (!role) {
-      res.status(400).json({ successs: false, message: "Role is required" });
-      return;
-    }
 
     const passwordHash = await bcrypt.hash(password, 10);
     const user = await AuthService.createUser({
       username,
       passwordHash,
       email,
-      role: role ?? "customer",
+      role: "customer",
     });
     res.status(201).json({ success: true, message: "" });
   } catch (error) {
-    if (error instanceof Prisma.PrismaClientKnownRequestError) {
-      if (error.code === "P2002") {
-        res.status(409).json({
-          success: false,
-          message: "Username or email already exists",
-        });
-        return;
-      }
-    }
-    console.log("Error : ", error);
+    console.error(error);
     res.status(500).json({ success: false, message: "Server Error" });
   }
 };

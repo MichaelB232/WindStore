@@ -1,11 +1,11 @@
 export interface LoginErrors {
-  email: string;
+  username: string;
   password: string;
   general: string;
 }
 
 export interface RegisterErrors {
-  name: string;
+  username: string;
   email: string;
   password: string;
   confirmPassword: string;
@@ -14,21 +14,17 @@ export interface RegisterErrors {
 }
 
 export function validateLoginForm(
-  email: string,
+  username: string,
   password: string,
 ): LoginErrors {
   const errors: LoginErrors = {
-    email: "",
+    username: "",
     password: "",
     general: "",
   };
 
-  if (!email.trim()) {
-    errors.email = "Email wajib diisi";
-  }
-
-  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    errors.email = "Format email tidak valid";
+  if (!username.trim()) {
+    errors.username = "Email wajib diisi";
   }
 
   if (!password.trim()) {
@@ -43,14 +39,14 @@ export function validateLoginForm(
 }
 
 export function validateRegisterForm(
-  name: string,
+  username: string,
   email: string,
   password: string,
   confirmPassword: string,
   acceptedTerms: boolean,
 ): RegisterErrors {
   const errors: RegisterErrors = {
-    name: "",
+    username: "",
     email: "",
     password: "",
     confirmPassword: "",
@@ -58,8 +54,8 @@ export function validateRegisterForm(
     general: "",
   };
 
-  if (!name.trim()) {
-    errors.name = "Nama wajib diisi";
+  if (!username.trim()) {
+    errors.username = "Username wajib diisi";
   }
 
   if (!email.trim()) {
@@ -70,8 +66,8 @@ export function validateRegisterForm(
 
   if (!password.trim()) {
     errors.password = "Password wajib diisi";
-  } else if (password.length < 6) {
-    errors.password = "Password minimal 6 karakter";
+  } else if (password.length < 8) {
+    errors.password = "Password minimal 8 karakter";
   }
 
   if (!confirmPassword.trim()) {
