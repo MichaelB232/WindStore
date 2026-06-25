@@ -12,16 +12,16 @@ export const authenticate = (
   next: NextFunction,
 ) => {
   try {
-    // Get token from header
-    const authHeader = req.headers.authorization;
+    // Get token from http cookie
+    const token = req.cookies.token;
 
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      res.status(401).json({ success: false, message: "No token provided" });
+    if (!token) {
+      res.status(401).json({
+        success: false,
+        message: "No token provided",
+      });
       return;
     }
-
-    // Extract token (remove "Bearer " prefix)
-    const token = authHeader.split(" ")[1];
 
     // Verify token
     const decoded = verifyToken(token);

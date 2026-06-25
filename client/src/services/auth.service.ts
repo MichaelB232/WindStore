@@ -6,6 +6,7 @@ export async function login(data: { username: string; password: string }) {
       headers: {
         "Content-Type": "application/json",
       },
+      credentials: "include",
       body: JSON.stringify(data),
     },
   );
@@ -37,4 +38,35 @@ export async function register(data: {
     throw new Error(result.message);
   }
   return result;
+}
+
+export async function getCurrentUser() {
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/api/auth/me`,
+    {
+      credentials: "include",
+    },
+  );
+
+  if (!response.ok) {
+    return null;
+  }
+
+  const data = await response.json();
+  return data.user;
+}
+
+export async function logoutUser() {
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/api/auth/logout`,
+    {
+      method: "POST",
+      credentials: "include",
+    },
+  );
+
+  if(!response.ok) {
+    throw new Error("Unable to logout");
+  }
+
 }

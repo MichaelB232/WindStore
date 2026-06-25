@@ -7,14 +7,21 @@ import { User, Mail, Lock } from "lucide-react";
 import { useState } from "react";
 import { validateRegisterForm } from "@/src/services/validators/auth.validator";
 import { register } from "@/src/services/auth.service";
+import {ROUTES} from "@/src/routes/routes";
+import { useRouter } from "next/navigation";
+import { useAuthRedirect } from "@/src/hooks/useAuthRedirect";
+
 
 export default function RegisterForm() {
+  useAuthRedirect();
+  
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
   const [errors, setErrors] = useState({
     username: "",
@@ -51,13 +58,13 @@ export default function RegisterForm() {
     try {
       setIsLoading(true);
 
-      const result = await register({
+      await register({
         username,
         email,
         password,
       });
 
-      console.log(result);
+      router.replace(ROUTES.LOGIN);
     } catch (error) {
       setErrors((prev) => ({
         ...prev,
