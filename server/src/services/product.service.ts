@@ -47,6 +47,7 @@ export const getFilteredProducts = async (filters: {
   category?: string;
   brand?: string;
   search?: string;
+  processor?: string;
 }) => {
   return await prisma.product.findMany({
     where: {
@@ -64,6 +65,13 @@ export const getFilteredProducts = async (filters: {
       ...(filters.search && {
         name: { contains: filters.search, mode: "insensitive" },
       }),
+      ...(filters.processor && {
+        specs: {
+          path: ["processor"],
+          string_contains: filters.processor,
+          mode: "insensitive",
+        },
+      }),
     },
     include: {
       brand: { select: { name: true } },
@@ -75,4 +83,17 @@ export const getFilteredProducts = async (filters: {
     },
     orderBy: { createdAt: "desc" },
   });
+};
+
+export const getUniqueProcessors = async () => {
+  const products = await prisma.product.findMany({
+    where: { isActive: true },
+    select: { specs: true },
+  });
+
+  const processors = products
+    .map((p) => (p.specs as any)?.processor)
+    .filter(Boolean);
+
+  return [...new Set(processors)];
 };
