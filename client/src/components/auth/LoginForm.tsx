@@ -9,14 +9,13 @@ import { login } from "@/src/services/auth.service";
 import { validateLoginForm } from "@/src/services/validators/auth.validator";
 import {ROUTES} from "@/src/routes/routes";
 import { useRouter } from "next/navigation";
-import { useAuthRedirect } from "@/src/hooks/useAuthRedirect";
+import { useAuth } from "@/src/hooks/useAuth";
 
 export default function LoginForm() {
-  useAuthRedirect();
-
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const {refreshUser} = useAuth();
   const router = useRouter();
   const [errors, setErrors] = useState({
     username: "",
@@ -47,7 +46,7 @@ export default function LoginForm() {
         username,
         password,
       });
-
+      refreshUser();
       router.replace(ROUTES.HOME);
     } catch (error) {
       setErrors((prev) => ({
