@@ -47,7 +47,7 @@ export default function AuthLayout({ children }: AuthLayoutProps) {
 
           <AuthTabs />
 
-          <div className="min-h-155">
+          <div className="min-h-120">
             <AuthContentTransition>{children}</AuthContentTransition>
           </div>
         </div>
