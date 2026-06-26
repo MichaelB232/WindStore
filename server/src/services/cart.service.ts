@@ -1,7 +1,7 @@
 import prisma from "../lib/prisma";
 
 export const getCartByUser = async (userId: number) => {
-  return await prisma.cartItem.findFirst({
+  return await prisma.cartItem.findMany({
     where: { userId: userId },
     include: { product: true, productConfig: true },
   });
@@ -30,4 +30,12 @@ export const addProductToCart = async (
       quantity: quantity !== undefined ? quantity : 1,
     },
   });
+};
+
+export const removeCart = async (userId: number, cartItemId: number) => {
+  return await prisma.cartItem.delete({ where: { id: cartItemId, userId } });
+};
+
+export const clearCart = async (userId: number) => {
+  return await prisma.cartItem.deleteMany({ where: { userId } });
 };
