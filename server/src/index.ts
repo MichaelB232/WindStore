@@ -4,6 +4,8 @@ import dotenv from "dotenv";
 import authRoutes from "./routes/auth.routes";
 import productRoutes from "./routes/product.routes";
 import shopRoutes from "./routes/shop.routes";
+import cartRoutes from "./routes/cart.routes";
+import wishlistRoutes from "./routes/wishlist.routes";
 import cookieParser from "cookie-parser";
 
 dotenv.config();
@@ -25,5 +27,8 @@ app.use(cookieParser());
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/shop", shopRoutes);
+app.use("/api/wishlist", wishlistRoutes);
+app.use("/api/cart", cartRoutes);
+
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => console.log(`Server running on PORT ${PORT}`));

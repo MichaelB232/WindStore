@@ -25,7 +25,7 @@ export const login = async (req: Request, res: Response) => {
     }
     const isMatch = await bcrypt.compare(password, user.passwordHash);
     if (!isMatch) {
-      res.status(404).json({ success: false, message: "Wrong Password" });
+      res.status(401).json({ success: false, message: "Wrong Password" });
       return;
     }
     const token = generateToken({
@@ -38,6 +38,7 @@ export const login = async (req: Request, res: Response) => {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
     res.status(200).json({
@@ -80,7 +81,7 @@ export const register = async (req: Request, res: Response) => {
       email,
       role: "customer",
     });
-    res.status(201).json({ success: true, message: "" });
+    res.status(201).json({ success: true, message: "Register successful" });
   } catch (error) {
     console.error(error);
     res.status(500).json({ success: false, message: "Server Error" });
@@ -88,27 +89,31 @@ export const register = async (req: Request, res: Response) => {
 };
 
 export const me = async (req: AuthRequest, res: Response) => {
-  const userId = req.user.id;
+  try {
+    const userId = req.user!.id;
 
-  const user = await AuthService.getUserById(userId);
+    const user = await AuthService.getUserById(userId);
 
-  if (!user) {
-    return res.status(404).json({
-      success: false,
-      message: "User not found",
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      isLoggedIn: true,
+      user: {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        role: user.role,
+      },
     });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Server Error" });
   }
-
-  res.status(200).json({
-    success: true,
-    isLoggedIn: true,
-    user: {
-      id: user.id,
-      username: user.username,
-      email: user.email,
-      role: user.role,
-    },
-  });
 };
 
 export const logout = (req: Request, res: Response) => {

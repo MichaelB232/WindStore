@@ -1,9 +1,14 @@
 import { Request, Response, NextFunction } from "express";
 import { verifyToken } from "../lib/jwt";
+import { JwtPayload } from "jsonwebtoken";
 
 // Extend Request type to include user
 export interface AuthRequest extends Request {
-  user?: any;
+  user?: {
+    id: number;
+    username: string;
+    role: string;
+  };
 }
 
 export const authenticate = (
@@ -13,19 +18,28 @@ export const authenticate = (
 ) => {
   try {
     // Get token from http cookie
+
     const token = req.cookies.token;
 
     if (!token) {
       res.status(401).json({
         success: false,
-        message: "No token provided",
+        message: "Please login first",
       });
       return;
     }
 
     // Verify token
-    const decoded = verifyToken(token);
-    req.user = decoded; // attach user info to request
+    const decoded = verifyToken(token) as JwtPayload & {
+      id: number;
+      username: string;
+      role: string;
+    };
+    req.user = {
+      id: decoded.id,
+      username: decoded.username,
+      role: decoded.role,
+    }; // attach user info to request
 
     next(); // continue to controller
   } catch (err) {

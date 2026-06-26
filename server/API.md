@@ -1,4 +1,4 @@
-# WindStore API
+# WindStore API SERVER
 
 ## Auth
 
@@ -7,6 +7,10 @@ Body: { username, email, password }
 
 POST /api/auth/login  
 Body: { username, password }
+
+POST /api/auth/logout
+
+GET /api/auth/me
 
 ## Products
 
