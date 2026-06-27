@@ -57,8 +57,12 @@ export const getFilteredProducts = async (filters: {
     }),
     ...((filters.priceMin !== undefined || filters.priceMax !== undefined) && {
       basePrice: {
-        ...(filters.priceMin !== undefined && { gte: BigInt(filters.priceMin) }),
-        ...(filters.priceMax !== undefined && { lte: BigInt(filters.priceMax) }),
+        ...(filters.priceMin !== undefined && {
+          gte: BigInt(filters.priceMin),
+        }),
+        ...(filters.priceMax !== undefined && {
+          lte: BigInt(filters.priceMax),
+        }),
       },
     }),
     ...(filters.processor?.length && {
@@ -79,15 +83,30 @@ export const getFilteredProducts = async (filters: {
         ? { basePrice: "desc" }
         : { createdAt: "desc" };
 
-  return await prisma.product.findMany({
+  const products = await prisma.product.findMany({
     where,
     include: {
       brand: { select: { name: true } },
       category: { select: { name: true } },
       productImages: { where: { isPrimary: true }, select: { imageUrl: true } },
+      productConfigs: {
+        take: 1,
+        orderBy: { priceModifier: "asc" },
+        select: {
+          id: true,
+          configName: true,
+          configType: true,
+          priceModifier: true,
+        },
+      },
     },
     orderBy,
   });
+
+  return products.map(({ productConfigs, ...product }) => ({
+    ...product,
+    defaultConfig: productConfigs[0] ?? null,
+  }));
 };
 
 export const getUniqueProcessors = async () => {
@@ -111,7 +130,12 @@ export const getProductBySlug = async (slug: string) => {
       productFeatures: { select: { title: true, description: true } },
       productImages: { select: { imageUrl: true } },
       productConfigs: {
-        select: { id: true, configName: true, configType: true, priceModifier: true },
+        select: {
+          id: true,
+          configName: true,
+          configType: true,
+          priceModifier: true,
+        },
       },
     },
   });

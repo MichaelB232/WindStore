@@ -5,7 +5,7 @@ import { Brands } from "@/src/lib/producttype/ProductType";
 import { formatPrice } from "@/src/utils/utils";
 import {
   Gamepad2,
-  Sun,
+  BanknoteCheck,
   Palette,
   BriefcaseBusiness,
   GraduationCap,
@@ -30,20 +30,12 @@ type CatalogSidebarProps = {
 const PRICE_MIN = 0;
 const PRICE_MAX = 50_000_000;
 
-// const CATEGORY_ICONS = {
-//   Gaming: Gamepad2,
-//   Ultrabook: Sun,
-//   CreativePro: Palette,
-//   Business: BriefcaseBusiness,
-//   Student: GraduationCap,
-// };
-
 const CATEGORY_ICONS = {
   "Gaming": Gamepad2,
   "Business": BriefcaseBusiness,
   "Ultrabook": GraduationCap,
   "Creator": Palette,
-  "Budget": BriefcaseBusiness,
+  "Budget": BanknoteCheck,
 }
 
 export default function CatalogSidebar({
@@ -199,7 +191,7 @@ export default function CatalogSidebar({
         </div>
 
         {/* Processor */}
-        <div className="px-4 py-4">
+        <div className="px-4 py-4 overflow-y-scroll h-50">
           <p className="font-mono text-[10px] uppercase tracking-widest text-text-muted mb-3">
             Processor
           </p>

@@ -7,7 +7,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/src/components/ui/dropdown-menu";
+} from "@/src/components/ui/shadcn/dropdown-menu";
 import Link from "next/link";
 import { ROUTES } from "@/src/routes/routes";
 import { useAuth } from "@/src/hooks/useAuth";
@@ -63,7 +63,9 @@ export default function UserMenu({ isHomePage, scrolled }: UserMenuProps) {
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem>Profile</DropdownMenuItem>
-          <DropdownMenuItem>Wishlist</DropdownMenuItem>
+          <Link href={ROUTES.WISHLIST}>
+            <DropdownMenuItem>Wishlist</DropdownMenuItem>
+          </Link>
           <DropdownMenuItem>Settings</DropdownMenuItem>
         </DropdownMenuGroup>
 

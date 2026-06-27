@@ -2,12 +2,9 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
-import { ChevronDown, ChevronUp, Pencil, Trash2 } from "lucide-react";
+import { ChevronDown, ChevronUp, Trash2 } from "lucide-react";
 import { CartItem } from "@/src/lib/producttype/ProductType";
 import { formatPrice } from "@/src/utils/utils";
-import { ROUTES } from "@/src/routes/routes";
-
 type CartCardProps = {
   item: CartItem;
   onRemove: (cartItemId: number) => void;

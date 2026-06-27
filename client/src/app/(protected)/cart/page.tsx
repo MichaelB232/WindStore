@@ -5,7 +5,11 @@ import Container from "@/src/components/layout/Container";
 import CartCard from "@/src/components/cart/CartCard";
 import OrderCard from "@/src/components/cart/OrderCard";
 import { CartItem } from "@/src/lib/producttype/ProductType";
-import { getCart, removeCartItem, clearCart } from "@/src/services/cart/cart.service";
+import {
+  getCart,
+  removeCartItem,
+  clearCart,
+} from "@/src/services/cart/cart.service";
 import { ShoppingCart } from "lucide-react";
 import Link from "next/link";
 import { ROUTES } from "@/src/routes/routes";
