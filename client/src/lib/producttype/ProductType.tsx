@@ -20,6 +20,12 @@ export interface ProductImage {
   imageUrl: string;
 }
 
+export interface DefaultConfig {
+  id: number;
+  configName: string;
+  configType: string;
+  priceModifier: string;
+}
 export interface Product {
   id: number;
   name: string;
@@ -37,6 +43,7 @@ export interface Product {
   imageUrl: string;
   category: Category;
   productImages: ProductImage[];
+  defaultConfig: DefaultConfig | null;
 }
 
 export interface Brands {
@@ -72,8 +79,8 @@ export interface ProductFeature {
 export interface ProductConfig {
   id: number;
   configName: string;
-  configType: string;          
-  priceModifier: string;     
+  configType: string;
+  priceModifier: string;
 }
 
 export interface ProductDetail {
@@ -121,4 +128,25 @@ export interface CartItem {
   quantity: number;
   product: CartProduct;
   productConfig: CartProductConfig | null;
+}
+
+// Wishlist types
+export interface WishlistProduct {
+  id: number;
+  name: string;
+  slug: string;
+  basePrice: string;
+  imageUrl: string;
+  badge: string | null;
+  specs: Specs;
+  brand: { name: string };
+  category: { name: string };
+}
+
+export interface WishlistItem {
+  id: number;
+  userId: number;
+  productId: number;
+  addedAt: string;
+  product: WishlistProduct;
 }

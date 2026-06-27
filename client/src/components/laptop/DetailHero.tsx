@@ -4,8 +4,11 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Heart } from "lucide-react";
+import { toast } from "sonner";
 import { ProductDetail } from "@/src/lib/producttype/ProductType";
 import { formatPrice } from "@/src/utils/utils";
+import { useWishlist } from "@/src/services/wishlist/context/WishlistContext";
+import { useAuth } from "@/src/hooks/useAuth";
 
 type DetailHeroProps = {
   laptop: ProductDetail;
@@ -18,6 +21,17 @@ export default function DetailHero({ laptop }: DetailHeroProps) {
       : [laptop.imageUrl];
 
   const [activeIdx, setActiveIdx] = useState(0);
+  const { user } = useAuth();
+  const { isWishlisted, toggle } = useWishlist();
+  const wishlisted = isWishlisted(laptop.id);
+
+  const handleWishlist = () => {
+    if (!user) {
+      toast.error("Please log in to save items to your wishlist");
+      return;
+    }
+    toggle(laptop.id);
+  };
 
   const specChips = [
     laptop.specs.processor,
@@ -33,7 +47,6 @@ export default function DetailHero({ laptop }: DetailHeroProps) {
         {/* Left — gallery */}
         <div className="col-span-7">
           <div className="space-y-4">
-            {/* Main image */}
             <div className="w-full aspect-16/10 rounded-xl bg-white shadow-card border border-border p-8">
               <div className="relative w-full h-full">
                 <Image
@@ -47,7 +60,6 @@ export default function DetailHero({ laptop }: DetailHeroProps) {
               </div>
             </div>
 
-            {/* Thumbnails */}
             <div className="grid grid-cols-4 gap-3">
               {images.slice(0, 4).map((src, idx) => (
                 <button
@@ -79,15 +91,12 @@ export default function DetailHero({ laptop }: DetailHeroProps) {
           <p className="font-mono text-xs text-accent uppercase tracking-widest mb-2 font-semibold">
             {laptop.brand.name}
           </p>
-
           <h1 className="text-5xl font-bold tracking-tight">{laptop.name}</h1>
           <p className="mt-3 text-muted-foreground">{laptop.motto}</p>
-
           <p className="mt-8 text-3xl font-bold text-accent">
             {formatPrice(laptop.basePrice)}
           </p>
 
-          {/* Spec chips */}
           <div className="mt-6 flex flex-wrap gap-2">
             {specChips.map((spec) => (
               <span
@@ -99,7 +108,6 @@ export default function DetailHero({ laptop }: DetailHeroProps) {
             ))}
           </div>
 
-          {/* CTA */}
           <div className="mt-10 flex gap-3">
             <Link
               href="#detail-configuration"
@@ -107,8 +115,13 @@ export default function DetailHero({ laptop }: DetailHeroProps) {
             >
               Configure Now
             </Link>
-            <button className="size-14 rounded-xl border border-border flex justify-center items-center bg-white/90 backdrop-blur-sm text-text-muted hover:text-danger hover:bg-white transition-all duration-200 cursor-pointer shadow-sm">
-              <Heart size={20} />
+            <button
+              onClick={handleWishlist}
+              title={wishlisted ? "Remove from wishlist" : "Save to wishlist"}
+              className={`size-14 rounded-xl border flex justify-center items-center backdrop-blur-sm transition-all duration-200 cursor-pointer shadow-sm
+                ${wishlisted ? "border-danger/40 bg-red-50 text-danger" : "border-border bg-white/90 text-text-muted hover:text-danger hover:bg-white"}`}
+            >
+              <Heart size={20} className={wishlisted ? "fill-current" : ""} />
             </button>
           </div>
         </div>
