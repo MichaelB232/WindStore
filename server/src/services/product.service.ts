@@ -111,7 +111,7 @@ export const getProductBySlug = async (slug: string) => {
       productFeatures: { select: { title: true, description: true } },
       productImages: { select: { imageUrl: true } },
       productConfigs: {
-        select: { configName: true, configType: true, priceModifier: true },
+        select: { id: true, configName: true, configType: true, priceModifier: true },
       },
     },
   });

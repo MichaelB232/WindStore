@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { Loader2, Check } from "lucide-react";
 import { ProductDetail, ProductConfig } from "@/src/lib/producttype/ProductType";
 import { formatPrice } from "@/src/utils/utils";
+import { addToCart } from "@/src/services/cart/cart.service";
 
 type DetailConfigurationProps = {
   laptop: ProductDetail;
@@ -12,27 +14,44 @@ type SelectionMap = Record<string, ProductConfig>;
 
 export default function DetailConfiguration({ laptop }: DetailConfigurationProps) {
   const groups = laptop.productConfigs.reduce<Record<string, ProductConfig[]>>(
-    (acc, config) => {
-      if (!acc[config.configType]) acc[config.configType] = [];
-      acc[config.configType].push(config);
+    (acc, cfg) => {
+      if (!acc[cfg.configType]) acc[cfg.configType] = [];
+      acc[cfg.configType].push(cfg);
       return acc;
     },
     {}
   );
 
-  // Default selection: first option per group
   const defaultSelection: SelectionMap = Object.fromEntries(
-    Object.entries(groups).map(([type, configs]) => [type, configs[0]])
+    Object.entries(groups).map(([type, cfgs]) => [type, cfgs[0]])
   );
 
   const [selected, setSelected] = useState<SelectionMap>(defaultSelection);
+  const [cartState, setCartState] = useState<"idle" | "loading" | "added">("idle");
 
   const basePrice = parseFloat(laptop.basePrice);
   const addonsTotal = Object.values(selected).reduce(
-    (sum, config) => sum + parseFloat(config.priceModifier),
+    (sum, cfg) => sum + parseFloat(cfg.priceModifier),
     0
   );
   const total = basePrice + addonsTotal;
+
+  const handleAddToCart = async () => {
+    if (cartState !== "idle" || laptop.stock === 0) return;
+
+
+    const firstSelected = Object.values(selected)[0];
+    if (!firstSelected) return;
+
+    setCartState("loading");
+    const result = await addToCart(laptop.id, firstSelected.id);
+    if (result.success) {
+      setCartState("added");
+      setTimeout(() => setCartState("idle"), 2000);
+    } else {
+      setCartState("idle");
+    }
+  };
 
   return (
     <section id="detail-configuration" className="mt-20">
@@ -50,21 +69,21 @@ export default function DetailConfiguration({ laptop }: DetailConfigurationProps
       <div className="mt-12 grid grid-cols-12 gap-8">
         {/* Config options */}
         <div className="col-span-8 space-y-8">
-          {Object.entries(groups).map(([type, configs]) => (
+          {Object.entries(groups).map(([type, cfgs]) => (
             <div
               key={type}
               className="rounded-3xl border border-border bg-card p-6 shadow-card"
             >
               <h3 className="mb-6 text-3xl font-semibold">{type}</h3>
               <div className="grid grid-cols-3 gap-4">
-                {configs.map((config) => {
-                  const isSelected = selected[type]?.configName === config.configName;
-                  const modifier = parseFloat(config.priceModifier);
+                {cfgs.map((cfg) => {
+                  const isSelected = selected[type]?.configName === cfg.configName;
+                  const modifier = parseFloat(cfg.priceModifier);
                   return (
                     <button
-                      key={config.configName}
+                      key={cfg.configName}
                       onClick={() =>
-                        setSelected((prev) => ({ ...prev, [type]: config }))
+                        setSelected((prev) => ({ ...prev, [type]: cfg }))
                       }
                       className={`rounded-2xl border-2 p-4 text-left transition-all cursor-pointer ${
                         isSelected
@@ -72,11 +91,11 @@ export default function DetailConfiguration({ laptop }: DetailConfigurationProps
                           : "border-border hover:border-accent"
                       }`}
                     >
-                      <p className="font-semibold">{config.configName}</p>
+                      <p className="font-semibold">{cfg.configName}</p>
                       <p className="mt-2 text-muted-foreground text-sm">
                         {modifier === 0
                           ? "Included"
-                          : `+ ${formatPrice(config.priceModifier)}`}
+                          : `+ ${formatPrice(cfg.priceModifier)}`}
                       </p>
                     </button>
                   );
@@ -98,13 +117,13 @@ export default function DetailConfiguration({ laptop }: DetailConfigurationProps
               <span className="font-medium">{formatPrice(laptop.basePrice)}</span>
             </div>
 
-            {Object.entries(selected).map(([type, config]) => (
+            {Object.entries(selected).map(([type, cfg]) => (
               <div key={type} className="flex justify-between text-sm">
-                <span className="text-muted-foreground">{config.configName}</span>
+                <span className="text-muted-foreground">{cfg.configName}</span>
                 <span className="font-medium">
-                  {parseFloat(config.priceModifier) === 0
+                  {parseFloat(cfg.priceModifier) === 0
                     ? "Included"
-                    : `+ ${formatPrice(config.priceModifier)}`}
+                    : `+ ${formatPrice(cfg.priceModifier)}`}
                 </span>
               </div>
             ))}
@@ -126,10 +145,19 @@ export default function DetailConfiguration({ laptop }: DetailConfigurationProps
           </p>
 
           <button
-            disabled={laptop.stock === 0}
-            className="mt-8 w-full rounded-2xl bg-accent py-4 font-semibold text-white transition-colors hover:bg-accent-hover disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+            onClick={handleAddToCart}
+            disabled={laptop.stock === 0 || cartState !== "idle"}
+            className={`mt-8 w-full rounded-2xl py-4 font-semibold text-white transition-all flex items-center justify-center gap-2
+              ${cartState === "added"
+                ? "bg-green-500"
+                : "bg-accent hover:bg-accent-hover"
+              } disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer`}
           >
-            Add to Cart
+            {cartState === "loading" && <Loader2 size={18} className="animate-spin" />}
+            {cartState === "added"   && <Check size={18} />}
+            {cartState === "loading" ? "Adding…"    :
+             cartState === "added"   ? "Added to Cart!" :
+             "Add to Cart"}
           </button>
         </aside>
       </div>
