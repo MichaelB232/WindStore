@@ -1,6 +1,6 @@
 import HeroSection from "@/src/components/main/HeroSection";
 import BrandMarquee from "@/src/components/main/BrandMarquee";
-import CategorySection from "@/src/components/main/CategorySection";
+// import CategorySection from "@/src/components/main/CategorySection";
 import FeaturedSection from "@/src/components/main/FeaturedSection";
 
 export const metadata = {
@@ -15,7 +15,7 @@ export default function Home() {
       <main className="">
         <HeroSection/>
         <BrandMarquee/>
-        <CategorySection/>
+        {/* <CategorySection/> */}
         <FeaturedSection/>
       </main>
     </>

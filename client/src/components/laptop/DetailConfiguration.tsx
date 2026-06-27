@@ -12,9 +12,9 @@ type SelectionMap = Record<string, ProductConfig>;
 
 export default function DetailConfiguration({ laptop }: DetailConfigurationProps) {
   const groups = laptop.productConfigs.reduce<Record<string, ProductConfig[]>>(
-    (acc, cfg) => {
-      if (!acc[cfg.configType]) acc[cfg.configType] = [];
-      acc[cfg.configType].push(cfg);
+    (acc, config) => {
+      if (!acc[config.configType]) acc[config.configType] = [];
+      acc[config.configType].push(config);
       return acc;
     },
     {}
@@ -22,14 +22,14 @@ export default function DetailConfiguration({ laptop }: DetailConfigurationProps
 
   // Default selection: first option per group
   const defaultSelection: SelectionMap = Object.fromEntries(
-    Object.entries(groups).map(([type, cfgs]) => [type, cfgs[0]])
+    Object.entries(groups).map(([type, configs]) => [type, configs[0]])
   );
 
   const [selected, setSelected] = useState<SelectionMap>(defaultSelection);
 
   const basePrice = parseFloat(laptop.basePrice);
   const addonsTotal = Object.values(selected).reduce(
-    (sum, cfg) => sum + parseFloat(cfg.priceModifier),
+    (sum, config) => sum + parseFloat(config.priceModifier),
     0
   );
   const total = basePrice + addonsTotal;
@@ -50,21 +50,21 @@ export default function DetailConfiguration({ laptop }: DetailConfigurationProps
       <div className="mt-12 grid grid-cols-12 gap-8">
         {/* Config options */}
         <div className="col-span-8 space-y-8">
-          {Object.entries(groups).map(([type, cfgs]) => (
+          {Object.entries(groups).map(([type, configs]) => (
             <div
               key={type}
               className="rounded-3xl border border-border bg-card p-6 shadow-card"
             >
               <h3 className="mb-6 text-3xl font-semibold">{type}</h3>
               <div className="grid grid-cols-3 gap-4">
-                {cfgs.map((cfg) => {
-                  const isSelected = selected[type]?.configName === cfg.configName;
-                  const modifier = parseFloat(cfg.priceModifier);
+                {configs.map((config) => {
+                  const isSelected = selected[type]?.configName === config.configName;
+                  const modifier = parseFloat(config.priceModifier);
                   return (
                     <button
-                      key={cfg.configName}
+                      key={config.configName}
                       onClick={() =>
-                        setSelected((prev) => ({ ...prev, [type]: cfg }))
+                        setSelected((prev) => ({ ...prev, [type]: config }))
                       }
                       className={`rounded-2xl border-2 p-4 text-left transition-all cursor-pointer ${
                         isSelected
@@ -72,11 +72,11 @@ export default function DetailConfiguration({ laptop }: DetailConfigurationProps
                           : "border-border hover:border-accent"
                       }`}
                     >
-                      <p className="font-semibold">{cfg.configName}</p>
+                      <p className="font-semibold">{config.configName}</p>
                       <p className="mt-2 text-muted-foreground text-sm">
                         {modifier === 0
                           ? "Included"
-                          : `+ ${formatPrice(cfg.priceModifier)}`}
+                          : `+ ${formatPrice(config.priceModifier)}`}
                       </p>
                     </button>
                   );
@@ -98,13 +98,13 @@ export default function DetailConfiguration({ laptop }: DetailConfigurationProps
               <span className="font-medium">{formatPrice(laptop.basePrice)}</span>
             </div>
 
-            {Object.entries(selected).map(([type, cfg]) => (
+            {Object.entries(selected).map(([type, config]) => (
               <div key={type} className="flex justify-between text-sm">
-                <span className="text-muted-foreground">{cfg.configName}</span>
+                <span className="text-muted-foreground">{config.configName}</span>
                 <span className="font-medium">
-                  {parseFloat(cfg.priceModifier) === 0
+                  {parseFloat(config.priceModifier) === 0
                     ? "Included"
-                    : `+ ${formatPrice(cfg.priceModifier)}`}
+                    : `+ ${formatPrice(config.priceModifier)}`}
                 </span>
               </div>
             ))}

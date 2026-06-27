@@ -37,8 +37,8 @@ model Wishlist {
   productId Int      @map("product_id")
   addedAt   DateTime @default(now()) @map("added_at")
 
-  product Product @relation(fields: [productId], references: [id])
-  user    User    @relation(fields: [userId], references: [id])
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, productId])
 }
@@ -76,8 +76,8 @@ model Product {
   isActive    Boolean  @default(false) @map("is_active")
   createdAt   DateTime @default(now()) @map("created_at")
 
-  brand           Brand            @relation(fields: [brandId], references: [id])
-  category        Category         @relation(fields: [categoryId], references: [id])
+  brand           Brand            @relation(fields: [brandId], references: [id], onDelete: Restrict)
+  category        Category         @relation(fields: [categoryId], references: [id], onDelete: Restrict)
   productImages   ProductImage[]
   productConfigs  ProductConfig[]
   wishlists       Wishlist[]
@@ -96,7 +96,7 @@ model ProductImage {
   isPrimary    Boolean @default(false) @map("is_primary")
   displayOrder Int     @map("display_order")
 
-  product Product @relation(fields: [productId], references: [id])
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   @@map("product_images")
 }
@@ -110,7 +110,7 @@ model ProductConfig {
   isDefault     Boolean @default(false) @map("is_default")
   displayOrder  Int     @map("display_order")
 
-  product    Product     @relation(fields: [productId], references: [id])
+  product    Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
   orderItems OrderItem[]
   cartItems  CartItem[]
 
@@ -124,7 +124,7 @@ model Order {
   status     String
   createdAt  DateTime @default(now()) @map("created_at")
 
-  user       User        @relation(fields: [userId], references: [id])
+  user       User        @relation(fields: [userId], references: [id], onDelete: Restrict)
   orderItems OrderItem[]
   payments   Payment[]
 
@@ -139,9 +139,9 @@ model OrderItem {
   quantity  Int    @default(1)
   unitPrice BigInt @map("unit_price")
 
-  order         Order          @relation(fields: [orderId], references: [id])
-  product       Product        @relation(fields: [productId], references: [id])
-  productConfig ProductConfig? @relation(fields: [configId], references: [id])
+  order         Order          @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product       Product        @relation(fields: [productId], references: [id], onDelete: Restrict)
+  productConfig ProductConfig? @relation(fields: [configId], references: [id], onDelete: Restrict)
 
   @@map("order_items")
 }
@@ -154,9 +154,9 @@ model CartItem {
   quantity  Int      @default(1)
   addedAt   DateTime @default(now()) @map("added_at")
 
-  user          User          @relation(fields: [userId], references: [id])
-  product       Product       @relation(fields: [productId], references: [id])
-  productConfig ProductConfig @relation(fields: [configId], references: [id])
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product       Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productConfig ProductConfig @relation(fields: [configId], references: [id], onDelete: Cascade)
 
   @@unique([userId, productId, configId])
   @@map("cart_items")
@@ -169,7 +169,7 @@ model ProductFeature {
   description  String
   displayOrder Int    @map("display_order")
 
-  product Product @relation(fields: [productId], references: [id])
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   @@map("product_features")
 }
@@ -195,8 +195,8 @@ model Payment {
   paidAt          DateTime @default(now()) @map("paid_at")
   createdAt       DateTime @default(now()) @map("created_at")
 
-  order         Order         @relation(fields: [orderId], references: [id])
-  paymentMethod PaymentMethod @relation(fields: [paymentMethodId], references: [id])
+  order         Order         @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  paymentMethod PaymentMethod @relation(fields: [paymentMethodId], references: [id], onDelete: Restrict)
 
   @@map("payments")
 }
@@ -209,8 +209,8 @@ model Review {
   comment   String?
   createdAt DateTime @default(now()) @map("created_at")
 
-  user    User    @relation(fields: [userId], references: [id])
-  product Product @relation(fields: [productId], references: [id])
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   @@unique([userId, productId])
   @@map("reviews")
