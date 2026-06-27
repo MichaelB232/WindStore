@@ -2759,6 +2759,14 @@ async function main() {
       orderCount++;
     }
   }
+  prisma.paymentMethod.create({
+    data: {
+      code: "MIDTRANS",
+      name: "Midtrans",
+      type: "gateway",
+      isActive: true,
+    },
+  });
   console.log("Orders seeded: " + orderCount);
 
   const ratings = [3.5, 4.0, 4.0, 4.5, 4.5, 4.5, 5.0, 5.0, 3.0, 4.0];

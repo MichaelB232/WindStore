@@ -84,7 +84,6 @@ Base URL: `http://localhost:8000`
 | Customer | `johndoe` | `user123`  |
 | Customer | `janedoe` | `user123`  |
 
-
 // Get reviews for a product
 GET http://localhost:8000/api/reviews/1
 
