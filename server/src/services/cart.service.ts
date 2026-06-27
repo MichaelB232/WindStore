@@ -2,8 +2,15 @@ import prisma from "../lib/prisma";
 
 export const getCartByUser = async (userId: number) => {
   return await prisma.cartItem.findMany({
-    where: { userId: userId },
-    include: { product: true, productConfig: true },
+    where: { userId },
+    include: {
+      product: {
+        include: {
+          brand: { select: { name: true } },
+        },
+      },
+      productConfig: true,
+    },
   });
 };
 
@@ -11,23 +18,26 @@ export const addProductToCart = async (
   userId: number,
   productId: number,
   productConfigId: number,
-  quantity?: number,
+  quantity = 1,
 ) => {
-  const existingCart = await prisma.cartItem.findFirst({
-    where: { userId, configId: productConfigId, productId: productId },
+  const existingItem = await prisma.cartItem.findFirst({
+    where: { userId, productId, configId: productConfigId },
   });
-  if (existingCart) {
+
+  // increment the qty
+  if (existingItem) {
     return await prisma.cartItem.update({
-      where: { id: existingCart.id },
-      data: { quantity: quantity !== undefined ? quantity : { increment: 1 } },
+      where: { id: existingItem.id },
+      data: { quantity: { increment: quantity } },
     });
   }
+
   return await prisma.cartItem.create({
     data: {
-      userId: userId,
-      productId: productId,
+      userId,
+      productId,
       configId: productConfigId,
-      quantity: quantity !== undefined ? quantity : 1,
+      quantity,
     },
   });
 };

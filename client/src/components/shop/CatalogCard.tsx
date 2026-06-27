@@ -55,7 +55,7 @@ export default function CatalogCard({ product }: { product: Product }) {
           {product.name}
         </h3>
 
-        {/* Specs chips */}
+        {/* Spec chips */}
         <div className="flex flex-wrap gap-1 mb-3 min-h-5.5">
           {specChips.map((spec) => (
             <span
@@ -84,9 +84,18 @@ export default function CatalogCard({ product }: { product: Product }) {
                 Customize Build
               </button>
             </Link>
-            <button className="w-8 h-8 shrink-0 flex items-center justify-center border border-border text-accent hover:bg-accent-muted hover:border-accent rounded-xl transition-all duration-150 cursor-pointer">
-              <ShoppingCart size={13} />
-            </button>
+            {/* configId is required by the schema — redirect to the slug page
+                so the user picks a config before adding to cart */}
+            <Link
+              href={`${ROUTES.LAPTOP}/${product.slug}#detail-configuration`}
+            >
+              <button
+                title="Select a configuration to add to cart"
+                className="w-8 h-8 shrink-0 flex items-center justify-center border border-border text-accent hover:bg-accent-muted hover:border-accent rounded-xl transition-all duration-150 cursor-pointer"
+              >
+                <ShoppingCart size={13} />
+              </button>
+            </Link>
           </div>
         </div>
       </div>

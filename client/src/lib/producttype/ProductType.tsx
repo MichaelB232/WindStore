@@ -63,14 +63,14 @@ export interface CatalogClientProps {
   initialFilters: ShopSearchParams;
 }
 
-//Detail page types 
-
+// Detail page types
 export interface ProductFeature {
   title: string;
   description: string;
 }
 
 export interface ProductConfig {
+  id: number;
   configName: string;
   configType: string;          
   priceModifier: string;     
@@ -92,4 +92,33 @@ export interface ProductDetail {
   productImages: ProductImage[];
   productFeatures: ProductFeature[];
   productConfigs: ProductConfig[];
+}
+
+// Cart types
+export interface CartProduct {
+  id: number;
+  name: string;
+  slug: string;
+  basePrice: string;
+  imageUrl: string;
+  specs: Specs;
+  brand: { name: string };
+  category: { name: string };
+}
+
+export interface CartProductConfig {
+  id: number;
+  configName: string;
+  configType: string;
+  priceModifier: string;
+}
+
+export interface CartItem {
+  id: number;
+  userId: number;
+  productId: number;
+  configId: number | null;
+  quantity: number;
+  product: CartProduct;
+  productConfig: CartProductConfig | null;
 }
