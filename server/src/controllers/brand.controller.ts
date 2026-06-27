@@ -18,7 +18,7 @@ export const createBrands = async (req: AuthRequest, res: Response) => {
     if (!name) {
       res
         .status(400)
-        .json({ success: false, messaage: "Brand name must be filled" });
+        .json({ success: false, message: "Brand name must be filled" });
       return;
     }
     if (!description) {
@@ -39,15 +39,13 @@ export const updateBrands = async (req: AuthRequest, res: Response) => {
     const { name, description } = req.body;
     const { id } = req.params;
     if (!id) {
-      res
-        .status(400)
-        .json({ success: false, messaage: "Id brand is required" });
+      res.status(400).json({ success: false, message: "Id brand is required" });
       return;
     }
     if (!name) {
       res
         .status(400)
-        .json({ success: false, messaage: "Brand name must be filled" });
+        .json({ success: false, message: "Brand name must be filled" });
       return;
     }
     if (!description) {
@@ -62,7 +60,7 @@ export const updateBrands = async (req: AuthRequest, res: Response) => {
       description: description,
     });
     res
-      .status(201)
+      .status(200)
       .json({ success: true, message: "Successfuly update brand" });
   } catch (error) {
     res.status(500).json({ success: false, message: "Server Error" });
