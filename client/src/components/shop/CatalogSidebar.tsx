@@ -211,11 +211,6 @@ export default function CatalogSidebar({
                         : "border-border-strong group-hover:border-accent"
                     }`}
                   >
-                    {active && (
-                      <span className="material-symbols-outlined text-white text-[11px]">
-                        check
-                      </span>
-                    )}
                   </span>
                   <span className="text-xs text-text-secondary group-hover:text-text-primary transition-colors">
                     {proc}
@@ -240,9 +235,6 @@ export default function CatalogSidebar({
             onClick={clearAll}
             className="flex items-center justify-center gap-1.5 w-full py-1.5 text-text-muted hover:text-accent transition-colors text-xs cursor-pointer"
           >
-            <span className="material-symbols-outlined text-[14px]">
-              refresh
-            </span>
             Clear All
           </button>
         )}

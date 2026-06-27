@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useTransition } from "react";
+import { useRouter, usePathname } from "next/navigation";
 import CatalogSidebar, { FilterState } from "./CatalogSidebar";
 import CatalogHero from "./CatalogHero";
 import CatalogSortBar, { ViewMode } from "./CatalogSortBar";
@@ -12,97 +13,110 @@ import { CatalogClientProps } from "@/src/lib/producttype/ProductType";
 const PRICE_MIN = 0;
 const PRICE_MAX = 50_000_000;
 
+function buildFilterUrl(pathname: string, filters: FilterState, sortBy: string) {
+  const params = new URLSearchParams();
+
+  if (filters.category) params.set("category", filters.category);
+  if (filters.brands.length) params.set("brand", filters.brands.join(","));
+  if (filters.processors.length)
+    params.set("processor", filters.processors.join(","));
+  if (filters.priceMin !== PRICE_MIN)
+    params.set("priceMin", String(filters.priceMin));
+  if (filters.priceMax !== PRICE_MAX)
+    params.set("priceMax", String(filters.priceMax));
+  if (sortBy && sortBy !== "featured") params.set("sortBy", sortBy);
+
+  const qs = params.toString();
+  return qs ? `${pathname}?${qs}` : pathname;
+}
+
 export default function CatalogClient({
   products,
   brands,
+  categories,
+  processors,
+  initialFilters,
 }: CatalogClientProps) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const [isPending, startTransition] = useTransition();
+
   const [filters, setFilters] = useState<FilterState>({
-    category: "",
-    brands: [],
-    processors: [],
-    priceMin: PRICE_MIN,
-    priceMax: PRICE_MAX,
+    category: initialFilters?.category ?? "",
+    brands: initialFilters?.brand ? initialFilters.brand.split(",") : [],
+    processors: initialFilters?.processor
+      ? initialFilters.processor.split(",")
+      : [],
+    priceMin: initialFilters?.priceMin ? Number(initialFilters.priceMin) : PRICE_MIN,
+    priceMax: initialFilters?.priceMax ? Number(initialFilters.priceMax) : PRICE_MAX,
   });
-  const [sortBy, setSortBy] = useState("featured");
+  const [sortBy, setSortBy] = useState(initialFilters?.sortBy ?? "featured");
   const [viewMode, setViewMode] = useState<ViewMode>("grid");
   const [visibleCount, setVisibleCount] = useState(8);
 
-  const categories = useMemo(
-    () => [...new Set(products.map((p) => p.category.name))],
-    [products],
-  );
-
-  const processors = useMemo(
-    () => [...new Set(products.map((p) => p.specs.processor))],
-    [products],
-  );
-
-  const filtered = useMemo(() => {
-    return products.filter((p) => {
-      if (filters.category && p.category.name !== filters.category)
-        return false;
-
-      if (filters.brands.length > 0 && !filters.brands.includes(p.brand.name))
-        return false;
-
-      if (filters.processors.length > 0) {
-        const match = filters.processors.some((proc) =>
-          p.specs.processor.toLowerCase().includes(proc.toLowerCase()),
-        );
-        if (!match) return false;
-      }
-
-      const price = parseFloat(p.basePrice);
-      if (price < filters.priceMin || price > filters.priceMax) return false;
-
-      return true;
+  const navigate = (nextFilters: FilterState, nextSort: string) => {
+    startTransition(() => {
+      router.replace(buildFilterUrl(pathname, nextFilters, nextSort), {
+        scroll: false,
+      });
     });
-  }, [products, filters]);
+  };
 
-  const sorted = useMemo(() => {
-    return [...filtered].sort((a, b) => {
-      const pa = parseFloat(a.basePrice);
-      const pb = parseFloat(b.basePrice);
-      if (sortBy === "price-asc") return pa - pb;
-      if (sortBy === "price-desc") return pb - pa;
-      return 0;
-    });
-  }, [filtered, sortBy]);
+  const handleFilterChange = (next: FilterState) => {
+    setFilters(next);
+    setVisibleCount(8);
+    navigate(next, sortBy);
+  };
 
-  const visible = sorted.slice(0, visibleCount);
-  const hasMore = visibleCount < sorted.length;
+  const handleSortChange = (next: string) => {
+    setSortBy(next);
+    navigate(filters, next);
+  };
+
+  const clearAll = () => {
+    const cleared: FilterState = {
+      category: "",
+      brands: [],
+      processors: [],
+      priceMin: PRICE_MIN,
+      priceMax: PRICE_MAX,
+    };
+    setFilters(cleared);
+    setVisibleCount(8);
+    navigate(cleared, sortBy);
+  };
+
+  const visible = products.slice(0, visibleCount);
+  const hasMore = visibleCount < products.length;
 
   return (
     <main className="max-w-screen-2xl px-4 md:px-8 pt-24 pb-16 min-h-screen">
       <Container>
         <div className="flex gap-6 shrink-0 items-start">
-          {/* SIDEBAR */}
           <div className="hidden lg:block w-55 self-start sticky top-20">
             <CatalogSidebar
               filters={filters}
-              onFilterChange={setFilters}
+              onFilterChange={handleFilterChange}
               brands={brands}
               categories={categories}
               processors={processors}
             />
           </div>
 
-          {/* MAIN COLUMN */}
           <div className="flex-1 flex flex-col min-w-0 min-h-[80vh]">
-            {/* Hero */}
             <CatalogHero />
 
-            {/* Sort bar */}
             <CatalogSortBar
-              total={sorted.length}
+              total={products.length}
               sortBy={sortBy}
               viewMode={viewMode}
-              onSortChange={setSortBy}
+              onSortChange={handleSortChange}
               onViewChange={setViewMode}
             />
 
-            {/* PRODUCT AREA */}
-            <div className="flex-1">
+            <div
+              className={`flex-1 transition-opacity ${isPending ? "opacity-50" : ""}`}
+            >
               {visible.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-24 text-center">
                   <span className="material-symbols-outlined text-5xl text-text-muted mb-3">
@@ -115,15 +129,7 @@ export default function CatalogClient({
                     Try adjusting your filters to see more results.
                   </p>
                   <button
-                    onClick={() =>
-                      setFilters({
-                        category: "",
-                        brands: [],
-                        processors: [],
-                        priceMin: PRICE_MIN,
-                        priceMax: PRICE_MAX,
-                      })
-                    }
+                    onClick={clearAll}
                     className="px-6 py-2.5 bg-accent text-white text-sm font-semibold rounded-xl hover:bg-accent-hover transition-colors cursor-pointer"
                   >
                     Clear All Filters
@@ -144,7 +150,6 @@ export default function CatalogClient({
               )}
             </div>
 
-            {/* Load more */}
             {hasMore && (
               <div className="mt-10 flex justify-center">
                 <button
