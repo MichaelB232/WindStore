@@ -83,3 +83,18 @@ Base URL: `http://localhost:8000`
 | Admin    | `admin`   | `admin123` |
 | Customer | `johndoe` | `user123`  |
 | Customer | `janedoe` | `user123`  |
+
+
+// Get reviews for a product
+GET http://localhost:8000/api/reviews/1
+
+// Add review (must be logged in)
+POST http://localhost:8000/api/reviews
+Body: { "productId": 1, "rating": 4.5, "comment": "Great laptop!" }
+
+// Update review
+PUT http://localhost:8000/api/reviews/1
+Body: { "rating": 5, "comment": "Even better than I thought!" }
+
+// Delete review
+DELETE http://localhost:8000/api/reviews/1

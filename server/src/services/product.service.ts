@@ -126,7 +126,16 @@ export const getProductBySlug = async (slug: string) => {
   return await prisma.product.findFirst({
     where: { slug, isActive: true },
     include: {
-      reviews: { select: { rating: true, comment: true } },
+      reviews: {
+        select: {
+          rating: true,
+          comment: true,
+          createdAt: true,
+          user: {
+            select: { username: true },
+          },
+        },
+      },
       brand: { select: { name: true } },
       productFeatures: { select: { title: true, description: true } },
       productImages: { select: { imageUrl: true } },
