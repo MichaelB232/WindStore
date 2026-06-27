@@ -5,3 +5,29 @@ export const getAllBrands = async () => {
     select: { name: true, description: true, id: true },
   });
 };
+export const createBrand = async ({
+  name,
+  description,
+}: {
+  name: string;
+  description: string;
+}) => {
+  return prisma.brand.create({ data: { name, description } });
+};
+export const updateBrand = async ({
+  id,
+  name,
+  description,
+}: {
+  id: number;
+  name: string;
+  description: string;
+}) => {
+  return prisma.brand.update({
+    where: { id },
+    data: {
+      ...(name && { name }),
+      ...(description && { description }),
+    },
+  });
+};
