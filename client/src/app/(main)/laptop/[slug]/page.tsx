@@ -1,32 +1,29 @@
-import { catalogProducts } from "@/src/lib/DataCatalog";
+import { notFound } from "next/navigation";
 import Container from "@/src/components/layout/Container";
 import DetailHero from "@/src/components/laptop/DetailHero";
 import DetailDescription from "@/src/components/laptop/DetailDescription";
 import DetailConfiguration from "@/src/components/laptop/DetailConfiguration";
+import { getProductBySlug } from "@/src/services/products/product.service";
 
-export default async function LaptopPage({
-  params,
-}: {
+interface LaptopPageProps {
   params: Promise<{ slug: string }>;
-}) {
-  const { slug } = await params;
+}
 
-  const laptop = catalogProducts.find((item) => item.slug === slug);
-  if (!laptop) {
-    throw new Error("Laptop not found");
-  }
+export default async function LaptopPage({ params }: LaptopPageProps) {
+  const { slug } = await params;
+  const laptop = await getProductBySlug(slug);
+
+  if (!laptop) notFound();
 
   return (
-    <>
-      <main className="py-24">
-        <Container>
-          <div className="">
-            <DetailHero laptop={laptop} />
-            <DetailDescription laptop={laptop}/>
-            <DetailConfiguration/>
-          </div>
-        </Container>
-      </main>
-    </>
+    <main className="py-24">
+      <Container>
+        <div>
+          <DetailHero laptop={laptop} />
+          <DetailDescription laptop={laptop} />
+          <DetailConfiguration laptop={laptop} />
+        </div>
+      </Container>
+    </main>
   );
 }
