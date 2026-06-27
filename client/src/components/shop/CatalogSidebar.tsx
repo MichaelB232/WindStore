@@ -30,13 +30,21 @@ type CatalogSidebarProps = {
 const PRICE_MIN = 0;
 const PRICE_MAX = 50_000_000;
 
+// const CATEGORY_ICONS = {
+//   Gaming: Gamepad2,
+//   Ultrabook: Sun,
+//   CreativePro: Palette,
+//   Business: BriefcaseBusiness,
+//   Student: GraduationCap,
+// };
+
 const CATEGORY_ICONS = {
-  Gaming: Gamepad2,
-  Ultrabook: Sun,
-  CreativePro: Palette,
-  Business: BriefcaseBusiness,
-  Student: GraduationCap,
-};
+  "Gaming": Gamepad2,
+  "Business": BriefcaseBusiness,
+  "Ultrabook": GraduationCap,
+  "Creator": Palette,
+  "Budget": BriefcaseBusiness,
+}
 
 export default function CatalogSidebar({
   filters,

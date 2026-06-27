@@ -13,10 +13,13 @@ export async function getAllProduct(params: GetShopParams = {}) {
 
   if (params.category) query.set("category", params.category);
   if (params.brand?.length) query.set("brand", params.brand.join(","));
-  if (params.processor?.length) query.set("processor", params.processor.join(","));
+  if (params.processor?.length)
+    query.set("processor", params.processor.join(","));
   if (params.search) query.set("search", params.search);
-  if (params.priceMin !== undefined) query.set("priceMin", String(params.priceMin));
-  if (params.priceMax !== undefined) query.set("priceMax", String(params.priceMax));
+  if (params.priceMin !== undefined)
+    query.set("priceMin", String(params.priceMin));
+  if (params.priceMax !== undefined)
+    query.set("priceMax", String(params.priceMax));
   if (params.sortBy) query.set("sortBy", params.sortBy);
 
   const qs = query.toString();
