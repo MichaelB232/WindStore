@@ -31,8 +31,8 @@ export function validateLoginForm(
     errors.password = "Password wajib diisi";
   }
 
-  if (password && password.length < 8) {
-    errors.password = "Panjang password minimal 8 karakter";
+  if (password && password.length < 6) {
+    errors.password = "Panjang password minimal 6 karakter";
   }
 
   return errors;
@@ -66,8 +66,8 @@ export function validateRegisterForm(
 
   if (!password.trim()) {
     errors.password = "Password wajib diisi";
-  } else if (password.length < 8) {
-    errors.password = "Password minimal 8 karakter";
+  } else if (password.length < 6) {
+    errors.password = "Password minimal 6 karakter";
   }
 
   if (!confirmPassword.trim()) {
