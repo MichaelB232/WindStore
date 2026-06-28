@@ -4,6 +4,7 @@ import DetailHero from "@/src/components/laptop/DetailHero";
 import DetailDescription from "@/src/components/laptop/DetailDescription";
 import DetailConfiguration from "@/src/components/laptop/DetailConfiguration";
 import { getProductBySlug } from "@/src/services/products/product.service";
+import DetailReviews from "@/src/components/laptop/DetailReviews";
 
 interface LaptopPageProps {
   params: Promise<{ slug: string }>;
@@ -22,6 +23,7 @@ export default async function LaptopPage({ params }: LaptopPageProps) {
           <DetailHero laptop={laptop} />
           <DetailDescription laptop={laptop} />
           <DetailConfiguration laptop={laptop} />
+          <DetailReviews laptop={laptop} />
         </div>
       </Container>
     </main>
