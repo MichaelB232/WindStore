@@ -1,6 +1,47 @@
 import { Prisma } from "@prisma/client";
 import prisma from "../lib/prisma";
 
+export const createProduct = async (dataProduct: {
+  name: string;
+  brandId: number;
+  slug: string;
+  categoryId: number;
+  motto: string;
+  description: string;
+  basePrice: bigint;
+  badge: string;
+  specs: any;
+  imageUrl: string;
+  stock: number;
+  isActive: boolean;
+}) => {
+  return await prisma.product.create({ data: { ...dataProduct } });
+};
+
+export const updateProduct = async (
+  id: number,
+  data: {
+    name: string;
+    brandId: number;
+    slug: string;
+    categoryId: number;
+    motto: string;
+    description: string;
+    basePrice: bigint;
+    badge: string;
+    specs: any;
+    imageUrl?: string;
+    stock: number;
+    isActive: boolean;
+  },
+) => {
+  return await prisma.product.update({ where: { id }, data: { ...data } });
+};
+
+export const deleteProduct = async (id: number) => {
+  return await prisma.product.delete({ where: { id } });
+};
+
 export const getAllProducts = async () => {
   return await prisma.product.findMany({
     where: { isActive: true },

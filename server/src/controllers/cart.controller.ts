@@ -18,7 +18,9 @@ export const addToCart = async (req: AuthRequest, res: Response) => {
     const { productId, configId, quantity } = req.body;
 
     if (!productId) {
-      res.status(400).json({ success: false, message: "ProductId is required" });
+      res
+        .status(400)
+        .json({ success: false, message: "ProductId is required" });
       return;
     }
 
@@ -40,7 +42,9 @@ export const removeFromCart = async (req: AuthRequest, res: Response) => {
     const { cartItemId } = req.body;
 
     if (!cartItemId) {
-      res.status(400).json({ success: false, message: "cartItemId is required" });
+      res
+        .status(400)
+        .json({ success: false, message: "cartItemId is required" });
       return;
     }
 

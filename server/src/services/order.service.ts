@@ -39,7 +39,7 @@ export const createOrder = async (
     });
   }
   return await prisma.$transaction(async (tx) => {
-    const order = await prisma.order.create({
+    const order = await tx.order.create({
       data: {
         userId,
         totalPrice,

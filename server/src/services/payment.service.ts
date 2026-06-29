@@ -1,7 +1,7 @@
 import prisma from "../lib/prisma";
 import crypto from "crypto";
 import { snap } from "../lib/midtrans";
-import { createOrder } from "../services/order.service";
+import { createOrder } from "./order.service";
 export const createPayment = async (
   userId: number,
   cartItems: { productId: number; configId: number; quantity: number }[],
