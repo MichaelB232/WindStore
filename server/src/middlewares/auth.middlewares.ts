@@ -1,6 +1,6 @@
+import { JwtPayload } from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
 import { verifyToken } from "../lib/jwt";
-import { JwtPayload } from "jsonwebtoken";
 
 // Extend Request type to include user
 export interface AuthRequest extends Request {

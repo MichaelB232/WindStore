@@ -52,7 +52,8 @@ export const login = async (req: Request, res: Response) => {
       },
     });
   } catch (error) {
-    res.status(500).json({ success: false, message: "Server Error" });
+    console.log("error", error);
+    res.status(500).json({ success: false, message: "Server Errorads" });
   }
 };
 
