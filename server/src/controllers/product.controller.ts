@@ -211,3 +211,28 @@ export const getAllProductsAdmin = async (req: AuthRequest, res: Response) => {
     res.status(500).json({ success: false, message: "Server Error" });
   }
 };
+
+export const getProductsFormData = async (req: AuthRequest, res: Response) => {
+  try {
+    const data = ProductService.getProductFormData();
+    res.status(200).json({ success: true, data: data });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+export const getProductEditData = async (req: AuthRequest, res: Response) => {
+  try {
+    const id = Number(req.params.id);
+    if (!id) {
+      res
+        .status(400)
+        .json({ success: false, message: "Product ID's required" });
+      return;
+    }
+    const data = await ProductService.getProductEditData(id);
+    res.status(200).json({ success: true, data: data });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};

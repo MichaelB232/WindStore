@@ -16,6 +16,8 @@ router.use(authenticate, authorizeAdmin);
 
 // Products
 router.get("/products", ProductController.getAllProductsAdmin);
+router.get("/products/create", ProductController.getProductsFormData); //For display input product
+router.get("/products/:id/edit", ProductController.getProductEditData); //For display input edit
 router.post(
   "/products",
   upload.single("image"),

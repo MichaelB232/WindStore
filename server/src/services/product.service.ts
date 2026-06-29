@@ -207,3 +207,18 @@ export const getAllProductsAdmin = async () => {
     orderBy: { createdAt: "desc" },
   });
 };
+export const getProductFormData = async () => { ////Form Edit Product 
+  const [brands, categories] = await Promise.all([
+    prisma.brand.findMany(),
+    prisma.category.findMany(),
+  ]);
+  return { brands, categories };
+};
+export const getProductEditData = async (id: number) => { //Form Edit Product 
+  const [product, brands, categories] = await Promise.all([
+    prisma.product.findUnique({ where: { id } }),
+    prisma.brand.findMany(),
+    prisma.category.findMany(),
+  ]);
+  return { product, brands, categories };
+};
