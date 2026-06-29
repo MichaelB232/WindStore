@@ -1,8 +1,5 @@
 import jwt from "jsonwebtoken";
 
-// Hapus deklarasi SECRET di luar fungsi ini
-
-// Generate token after login
 export const generateToken = (payload: {
   id: number;
   username: string;
