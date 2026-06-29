@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import userRoutes from "./routes/user.routes";
 import authRoutes from "./routes/auth.routes";
 import productRoutes from "./routes/product.routes";
 import shopRoutes from "./routes/shop.routes";
@@ -11,7 +12,7 @@ import reviewRoutes from "./routes/review.routes";
 import orderRoutes from "./routes/order.routes";
 import paymentRoutes from "./routes/payment.routes";
 import productConfigRoutes from "./routes/productConfig.routes";
-import productFeatureRoutes from "./routes/productFeature.routes";
+import adminRoutes from "./routes/admin.routes";
 import cookieParser from "cookie-parser";
 
 dotenv.config();
@@ -30,6 +31,7 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 
+app.use("/api/admin", adminRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/shop", shopRoutes);
@@ -40,6 +42,6 @@ app.use("/api/reviews", reviewRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/configs", productConfigRoutes);
-app.use("/api/features", productFeatureRoutes);
+app.use("/api/users", userRoutes);
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => console.log(`Server running on PORT ${PORT}`));

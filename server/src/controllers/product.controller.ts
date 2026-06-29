@@ -203,3 +203,11 @@ export const deleteProduct = async (req: AuthRequest, res: Response) => {
     res.status(500).json({ success: false, message: "Server Error" });
   }
 };
+export const getAllProductsAdmin = async (req: AuthRequest, res: Response) => {
+  try {
+    const products = await ProductService.getAllProductsAdmin(); // all products
+    res.status(200).json({ success: true, data: products });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Server Error" });
+  }
+};

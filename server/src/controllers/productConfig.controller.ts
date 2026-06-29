@@ -100,7 +100,7 @@ export const updateProductConfig = async (req: AuthRequest, res: Response) => {
   }
 };
 
-export const deleteProductConfigs = async (req: AuthRequest, res: Response) => {
+export const deleteProductConfig = async (req: AuthRequest, res: Response) => {
   try {
     const id = Number(req.params.id);
     if (!id) {

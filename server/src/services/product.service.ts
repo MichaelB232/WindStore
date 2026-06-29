@@ -191,3 +191,19 @@ export const getProductBySlug = async (slug: string) => {
     },
   });
 };
+export const getAllProductsAdmin = async () => {
+  return await prisma.product.findMany({
+    // ← no isActive filter
+    include: {
+      brand: { select: { name: true } },
+      category: { select: { name: true } },
+      _count: {
+        select: {
+          reviews: true, // ← extra info for admin
+          orderItems: true,
+        },
+      },
+    },
+    orderBy: { createdAt: "desc" },
+  });
+};

@@ -66,3 +66,18 @@ export const updateBrands = async (req: AuthRequest, res: Response) => {
     res.status(500).json({ success: false, message: "Server Error" });
   }
 };
+export const deleteBrand = async (req: AuthRequest, res: Response) => {
+  try {
+    const id = Number(req.params.id);
+    if (!id) {
+      res.status(400).json({ success: false, message: "Id brand is required" });
+      return;
+    }
+    await BrandService.deleteBrand(id);
+    res
+      .status(200)
+      .json({ success: true, message: "Successfuly delete brand" });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Server Error" });
+  }
+};

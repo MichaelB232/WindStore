@@ -31,3 +31,6 @@ export const updateBrand = async ({
     },
   });
 };
+export const deleteBrand = async (id: number) => {
+  return await prisma.brand.delete({ where: { id } });
+};
