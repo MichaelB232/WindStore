@@ -15,3 +15,15 @@ export async function getOrderStatus(
   const json = await res.json();
   return json.data ?? null;
 }
+
+export async function getAllMyOrder(): Promise<Order[]> {
+  const res = await fetch(`${BASE}/api/orders/`, {
+    credentials: "include",
+    cache: "no-store",
+  });
+
+  if (!res.ok) return [];
+
+  const json = await res.json();
+  return json.data ?? [];
+}

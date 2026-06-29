@@ -12,7 +12,7 @@ import { getOrderStatus } from "@/src/services/order/order.service";
 import { ROUTES } from "@/src/routes/routes";
 
 const POLL_INTERVAL_MS = 4000;
-const MAX_POLL_ATTEMPTS = 15; // ~1 minute of polling while the webhook lands
+const MAX_POLL_ATTEMPTS = 15;
 
 export default function OrderStatusPage() {
   const { orderId } = useParams() as { orderId: string };

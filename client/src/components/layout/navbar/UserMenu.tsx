@@ -66,6 +66,9 @@ export default function UserMenu({ isHomePage, scrolled }: UserMenuProps) {
           <Link href={ROUTES.WISHLIST}>
             <DropdownMenuItem>Wishlist</DropdownMenuItem>
           </Link>
+          <Link href={ROUTES.ORDERS}>
+            <DropdownMenuItem>Orders</DropdownMenuItem>
+          </Link>
           <DropdownMenuItem>Settings</DropdownMenuItem>
         </DropdownMenuGroup>
 

@@ -9,4 +9,5 @@ export const ROUTES = {
   REGISTER: "/register",
   CHECKOUT: "/checkout",
   ORDERS: "/orders",
+  ORDER_DETAIL: (orderId: number | string) => `/orders/${orderId}`,
 };

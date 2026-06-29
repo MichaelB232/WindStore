@@ -78,8 +78,7 @@ export default function CheckoutPage() {
       <Container>
         <Link
           href={ROUTES.CART}
-          className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-accent transition-colors mb-6"
-        >
+          className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-accent transition-colors mb-6">
           <ArrowLeft size={16} />
           Back to Cart
         </Link>
