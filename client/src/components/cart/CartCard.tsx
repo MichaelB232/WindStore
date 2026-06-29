@@ -9,6 +9,8 @@ type CartCardProps = {
   item: CartItem;
   onRemove: (cartItemId: number) => void;
 };
+import Link from "next/link";
+import { ROUTES } from "@/src/routes/routes";
 
 export default function CartCard({ item, onRemove }: CartCardProps) {
   const [isExpanded, setIsExpanded] = useState(true);
@@ -38,57 +40,68 @@ export default function CartCard({ item, onRemove }: CartCardProps) {
   };
 
   return (
-    <div className="w-full rounded-3xl bg-white shadow-card overflow-hidden mb-5">
+    <div className="w-full rounded-3xl bg-white shadow-card overflow-hidden mb-5 transition ease-in duration-200 hover:shadow-card-hover ">
       {/* Header */}
-      <div className="flex items-center gap-6 p-8">
-        {/* Thumbnail */}
-        <div className="relative size-28 shrink-0 overflow-hidden rounded-xl bg-muted">
-          <Image
-            src={product.imageUrl}
-            alt={product.name}
-            fill
-            sizes="112px"
-            className="object-contain"
-            unoptimized
-          />
-        </div>
+      <div className="flex items-center">
+        <Link
+          href={`${ROUTES.LAPTOP}/${item.product.slug}`}
+          className="flex flex-1 items-center gap-6 p-8 "
+          title={`Go to ${product.name} detail page`}
+        >
+          {/* Thumbnail */}
+          <div className="relative size-28 shrink-0 overflow-hidden rounded-xl bg-muted">
+            <Image
+              src={product.imageUrl}
+              alt={product.name}
+              fill
+              sizes="112px"
+              className="object-contain"
+              unoptimized
+            />
+          </div>
 
-        {/* Product Info */}
-        <div className="flex-1 min-w-0">
-          <p className="font-mono text-[10px] text-accent uppercase tracking-widest mb-1 font-semibold">
-            {product.brand.name}
-          </p>
-          <h3 className="text-2xl font-bold font-display truncate">
-            {product.name}
-          </h3>
-          {productConfig && (
-            <p className="mt-1 text-sm text-muted-foreground">
-              {productConfig.configType}: {productConfig.configName}
+          {/* Product Info */}
+          <div className="flex-1 min-w-0">
+            <p className="font-mono text-[10px] text-accent uppercase tracking-widest mb-1 font-semibold">
+              {product.brand.name}
             </p>
-          )}
-          {quantity > 1 && (
-            <p className="mt-1 text-xs text-muted-foreground">
-              Qty: {quantity}
-            </p>
-          )}
-        </div>
 
-        {/* Price */}
-        <div className="text-right shrink-0">
-          <p className="text-2xl font-bold text-accent">
-            {formatPrice(totalPrice)}
-          </p>
-          {quantity > 1 && (
-            <p className="text-xs text-muted-foreground mt-0.5">
-              {formatPrice(unitPrice)} each
-            </p>
-          )}
-        </div>
+            <h3 className="text-2xl font-bold font-display truncate">
+              {product.name}
+            </h3>
 
-        {/* Expand toggle */}
+            {productConfig && (
+              <p className="mt-1 text-sm text-muted-foreground">
+                {productConfig.configType}: {productConfig.configName}
+              </p>
+            )}
+
+            {quantity > 1 && (
+              <p className="mt-1 text-xs text-muted-foreground">
+                Qty: {quantity}
+              </p>
+            )}
+          </div>
+
+          {/* Price */}
+          <div className="text-right shrink-0">
+            <p className="text-2xl font-bold text-accent">
+              {formatPrice(totalPrice)}
+            </p>
+
+            {quantity > 1 && (
+              <p className="text-xs text-muted-foreground mt-0.5">
+                {formatPrice(unitPrice)} each
+              </p>
+            )}
+          </div>
+        </Link>
+
+        {/* Expand Button */}
         <button
+          type="button"
           onClick={() => setIsExpanded(!isExpanded)}
-          className="text-muted-foreground hover:text-accent transition cursor-pointer"
+          className="px-8 text-muted-foreground hover:text-accent transition cursor-pointer self-stretch flex items-center justify-center"
         >
           {isExpanded ? <ChevronUp size={24} /> : <ChevronDown size={24} />}
         </button>
@@ -115,7 +128,9 @@ export default function CartCard({ item, onRemove }: CartCardProps) {
                   <span className="text-muted-foreground">
                     {productConfig.configType}
                   </span>
-                  <span className="font-medium">{productConfig.configName}</span>
+                  <span className="font-medium">
+                    {productConfig.configName}
+                  </span>
                 </div>
               )}
             </div>

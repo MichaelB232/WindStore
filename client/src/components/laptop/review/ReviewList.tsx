@@ -34,6 +34,7 @@ export default function ReviewList({ reviews }: { reviews: Review[] }) {
               <div className="flex flex-wrap items-center gap-3 mb-2">
                 <StarRow rating={Number(review.rating)} size={14} />
                 <span className="flex items-center gap-1 text-xs text-success font-medium">
+                  {/* Ini nanti bisa dimasukkin logic agar bisa deteksi user yang sudah beli sama yang belum */}
                   <ShieldCheck size={12} />
                   Verified Purchase
                 </span>

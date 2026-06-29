@@ -7,4 +7,6 @@ export const ROUTES = {
   WISHLIST: "/wishlist",
   LOGIN: "/login",
   REGISTER: "/register",
+  CHECKOUT: "/checkout",
+  ORDERS: "/orders",
 };
