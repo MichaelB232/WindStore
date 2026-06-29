@@ -26,3 +26,24 @@ export async function createCheckout(
 
   return { success: true, data: json.data };
 }
+
+export async function getPaymentToken(orderId: number | string): Promise<{
+  success: boolean;
+  data?: { orderId: number; token: string; redirectUrl: string };
+  message?: string;
+}> {
+  const res = await fetch(`${BASE}/api/payments/${orderId}/token`, {
+    credentials: "include",
+  });
+
+  const json = await res.json();
+
+  if (!res.ok || !json.success) {
+    return {
+      success: false,
+      message: json.message ?? "Failed to get payment token",
+    };
+  }
+
+  return { success: true, data: json.data };
+}

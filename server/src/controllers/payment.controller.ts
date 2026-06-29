@@ -21,7 +21,7 @@ export const checkout = async (req: AuthRequest, res: Response) => {
       },
     });
   } catch (error) {
-    console.log("ini error 1 : " + error)
+    console.log("ini error 1 : " + error);
     res.status(500).json({ success: false, message: "Server Error" });
   }
 };
@@ -36,5 +36,20 @@ export const webhook = async (req: Request, res: Response) => {
   } catch (error) {
     console.error("Webhook error:", error);
     res.status(500).json({ success: false, message: "Server Error" });
+  }
+};
+
+export const getPaymentToken = async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user!.id;
+    const orderId = Number(req.params.orderId);
+
+    const result = await PaymentService.getPaymentToken(userId, orderId);
+    res.status(200).json({ success: true, data: result });
+  } catch (error: any) {
+    console.error("getPaymentToken error:", error);
+    res
+      .status(400)
+      .json({ success: false, message: error.message ?? "Server Error" });
   }
 };
