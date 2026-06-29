@@ -8,6 +8,7 @@ import * as ProductConfigController from "../controllers/productConfig.controlle
 import * as ProductFeatureController from "../controllers/productFeature.controller";
 import * as UserController from "../controllers/user.controller";
 import * as ReviewController from "../controllers/review.controller";
+import * as ProductImageController from "../controllers/productImage.controller";
 import { upload } from "../lib/multer";
 
 const router = Router();
@@ -59,4 +60,12 @@ router.delete("/users/:id", UserController.deleteUser);
 // Reviews
 router.delete("/reviews/:id", ReviewController.deleteReview);
 
+// Images
+router.post(
+  "/images",
+  upload.single("image"),
+  ProductImageController.addProductImage,
+);
+router.put("/images/:id", ProductImageController.updateProductImage);
+router.delete("/images/:id", ProductImageController.deleteProductImage);
 export default router;
