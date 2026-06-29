@@ -4,6 +4,7 @@ import { AuthProvider } from "../services/auth/providers/AuthProviders";
 import { WishlistProvider } from "@/src/services/wishlist/context/WishlistContext";
 import "./globals.css";
 import { Toaster } from "sonner";
+import Script from "next/script";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -39,7 +40,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col">
         <AuthProvider>
           <WishlistProvider>{children}</WishlistProvider>
-          <Toaster/>
+          <Toaster />
         </AuthProvider>
       </body>
     </html>

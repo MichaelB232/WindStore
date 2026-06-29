@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { AuthRequest } from "../middlewares/auth.middlewares";
 import * as PaymentService from "../services/payment.service";
-import * as OrderService from "../services/order.service";
 
 export const checkout = async (req: AuthRequest, res: Response) => {
   try {
@@ -22,6 +21,7 @@ export const checkout = async (req: AuthRequest, res: Response) => {
       },
     });
   } catch (error) {
+    console.log("ini error 1 : " + error)
     res.status(500).json({ success: false, message: "Server Error" });
   }
 };
