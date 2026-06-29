@@ -101,3 +101,47 @@ export const handleWebhook = async (notification: any) => {
 
   return { orderId, orderStatus, paymentStatus };
 };
+
+// Add this new function — generates/refreshes a snap token for an EXISTING pending order
+export const getPaymentToken = async (userId: number, orderId: number) => {
+  const order = await prisma.order.findFirst({
+    where: { id: orderId, userId },
+    include: { orderItems: { include: { product: true } } },
+  });
+
+  if (!order) throw new Error("Order not found");
+  if (order.status.toLowerCase() !== "pending") {
+    throw new Error("This order is no longer pending payment");
+  }
+
+  const user = await prisma.user.findUnique({ where: { id: userId } });
+
+  const transaction = await snap.createTransaction({
+    transaction_details: {
+      order_id: `ORDER-${order.id}-${Date.now()}`,
+      gross_amount: Number(order.totalPrice),
+    },
+    customer_details: {
+      first_name: user!.username,
+      email: user!.email,
+    },
+    item_details: order.orderItems.map((item) => ({
+      id: item.productId.toString(),
+      name: item.product.name,
+      price: Number(item.unitPrice),
+      quantity: item.quantity,
+    })),
+  } as any);
+
+  // Update the existing payment row instead of creating a duplicate
+  await prisma.payment.updateMany({
+    where: { orderId: order.id, status: "pending" },
+    data: { transactionId: transaction.token },
+  });
+
+  return {
+    orderId: order.id,
+    token: transaction.token,
+    redirectUrl: transaction.redirect_url,
+  };
+};
