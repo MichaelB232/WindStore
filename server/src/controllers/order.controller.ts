@@ -21,6 +21,12 @@ export const getMyOrders = async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.user!.id;
     const orders = await OrderService.getMyOrders(userId);
+    if (!orders) {
+      res
+        .status(404)
+        .json({ success: false, message: "Kau gapunya orderan apa" });
+      return;
+    }
     res.status(200).json({ success: true, data: orders });
   } catch (error) {
     res.status(500).json({ success: false, message: "Server Error" });

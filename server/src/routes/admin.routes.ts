@@ -10,7 +10,7 @@ import * as UserController from "../controllers/user.controller";
 import * as ReviewController from "../controllers/review.controller";
 import * as ProductImageController from "../controllers/productImage.controller";
 import { upload } from "../lib/multer";
-
+import { writeLimiter } from "../middlewares/rateLimiter";
 const router = Router();
 
 router.use(authenticate, authorizeAdmin);
@@ -21,51 +21,90 @@ router.get("/products/create", ProductController.getProductsFormData); //For dis
 router.get("/products/:id/edit", ProductController.getProductEditData); //For display input edit
 router.post(
   "/products",
+  writeLimiter,
   upload.single("image"),
   ProductController.createProduct,
 );
 router.put(
   "/products/:id",
+  writeLimiter,
   upload.single("image"),
   ProductController.updateProduct,
 );
-router.delete("/products/:id", ProductController.deleteProduct);
+router.delete("/products/:id", writeLimiter, ProductController.deleteProduct);
 
 // Brands
 router.get("/brands", BrandController.getAllBrands);
-router.post("/brands", BrandController.createBrands);
-router.put("/brands/:id", BrandController.updateBrands);
-router.delete("/brands/:id", BrandController.deleteBrand);
+router.post("/brands", writeLimiter, BrandController.createBrands);
+router.put("/brands/:id", writeLimiter, BrandController.updateBrands);
+router.delete("/brands/:id", writeLimiter, BrandController.deleteBrand);
 
 // Categories
 router.get("/categories", CategoryController.getAllCategories);
-router.post("/categories", CategoryController.createCategory);
-router.put("/categories/:id", CategoryController.updateCategory);
-router.delete("/categories/:id", CategoryController.deleteCategory);
+router.post("/categories", writeLimiter, CategoryController.createCategory);
+router.put("/categories/:id", writeLimiter, CategoryController.updateCategory);
+router.delete(
+  "/categories/:id",
+  writeLimiter,
+  CategoryController.deleteCategory,
+);
 
 // Product Configs
-router.post("/configs", ProductConfigController.createProductConfig);
-router.put("/configs/:id", ProductConfigController.updateProductConfig);
-router.delete("/configs/:id", ProductConfigController.deleteProductConfig);
+router.post(
+  "/configs",
+  writeLimiter,
+  ProductConfigController.createProductConfig,
+);
+router.put(
+  "/configs/:id",
+  writeLimiter,
+  ProductConfigController.updateProductConfig,
+);
+router.delete(
+  "/configs/:id",
+  writeLimiter,
+  ProductConfigController.deleteProductConfig,
+);
 
 // Product Features
-router.post("/features", ProductFeatureController.createProductFeature);
-router.put("/features/:id", ProductFeatureController.updateProductFeature);
-router.delete("/features/:id", ProductFeatureController.deleteProductFeature);
+router.post(
+  "/features",
+  writeLimiter,
+  ProductFeatureController.createProductFeature,
+);
+router.put(
+  "/features/:id",
+  writeLimiter,
+  ProductFeatureController.updateProductFeature,
+);
+router.delete(
+  "/features/:id",
+  writeLimiter,
+  ProductFeatureController.deleteProductFeature,
+);
 
 // Users
 router.get("/users", UserController.getAllUsers);
-router.delete("/users/:id", UserController.deleteUser);
+router.delete("/users/:id", writeLimiter, UserController.deleteUser);
 
 // Reviews
-router.delete("/reviews/:id", ReviewController.deleteReview);
+router.delete("/reviews/:id", writeLimiter, ReviewController.deleteReview);
 
 // Images
 router.post(
   "/images",
+  writeLimiter,
   upload.single("image"),
   ProductImageController.addProductImage,
 );
-router.put("/images/:id", ProductImageController.updateProductImage);
-router.delete("/images/:id", ProductImageController.deleteProductImage);
+router.put(
+  "/images/:id",
+  writeLimiter,
+  ProductImageController.updateProductImage,
+);
+router.delete(
+  "/images/:id",
+  writeLimiter,
+  ProductImageController.deleteProductImage,
+);
 export default router;

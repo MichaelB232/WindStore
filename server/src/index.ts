@@ -15,7 +15,7 @@ import paymentRoutes from "./routes/payment.routes";
 import productConfigRoutes from "./routes/productConfig.routes";
 import adminRoutes from "./routes/admin.routes";
 import cookieParser from "cookie-parser";
-
+import { globalLimiter } from "./middlewares/rateLimiter";
 (BigInt.prototype as any).toJSON = function () {
   return this.toString();
 };
@@ -29,6 +29,7 @@ app.use(
 );
 app.use(express.json());
 app.use(cookieParser());
+app.use(globalLimiter);
 
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
