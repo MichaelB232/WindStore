@@ -71,7 +71,7 @@ export default function OrderStatusPage() {
     setPayingNow(true);
 
     try {
-      const result = await getPaymentToken(order.id);
+      const result = await getPaymentToken(order.publicId);
 
       if (!result.success || !result.data) {
         toast.error(

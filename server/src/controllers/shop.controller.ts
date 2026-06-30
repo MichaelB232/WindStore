@@ -29,7 +29,6 @@ export const getShop = async (req: Request, res: Response) => {
       data: { brands, products, processors, categories },
     });
   } catch (error) {
-    console.log("Error : ", error);
     res.status(500).json({ success: false, message: "Server Error" });
   }
 };

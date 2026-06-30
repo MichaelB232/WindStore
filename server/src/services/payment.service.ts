@@ -119,9 +119,9 @@ export const handleWebhook = async (notification: any) => {
 };
 
 // Add this new function — generates/refreshes a snap token for an EXISTING pending order
-export const getPaymentToken = async (userId: number, orderId: number) => {
+export const getPaymentToken = async (userId: number, publicId: string) => {
   const order = await prisma.order.findFirst({
-    where: { id: orderId, userId },
+    where: { publicId, userId },
     include: { orderItems: { include: { product: true } } },
   });
 

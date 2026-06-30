@@ -17,6 +17,7 @@ const badgeClasses: Record<string, string> = {
 export default function CatalogListCard({ product }: { product: Product }) {
   const { isWishlisted, toggle } = useWishlist();
   const wishlisted = isWishlisted(product.id);
+  const outOfStock = product.stock <= 0;
 
   const specChips = [
     product.specs.processor,
@@ -30,19 +31,25 @@ export default function CatalogListCard({ product }: { product: Product }) {
         href={`${ROUTES.LAPTOP}/${product.slug}`}
         className="relative w-45 shrink-0 self-stretch bg-surface-alt flex items-center justify-center p-4"
       >
-        {product.badge && (
-          <span
-            className={`absolute top-3 left-3 z-10 font-mono text-[9px] font-bold px-2 py-0.5 rounded uppercase tracking-wider ${badgeClasses[product.badge] ?? "bg-surface-alt text-text-secondary"}`}
-          >
-            {product.badge}
+        {outOfStock ? (
+          <span className="absolute top-3 left-3 z-10 font-mono text-[9px] font-bold px-2 py-0.5 rounded uppercase tracking-wider bg-text-primary text-white">
+            Out of Stock
           </span>
+        ) : (
+          product.badge && (
+            <span
+              className={`absolute top-3 left-3 z-10 font-mono text-[9px] font-bold px-2 py-0.5 rounded uppercase tracking-wider ${badgeClasses[product.badge] ?? "bg-surface-alt text-text-secondary"}`}
+            >
+              {product.badge}
+            </span>
+          )
         )}
         <Image
           src={product.imageUrl}
           alt={`${product.brand.name} ${product.name}`}
           width={160}
           height={120}
-          className="w-full h-30 object-contain drop-shadow-md mix-blend-multiply transition-transform duration-300 group-hover:scale-105"
+          className={`w-full h-30 object-contain drop-shadow-md mix-blend-multiply transition-transform duration-300 group-hover:scale-105 ${outOfStock ? "grayscale opacity-50" : ""}`}
           unoptimized
         />
       </Link>
@@ -77,18 +84,29 @@ export default function CatalogListCard({ product }: { product: Product }) {
           <div className="flex flex-col gap-2 w-full">
             <Link href={`${ROUTES.LAPTOP}/${product.slug}`} className="w-full">
               <button className="w-full py-2 bg-accent hover:bg-accent-hover text-white font-semibold text-sm rounded-xl transition-colors duration-150 cursor-pointer">
-                Customize Build
+                {outOfStock ? "View Details" : "Customize Build"}
               </button>
             </Link>
             <div className="flex gap-2 w-full">
-              <Link
-                href={`${ROUTES.LAPTOP}/${product.slug}#detail-configuration`}
-                className="flex-1"
-              >
-                <button className="w-full py-1.5 flex items-center justify-center gap-1.5 border border-border text-accent hover:bg-accent-muted hover:border-accent rounded-xl text-sm transition-all duration-150 cursor-pointer">
+              {outOfStock ? (
+                <button
+                  type="button"
+                  disabled
+                  title="Out of stock"
+                  className="flex-1 py-1.5 flex items-center justify-center gap-1.5 border border-border text-text-muted rounded-xl text-sm cursor-not-allowed opacity-50"
+                >
                   <ShoppingCart size={13} /> Add
                 </button>
-              </Link>
+              ) : (
+                <Link
+                  href={`${ROUTES.LAPTOP}/${product.slug}#detail-configuration`}
+                  className="flex-1"
+                >
+                  <button className="w-full py-1.5 flex items-center justify-center gap-1.5 border border-border text-accent hover:bg-accent-muted hover:border-accent rounded-xl text-sm transition-all duration-150 cursor-pointer">
+                    <ShoppingCart size={13} /> Add
+                  </button>
+                </Link>
+              )}
               <button
                 onClick={() => toggle(product.id)}
                 title={wishlisted ? "Remove from wishlist" : "Save to wishlist"}
