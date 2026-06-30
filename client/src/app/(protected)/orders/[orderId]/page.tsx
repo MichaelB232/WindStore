@@ -18,7 +18,7 @@ const POLL_INTERVAL_MS = 4000;
 const MAX_POLL_ATTEMPTS = 15;
 
 export default function OrderStatusPage() {
-  const { orderId } = useParams() as { orderId: string };
+  const { publicId } = useParams() as { publicId: string };
 
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
@@ -29,10 +29,11 @@ export default function OrderStatusPage() {
   const { isReady, pay } = useMidtransSnap();
 
   const fetchOrder = useCallback(async () => {
-    const data = await getOrderStatus(orderId);
+    const data = await getOrderStatus(publicId);
+    console.log(data);
     setOrder(data);
     return data;
-  }, [orderId]);
+  }, [publicId]);
 
   useEffect(() => {
     let cancelled = false;
@@ -135,7 +136,7 @@ export default function OrderStatusPage() {
           <div className="space-y-8">
             <OrderStatusBanner
               status={order.status}
-              orderId={order.id}
+              publicId={order.publicId}
               onRefresh={handleRefresh}
               refreshing={refreshing}
             />

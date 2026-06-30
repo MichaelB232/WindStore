@@ -28,6 +28,7 @@ export interface OrderPayment {
 
 export interface Order {
   id: number;
+  publicId: string,
   userId: number;
   totalPrice: string;
   status: string;

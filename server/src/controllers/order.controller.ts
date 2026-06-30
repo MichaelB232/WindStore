@@ -5,7 +5,7 @@ import * as OrderService from "../services/order.service";
 export const getOrderStatus = async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.user!.id;
-    const  publicId  = String(req.params);
+    const publicId = req.params.publicId as string; // ← fix here
 
     const order = await OrderService.findOrderStatus(publicId, userId);
     if (!order) {
@@ -14,6 +14,7 @@ export const getOrderStatus = async (req: AuthRequest, res: Response) => {
     }
     res.status(200).json({ success: true, data: order });
   } catch (error) {
+    console.error("getOrderStatus error:", error); // ← add this for debugging next time
     res.status(500).json({ success: false, message: "Server Error" });
   }
 };

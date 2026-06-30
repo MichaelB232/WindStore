@@ -35,7 +35,7 @@ export default function OrderListCard({ order }: OrderListCardProps) {
 
   return (
     <Link
-      href={ROUTES.ORDER_DETAIL(order.id)}
+      href={ROUTES.ORDER_DETAIL(order.publicId)}
       className="group block w-full rounded-3xl bg-white shadow-card overflow-hidden transition ease-in duration-200 hover:shadow-card-hover"
     >
       {/* Header */}

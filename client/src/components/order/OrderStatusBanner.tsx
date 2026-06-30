@@ -2,7 +2,7 @@ import { CheckCircle2, Clock, XCircle, RotateCw, LucideIcon } from "lucide-react
 
 type OrderStatusBannerProps = {
   status: string;
-  orderId: number;
+  publicId: string;
   onRefresh: () => void;
   refreshing: boolean;
 };
@@ -43,7 +43,7 @@ const STATUS_MAP: Record<string, StatusConfig> = {
 
 export default function OrderStatusBanner({
   status,
-  orderId,
+  publicId,
   onRefresh,
   refreshing,
 }: OrderStatusBannerProps) {
@@ -58,7 +58,7 @@ export default function OrderStatusBanner({
 
         <div className="flex-1">
           <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground">
-            Order #{orderId}
+            Order #{publicId}
           </p>
           <h1 className={`font-display text-3xl font-bold mt-1 ${config.color}`}>
             {config.label}
