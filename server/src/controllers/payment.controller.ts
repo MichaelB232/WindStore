@@ -21,7 +21,6 @@ export const checkout = async (req: AuthRequest, res: Response) => {
       },
     });
   } catch (error) {
-    console.log("ini error 1 : " + error);
     res.status(500).json({ success: false, message: "Server Error" });
   }
 };
@@ -29,7 +28,6 @@ export const checkout = async (req: AuthRequest, res: Response) => {
 export const webhook = async (req: Request, res: Response) => {
   try {
     const notification = req.body;
-    console.log("Webhook received : ", notification);
 
     const result = PaymentService.handleWebhook(notification);
     res.status(200).json({ success: true, data: result });
@@ -42,9 +40,9 @@ export const webhook = async (req: Request, res: Response) => {
 export const getPaymentToken = async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.user!.id;
-    const orderId = Number(req.params.orderId);
+    const publicId = req.params.publicId as string;
 
-    const result = await PaymentService.getPaymentToken(userId, orderId);
+    const result = await PaymentService.getPaymentToken(userId, publicId);
     res.status(200).json({ success: true, data: result });
   } catch (error: any) {
     console.error("getPaymentToken error:", error);

@@ -25,7 +25,6 @@ export const addProductToWishlist = async (req: AuthRequest, res: Response) => {
     const wishlist = await WishlistService.addWishlist(userId, productId);
     res.status(201).json({ success: true, data: wishlist });
   } catch (error) {
-    console.log("Error : ", error);
     res.status(500).json({ success: false, message: "Server Error" });
   }
 };

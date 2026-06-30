@@ -11,6 +11,6 @@ router.post(
   paymentLimiter,
   PaymentController.checkout,
 );
-router.get("/:orderId/token", authenticate, PaymentController.getPaymentToken);
+router.get("/:publicId/token", authenticate, PaymentController.getPaymentToken);
 
 export default router;

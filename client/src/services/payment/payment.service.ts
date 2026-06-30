@@ -27,12 +27,12 @@ export async function createCheckout(
   return { success: true, data: json.data };
 }
 
-export async function getPaymentToken(orderId: number | string): Promise<{
+export async function getPaymentToken(publicId: string): Promise<{
   success: boolean;
   data?: { orderId: number; token: string; redirectUrl: string };
   message?: string;
 }> {
-  const res = await fetch(`${BASE}/api/payments/${orderId}/token`, {
+  const res = await fetch(`${BASE}/api/payments/${publicId}/token`, {
     credentials: "include",
   });
 

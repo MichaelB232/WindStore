@@ -25,6 +25,7 @@ export default function CatalogCard({ product }: { product: Product }) {
   );
   const { isWishlisted, toggle } = useWishlist();
   const wishlisted = isWishlisted(product.id);
+  const outOfStock = product.stock <= 0;
 
   const specChips = [
     product.specs.processor,
@@ -42,7 +43,7 @@ export default function CatalogCard({ product }: { product: Product }) {
       return;
     }
 
-    if (cartState !== "idle" || !product.defaultConfig) return;
+    if (cartState !== "idle" || !product.defaultConfig || outOfStock) return;
     setCartState("loading");
     const result = await addToCart(product.id, product.defaultConfig.id);
     if (result.success) {
@@ -86,19 +87,25 @@ export default function CatalogCard({ product }: { product: Product }) {
           className="relative bg-surface-alt flex items-center justify-center p-4 overflow-hidden shrink-0"
           style={{ height: "170px" }}
         >
-          {product.badge && (
-            <span
-              className={`absolute top-3 left-3 z-10 font-mono text-[9px] font-bold px-2 py-0.5 rounded uppercase tracking-wider ${badgeClasses[product.badge] ?? "bg-surface-alt text-text-secondary"}`}
-            >
-              {product.badge}
+          {outOfStock ? (
+            <span className="absolute top-3 left-3 z-10 font-mono text-[9px] font-bold px-2 py-0.5 rounded uppercase tracking-wider bg-text-primary text-white">
+              Out of Stock
             </span>
+          ) : (
+            product.badge && (
+              <span
+                className={`absolute top-3 left-3 z-10 font-mono text-[9px] font-bold px-2 py-0.5 rounded uppercase tracking-wider ${badgeClasses[product.badge] ?? "bg-surface-alt text-text-secondary"}`}
+              >
+                {product.badge}
+              </span>
+            )
           )}
           <Image
             src={product.imageUrl}
             alt={`${product.brand.name} ${product.name}`}
             width={280}
             height={160}
-            className="w-full h-full object-contain drop-shadow-md mix-blend-multiply transition-transform duration-300 group-hover:scale-[1.04]"
+            className={`w-full h-full object-contain drop-shadow-md mix-blend-multiply transition-transform duration-300 group-hover:scale-[1.04] ${outOfStock ? "grayscale opacity-50" : ""}`}
             unoptimized
           />
         </div>
@@ -129,17 +136,21 @@ export default function CatalogCard({ product }: { product: Product }) {
             <div className="flex gap-2">
               <span className="flex-1 min-w-0">
                 <span className="w-full block text-center py-2 bg-accent group-hover:bg-accent-hover text-white font-semibold text-xs rounded-xl transition-colors duration-150">
-                  Customize Build
+                  {outOfStock ? "View Details" : "Customize Build"}
                 </span>
               </span>
               <button
                 type="button"
                 title={
-                  cartState === "added" ? "Added to cart" : "Quick add to cart"
+                  outOfStock
+                    ? "Out of stock"
+                    : cartState === "added"
+                      ? "Added to cart"
+                      : "Quick add to cart"
                 }
                 onClick={handleQuickAddToCart}
-                disabled={cartState !== "idle"}
-                className={`w-8 h-8 shrink-0 flex items-center justify-center rounded-xl border transition-all duration-150 cursor-pointer disabled:cursor-not-allowed
+                disabled={cartState !== "idle" || outOfStock}
+                className={`w-8 h-8 shrink-0 flex items-center justify-center rounded-xl border transition-all duration-150 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50
                   ${cartState === "added" ? "bg-green-500 border-green-500 text-white" : "border-border text-accent hover:bg-accent-muted hover:border-accent"}`}
               >
                 {cartState === "added" ? (

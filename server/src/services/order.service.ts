@@ -88,7 +88,6 @@ export const getMyOrders = async (userId: number) => {
     },
     orderBy: { createdAt: "desc" },
   });
-  console.log(orders);
   return orders;
 };
 

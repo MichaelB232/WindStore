@@ -155,7 +155,9 @@ export default function DetailConfiguration({
             </span>
           </div>
 
-          <p className="mt-4 text-sm text-green-600">
+          <p
+            className={`mt-4 text-sm font-medium ${laptop.stock > 0 ? "text-green-600" : "text-red-600"}`}
+          >
             {laptop.stock > 0
               ? `In Stock (${laptop.stock} left)`
               : "Out of Stock"}
