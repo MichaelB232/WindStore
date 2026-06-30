@@ -60,7 +60,7 @@ export default function CheckoutPage() {
 
     await clearCart();
 
-    const goToOrderStatus = () => router.push(`${ROUTES.ORDERS}/${publicId}`);
+    const goToOrderStatus = () => router.push(ROUTES.ORDER_DETAIL(publicId));
 
     pay(token, {
       onSuccess: goToOrderStatus,

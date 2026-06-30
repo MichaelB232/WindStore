@@ -43,7 +43,7 @@ export default function OrderListCard({ order }: OrderListCardProps) {
         <div className="flex items-center gap-3 min-w-0">
           <Package size={16} className="text-muted-foreground shrink-0" />
           <p className="text-sm font-mono uppercase tracking-widest text-muted-foreground truncate">
-            Order #{order.id}
+            Order #{order.publicId}
           </p>
           <span className="text-muted-foreground/40">•</span>
           <p className="text-sm text-muted-foreground whitespace-nowrap">
