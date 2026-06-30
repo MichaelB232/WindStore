@@ -87,7 +87,23 @@ export const handleWebhook = async (notification: any) => {
   ) {
     orderStatus = "cancelled";
     paymentStatus = "failed";
+
+    const order = await prisma.order.findUnique({
+      where: { id: orderId },
+      include: { orderItems: true },
+    });
+    if (order) {
+      await prisma.$transaction(
+        order.orderItems.map((item) =>
+          prisma.product.update({
+            where: { id: item.productId },
+            data: { stock: { increment: item.quantity } }, //give back
+          }),
+        ),
+      );
+    }
   }
+
   await prisma.$transaction([
     prisma.order.update({
       where: { id: orderId },

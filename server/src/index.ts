@@ -16,6 +16,7 @@ import productConfigRoutes from "./routes/productConfig.routes";
 import adminRoutes from "./routes/admin.routes";
 import cookieParser from "cookie-parser";
 import { globalLimiter } from "./middlewares/rateLimiter";
+import { startExpiredOrdersJob } from "./jobs/releaseExpiredOrders.job";
 (BigInt.prototype as any).toJSON = function () {
   return this.toString();
 };
@@ -44,4 +45,7 @@ app.use("/api/configs", productConfigRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/admin", adminRoutes);
 const PORT = process.env.PORT || 8000;
-app.listen(PORT, () => console.log(`Server running on PORT ${PORT}`));
+app.listen(PORT, () => {
+  console.log(`Server running on PORT ${PORT}`);
+  startExpiredOrdersJob(); // ← start the cron job when server starts
+});

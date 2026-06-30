@@ -18,16 +18,32 @@ export const addProductToCart = async (
   userId: number,
   productId: number,
   productConfigId: number,
-  quantity = 1,
+  quantity?: number,
 ) => {
-  const existingItem = await prisma.cartItem.findFirst({
+  const qty = quantity ?? 1;
+  const product = await prisma.product.findUnique({
+    where: { id: productId },
+    select: { stock: true, name: true },
+  });
+  if (!product) {
+    throw new Error("PRODUCT_NOT_FOUND");
+  }
+  const existingCart = await prisma.cartItem.findFirst({
     where: { userId, productId, configId: productConfigId },
   });
+  const totalQuantity = existingCart
+    ? quantity !== undefined
+      ? quantity
+      : existingCart.quantity + 1
+    : qty;
 
+  if (totalQuantity > product.stock) {
+    throw new Error("INSUFFICIENT STOCK");
+  }
   // increment the qty
-  if (existingItem) {
+  if (existingCart) {
     return await prisma.cartItem.update({
-      where: { id: existingItem.id },
+      where: { id: existingCart.id },
       data: { quantity: { increment: quantity } },
     });
   }

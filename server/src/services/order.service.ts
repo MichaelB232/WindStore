@@ -3,42 +3,49 @@ export const createOrder = async (
   userId: number,
   cartItems: { productId: number; configId: number; quantity: number }[],
 ) => {
-  const configIds = cartItems.map((item) => Number(item.configId));
-
-  const configs = await prisma.productConfig.findMany({
-    where: { id: { in: configIds } },
-    include: { product: true },
-  });
-
-  const configMap = new Map(configs.map((c) => [c.id, c]));
-
-  let totalPrice = BigInt(0);
-  const orderItemsData: {
-    productId: number;
-    configId: number;
-    quantity: number;
-    unitPrice: bigint;
-  }[] = [];
-
-  for (const item of cartItems) {
-    const config = configMap.get(Number(item.configId));
-    if (!config)
-      throw new Error(`Config with ID ${item.configId} is not found!`);
-    const basePrice = BigInt(config.product.basePrice);
-    const priceModifier = BigInt(config.priceModifier);
-    const unitPrice = basePrice + priceModifier;
-
-    const quantity = BigInt(item.quantity);
-    totalPrice += unitPrice * quantity;
-
-    orderItemsData.push({
-      productId: Number(item.productId),
-      configId: Number(item.configId),
-      quantity: Number(item.quantity),
-      unitPrice,
-    });
-  }
   return await prisma.$transaction(async (tx) => {
+    const configIds = cartItems.map((item) => Number(item.configId));
+
+    const configs = await tx.productConfig.findMany({
+      where: { id: { in: configIds } },
+      include: { product: true },
+    });
+
+    const configMap = new Map(configs.map((c) => [c.id, c]));
+
+    let totalPrice = BigInt(0);
+    const orderItemsData: {
+      productId: number;
+      configId: number;
+      quantity: number;
+      unitPrice: bigint;
+    }[] = [];
+
+    for (const item of cartItems) {
+      const config = configMap.get(Number(item.configId));
+      if (!config)
+        throw new Error(`Config with ID ${item.configId} is not found!`);
+      if (item.quantity > config.product.stock) {
+        throw new Error(`INSUFFICIENT_STOCK:${config.product.name}`);
+      }
+      const basePrice = BigInt(config.product.basePrice);
+      const priceModifier = BigInt(config.priceModifier);
+      const unitPrice = basePrice + priceModifier;
+
+      const quantity = BigInt(item.quantity);
+      totalPrice += unitPrice * quantity;
+
+      orderItemsData.push({
+        productId: Number(item.productId),
+        configId: Number(item.configId),
+        quantity: Number(item.quantity),
+        unitPrice,
+      });
+      await tx.product.update({
+        where: { id: item.productId },
+        data: { stock: { decrement: item.quantity } },
+      });
+    }
     const order = await tx.order.create({
       data: {
         userId,
@@ -81,4 +88,30 @@ export const getMyOrders = async (userId: number) => {
     },
     orderBy: { createdAt: "desc" },
   });
+};
+
+export const releaseExpiredOrders = async () => {
+  const expiredOrders = await prisma.order.findMany({
+    where: {
+      status: "pending",
+      createdAt: { lte: new Date(Date.now() - 30 * 60 * 1000) },
+    },
+    include: { orderItems: true },
+  });
+
+  for (const order of expiredOrders) {
+    await prisma.$transaction([
+      ...order.orderItems.map((item) =>
+        prisma.product.update({
+          where: { id: item.productId },
+          data: { stock: { increment: item.quantity } },
+        }),
+      ),
+      prisma.order.update({
+        where: { id: order.id },
+        data: { status: "cancelled" },
+      }),
+    ]);
+  }
+  return expiredOrders;
 };
