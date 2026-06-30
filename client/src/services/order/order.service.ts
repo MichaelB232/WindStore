@@ -2,9 +2,7 @@ import { Order } from "@/src/lib/producttype/OrderType";
 
 const BASE = process.env.NEXT_PUBLIC_API_URL;
 
-export async function getOrderStatus(
-  publicId: string | string,
-): Promise<Order | null> {
+export async function getOrderStatus(publicId: string): Promise<Order | null> {
   const res = await fetch(`${BASE}/api/orders/${publicId}`, {
     credentials: "include",
     cache: "no-store",

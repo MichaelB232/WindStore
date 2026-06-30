@@ -56,7 +56,7 @@ export default function OrdersPage() {
         ) : (
           <div className="flex flex-col gap-5">
             {orders.map((order) => (
-              <OrderListCard key={order.id} order={order} />
+              <OrderListCard key={order.publicId} order={order} />
             ))}
           </div>
         )}

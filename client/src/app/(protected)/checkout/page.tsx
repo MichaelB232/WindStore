@@ -56,11 +56,11 @@ export default function CheckoutPage() {
       return;
     }
 
-    const { orderId, token } = result.data;
+    const { publicId, token } = result.data;
 
     await clearCart();
 
-    const goToOrderStatus = () => router.push(`${ROUTES.ORDERS}/${orderId}`);
+    const goToOrderStatus = () => router.push(ROUTES.ORDER_DETAIL(publicId));
 
     pay(token, {
       onSuccess: goToOrderStatus,

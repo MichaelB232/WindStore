@@ -39,6 +39,7 @@ export interface Order {
 
 export interface CheckoutResult {
   orderId: number;
+  publicId: string;
   token: string;
   redirectUrl: string;
 }
