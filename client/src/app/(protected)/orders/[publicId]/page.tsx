@@ -30,7 +30,6 @@ export default function OrderStatusPage() {
 
   const fetchOrder = useCallback(async () => {
     const data = await getOrderStatus(publicId);
-    console.log(data);
     setOrder(data);
     return data;
   }, [publicId]);
