@@ -59,9 +59,9 @@ export const createOrder = async (
   });
 };
 
-export const findOrderStatus = async (id: number, userId: number) => {
+export const findOrderStatus = async (publicId: string, userId: number) => {
   return await prisma.order.findFirst({
-    where: { id: id, userId: userId },
+    where: { publicId: publicId, userId: userId },
     include: {
       orderItems: {
         include: {
@@ -94,7 +94,7 @@ export const releaseExpiredOrders = async () => {
   const expiredOrders = await prisma.order.findMany({
     where: {
       status: "pending",
-      createdAt: { lte: new Date(Date.now() - 30 * 60 * 1000) },
+      createdAt: { lte: new Date(Date.now() - 30 * 60 * 1000) }, // 30 mins
     },
     include: { orderItems: true },
   });

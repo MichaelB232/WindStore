@@ -5,9 +5,9 @@ import * as OrderService from "../services/order.service";
 export const getOrderStatus = async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.user!.id;
-    const orderId = Number(req.params.orderId);
+    const  publicId  = String(req.params);
 
-    const order = await OrderService.findOrderStatus(orderId, userId);
+    const order = await OrderService.findOrderStatus(publicId, userId);
     if (!order) {
       res.status(404).json({ success: false, message: "Order not found" });
       return;

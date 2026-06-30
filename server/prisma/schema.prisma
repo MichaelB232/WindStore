@@ -120,6 +120,7 @@ model ProductConfig {
 model Order {
   id         Int      @id @default(autoincrement())
   userId     Int      @map("user_id")
+  publicId   String   @unique @default(uuid()) @map("public_id")
   totalPrice BigInt   @map("total_price")
   status     String
   createdAt  DateTime @default(now()) @map("created_at")
