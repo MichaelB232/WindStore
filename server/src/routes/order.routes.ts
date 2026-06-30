@@ -5,5 +5,5 @@ import * as OrderController from "../controllers/order.controller";
 const router = Router();
 
 router.get("/", authenticate, OrderController.getMyOrders);
-router.get("/:orderId", authenticate, OrderController.getOrderStatus);
+router.get("/:publicId", authenticate, OrderController.getOrderStatus);
 export default router;
