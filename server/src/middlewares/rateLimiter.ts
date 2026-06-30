@@ -10,11 +10,12 @@ export const globalLimiter = rateLimit({
 
 // Stricter for auth
 export const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
+  windowMs: 0.1 * 60 * 1000,
+  // windowsMs: 10 * 60 * 1000, // Production
   max: 5,
   message: {
     success: false,
-    message: "Too many attempts, try again in 15 minutes",
+    message: "Too many attempts, try again in 6 sec", // development
   },
   keyGenerator: (req) => ipKeyGenerator(req.ip as string),
 });

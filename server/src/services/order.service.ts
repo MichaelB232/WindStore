@@ -75,7 +75,7 @@ export const findOrderStatus = async (publicId: string, userId: number) => {
 };
 
 export const getMyOrders = async (userId: number) => {
-  return await prisma.order.findMany({
+  const orders = await prisma.order.findMany({
     where: { userId },
     include: {
       orderItems: {
@@ -88,6 +88,8 @@ export const getMyOrders = async (userId: number) => {
     },
     orderBy: { createdAt: "desc" },
   });
+  console.log(orders);
+  return orders;
 };
 
 export const releaseExpiredOrders = async () => {
