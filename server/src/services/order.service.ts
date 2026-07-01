@@ -62,7 +62,7 @@ export const createOrder = async (
       data: {
         userId,
         totalPrice,
-        status: "Pending",
+        status: "pending",
         orderItems: { create: orderItemsData },
       },
       include: { orderItems: { include: { product: true } } },
@@ -107,7 +107,7 @@ export const releaseExpiredOrders = async () => {
   const expiredOrders = await prisma.order.findMany({
     where: {
       status: "pending",
-      createdAt: { lte: new Date(Date.now() - 30 * 60 * 1000) }, // 30 mins
+      createdAt: { lte: new Date(Date.now() - 0.5 * 60 * 1000) },
     },
     include: { orderItems: true },
   });
