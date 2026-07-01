@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Bricolage_Grotesque } from "next/font/google";
 import { AuthProvider } from "../services/auth/providers/AuthProviders";
 import { WishlistProvider } from "@/src/services/wishlist/context/WishlistContext";
+import { CartSelectionProvider } from "@/src/services/cart/context/CartSelectionContext";
 import "./globals.css";
 import { Toaster } from "sonner";
 import Script from "next/script";
@@ -39,7 +40,9 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <AuthProvider>
-          <WishlistProvider>{children}</WishlistProvider>
+          <WishlistProvider>
+            <CartSelectionProvider>{children}</CartSelectionProvider>
+          </WishlistProvider>
           <Toaster />
         </AuthProvider>
       </body>

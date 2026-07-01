@@ -42,8 +42,9 @@ export const createPayment = async (
   });
   return {
     orderId: order.id,
-    token: transaction.token, // <- FE uses this to open payment popup
-    redirectUrl: transaction.redirect_url, // or redirect here dude
+    publicId: order.publicId, 
+    token: transaction.token, 
+    redirectUrl: transaction.redirect_url,
   };
 };
 
