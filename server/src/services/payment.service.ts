@@ -29,8 +29,7 @@ export const createPayment = async (
     where: { code: "MIDTRANS" },
   });
 
-  if (!paymentMethod)
-    throw new Error("Payment Method not yet registered anjaay");
+  if (!paymentMethod) throw new Error("Payment Method not yet registered");
 
   await prisma.payment.create({
     data: {

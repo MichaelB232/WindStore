@@ -1,4 +1,5 @@
 import prisma from "../lib/prisma";
+import { AppError } from "../errors/AppError";
 export const createOrder = async (
   userId: number,
   cartItems: { productId: number; configId: number; quantity: number }[],
@@ -24,10 +25,21 @@ export const createOrder = async (
     for (const item of cartItems) {
       const config = configMap.get(Number(item.configId));
       if (!config)
-        throw new Error(`Config with ID ${item.configId} is not found!`);
+        throw new AppError(
+          404,
+          "CONFIG_NOT_FOUND",
+          `Config is not found or no longer exist`,
+        );
       if (item.quantity > config.product.stock) {
-        throw new Error(`INSUFFICIENT_STOCK:${config.product.name}`);
+        throw new AppError(404, "INSUFFICIENT_STOCK", "Not Enough Stock", {
+          productName: config.product.name,
+          availableStock: config.product.stock,
+        });
       }
+    }
+
+    for (const item of cartItems) {
+      const config = configMap.get(Number(item.configId))!;
       const basePrice = BigInt(config.product.basePrice);
       const priceModifier = BigInt(config.priceModifier);
       const unitPrice = basePrice + priceModifier;

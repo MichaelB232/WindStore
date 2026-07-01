@@ -12,6 +12,40 @@ export const getAllBrands = async (req: Request, res: Response) => {
   }
 };
 
+export const getBrandByName = async (req: AuthRequest, res: Response) => {
+  try {
+    const name = req.params.name as string;
+    const brand = await BrandService.getBrandByName(name);
+    if (!brand) {
+      res.status(404).json({
+        success: false,
+        message: "Brand not found or no longer exist",
+      });
+      return;
+    }
+    res.status(200).json({ success: true, data: brand });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Server Error" });
+  }
+};
+
+export const getBrandById = async (req: AuthRequest, res: Response) => {
+  try {
+    const id = Number(req.params.id);
+    const brand = await BrandService.getBrandById(id);
+    if (!brand) {
+      res.status(404).json({
+        success: false,
+        message: "Brand not found or no longer exist",
+      });
+      return;
+    }
+    res.status(200).json({ success: true, data: brand });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Server Error" });
+  }
+};
+
 export const createBrands = async (req: AuthRequest, res: Response) => {
   try {
     const { name, description } = req.body;

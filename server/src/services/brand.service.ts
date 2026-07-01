@@ -34,3 +34,11 @@ export const updateBrand = async ({
 export const deleteBrand = async (id: number) => {
   return await prisma.brand.delete({ where: { id } });
 };
+
+export const getBrandByName = async (name: string) => {
+  return await prisma.brand.findUnique({ where: { name } });
+};
+
+export const getBrandById = async (id: number) => {
+  return await prisma.brand.findFirst({ where: { id } });
+};

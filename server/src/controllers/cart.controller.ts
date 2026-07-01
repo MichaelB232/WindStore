@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { AuthRequest } from "../middlewares/auth.middlewares";
 import * as CartService from "../services/cart.service";
+import { AppError } from "../errors/AppError";
 
 export const getCartByUser = async (req: AuthRequest, res: Response) => {
   try {
@@ -31,7 +32,15 @@ export const addToCart = async (req: AuthRequest, res: Response) => {
       quantity,
     );
     res.status(201).json({ success: true, data: cart });
-  } catch (error) {
+  } catch (error: any) {
+    if (error instanceof AppError) {
+      if (error.code === "INSUFFICIENT_STOCK") {
+        return res.status(error.statusCode).json({
+          success: false,
+          message: `Sorry, ${error.details.productName} only has ${error.details.availableStock} units left.`,
+        });
+      }
+    }
     res.status(500).json({ success: false, message: "Server Error" });
   }
 };

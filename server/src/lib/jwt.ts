@@ -8,9 +8,7 @@ export const generateToken = (payload: {
   const secret = process.env.JWT_SECRET;
 
   if (!secret) {
-    throw new Error(
-      "Kritis: JWT_SECRET tidak terdefinisi di environment variable!",
-    );
+    throw new Error("JWT_SECRET is not defiend on .env");
   }
 
   return jwt.sign(payload, secret, { expiresIn: "7d" });
@@ -21,9 +19,7 @@ export const verifyToken = (token: string) => {
   const secret = process.env.JWT_SECRET;
 
   if (!secret) {
-    throw new Error(
-      "Kritis: JWT_SECRET tidak terdefinisi di environment variable!",
-    );
+    throw new Error("JWT_SECRET is not defiend on .env");
   }
 
   return jwt.verify(token, secret);

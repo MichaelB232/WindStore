@@ -1,3 +1,4 @@
+import { AppError } from "../errors/AppError";
 import prisma from "../lib/prisma";
 
 export const getCartByUser = async (userId: number) => {
@@ -31,6 +32,7 @@ export const addProductToCart = async (
   const existingCart = await prisma.cartItem.findFirst({
     where: { userId, productId, configId: productConfigId },
   });
+
   const totalQuantity = existingCart
     ? quantity !== undefined
       ? quantity
@@ -38,7 +40,10 @@ export const addProductToCart = async (
     : qty;
 
   if (totalQuantity > product.stock) {
-    throw new Error("INSUFFICIENT STOCK");
+    throw new AppError(401, "INSUFFICIENT_STOCK", "Not Enough Stock", {
+      productName: product.name,
+      availableStock: product.stock,
+    });
   }
   // increment the qty
   if (existingCart) {

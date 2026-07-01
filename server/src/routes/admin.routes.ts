@@ -35,6 +35,8 @@ router.delete("/products/:id", writeLimiter, ProductController.deleteProduct);
 
 // Brands
 router.get("/brands", BrandController.getAllBrands);
+router.get("/brands/:id", BrandController.getBrandById);
+router.get("/brands/:name", BrandController.getBrandByName);
 router.post("/brands", writeLimiter, BrandController.createBrands);
 router.put("/brands/:id", writeLimiter, BrandController.updateBrands);
 router.delete("/brands/:id", writeLimiter, BrandController.deleteBrand);
