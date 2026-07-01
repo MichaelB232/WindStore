@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { AuthRequest } from "../middlewares/auth.middlewares";
 import * as PaymentService from "../services/payment.service";
-import { AppError } from "../errors/AppError";
+import { AppError } from "../lib/customError";
 
 export const checkout = async (req: AuthRequest, res: Response) => {
   try {

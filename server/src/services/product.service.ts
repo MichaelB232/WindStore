@@ -191,6 +191,7 @@ export const getProductBySlug = async (slug: string) => {
     },
   });
 };
+
 export const getAllProductsAdmin = async () => {
   return await prisma.product.findMany({
     // ← no isActive filter

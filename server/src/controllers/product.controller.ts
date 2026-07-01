@@ -236,3 +236,5 @@ export const getProductEditData = async (req: AuthRequest, res: Response) => {
     res.status(500).json({ success: false, message: "Server error" });
   }
 };
+
+

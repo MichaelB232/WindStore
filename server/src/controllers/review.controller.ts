@@ -14,6 +14,20 @@ export const getReviewsByProduct = async (req: Request, res: Response) => {
   }
 };
 
+export const getReviewsByProductSlug = async (req: Request, res: Response) => {
+  try {
+    const slug = req.params.slug as string;
+    if (!slug) {
+      res.status(400).json({ success: false, message: "Slug is required" });
+      return;
+    }
+    const reviews = await ReviewService.getReviewsByProductSlug(slug);
+    res.status(200).json({ success: true, data: reviews });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
 export const createReview = async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.user!.id;

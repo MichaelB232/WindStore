@@ -1,5 +1,5 @@
 import prisma from "../lib/prisma";
-import { AppError } from "../errors/AppError";
+import { AppError } from "../lib/customError";
 export const createOrder = async (
   userId: number,
   cartItems: { productId: number; configId: number; quantity: number }[],

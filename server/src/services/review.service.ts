@@ -3,6 +3,7 @@ import prisma from "../lib/prisma";
 export const getReviewsByProduct = async (productId: number) => {
   return await prisma.review.findMany({
     where: { productId },
+    take: 5,
     select: {
       id: true,
       rating: true,
@@ -11,6 +12,19 @@ export const getReviewsByProduct = async (productId: number) => {
       user: { select: { username: true } },
     },
     orderBy: { createdAt: "desc" },
+  });
+};
+
+export const getReviewsByProductSlug = async (slug: string) => {
+  return await prisma.review.findMany({
+    where: { product: { slug } },
+    select: {
+      id: true,
+      rating: true,
+      comment: true,
+      createdAt: true,
+      user: { select: { username: true } },
+    },
   });
 };
 
