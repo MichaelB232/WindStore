@@ -72,15 +72,22 @@ export default function CheckoutPage() {
     const { publicId, token } = result.data;
     const checkedOutIds = items.map((item) => item.id);
 
-    await Promise.all(checkedOutIds.map((id) => removeCartItem(id)));
-    deselectMany(checkedOutIds);
-
     const goToOrderStatus = () => router.push(ROUTES.ORDER_DETAIL(publicId));
+    await Promise.all(checkedOutIds.map((id) => removeCartItem(id)));
 
     pay(token, {
-      onSuccess: goToOrderStatus,
-      onPending: goToOrderStatus,
-      onClose: goToOrderStatus,
+      onSuccess: async () => {
+        deselectMany(checkedOutIds);
+        goToOrderStatus;
+      },
+      onPending: () => {
+        deselectMany(checkedOutIds);
+        goToOrderStatus;
+      },
+      onClose: () => {
+        deselectMany(checkedOutIds);
+        goToOrderStatus;
+      },
       onError: () => {
         toast.error("Payment failed. You can check your order status below.");
         goToOrderStatus();
