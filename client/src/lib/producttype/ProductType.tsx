@@ -108,6 +108,7 @@ export interface CartProduct {
   slug: string;
   basePrice: string;
   imageUrl: string;
+  stock: number;
   specs: Specs;
   brand: { name: string };
   category: { name: string };

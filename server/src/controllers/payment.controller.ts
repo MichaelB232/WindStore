@@ -17,7 +17,8 @@ export const checkout = async (req: AuthRequest, res: Response) => {
       success: true,
       data: {
         orderId: result.orderId,
-        token: result.token, // ← FE uses this!
+        publicId: result.publicId,
+        token: result.token,
         redirectUrl: result.redirectUrl,
       },
     });

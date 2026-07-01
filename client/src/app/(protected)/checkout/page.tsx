@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { toast } from "sonner";
@@ -10,24 +10,35 @@ import CustomerInfoCard from "@/src/components/checkout/CustomerInfoCard";
 import CheckoutItemsList from "@/src/components/checkout/CheckoutItemsList";
 import CheckoutSummary from "@/src/components/checkout/CheckoutSummary";
 import { CartItem } from "@/src/lib/producttype/ProductType";
-import { getCart, clearCart } from "@/src/services/cart/cart.service";
+import { getCartStockInfo } from "@/src/lib/cart/cartStock";
+import { getCart, removeCartItem } from "@/src/services/cart/cart.service";
 import { createCheckout } from "@/src/services/payment/payment.service";
 import { useMidtransSnap } from "@/src/hooks/useMidtransSnap";
+import { useCartSelection } from "@/src/services/cart/context/CartSelectionContext";
 import { ROUTES } from "@/src/routes/routes";
 
 export default function CheckoutPage() {
-  const [items, setItems] = useState<CartItem[]>([]);
+  const [cart, setCart] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);
 
   const router = useRouter();
   const { isReady, pay } = useMidtransSnap();
+  const { selectedIds, deselectMany } = useCartSelection();
 
   useEffect(() => {
     getCart()
-      .then(setItems)
+      .then(setCart)
       .finally(() => setLoading(false));
   }, []);
+
+  const items = useMemo(() => {
+    const hasStoredSelection = cart.some((item) => selectedIds.has(item.id));
+    if (hasStoredSelection) {
+      return cart.filter((item) => selectedIds.has(item.id));
+    }
+    return cart.filter((item) => !getCartStockInfo(item).isBlocked);
+  }, [cart, selectedIds]);
 
   const handlePay = async () => {
     if (isProcessing || items.length === 0) return;
@@ -35,7 +46,7 @@ export default function CheckoutPage() {
     const hasMissingConfig = items.some((item) => !item.configId);
     if (hasMissingConfig) {
       toast.error(
-        "Some items are missing a configuration. Please remove and re-add them from the shop."
+        "Some items are missing a configuration. Please remove and re-add them from the shop.",
       );
       return;
     }
@@ -47,18 +58,22 @@ export default function CheckoutPage() {
         productId: item.productId,
         configId: item.configId as number,
         quantity: item.quantity,
-      }))
+      })),
     );
 
     if (!result.success || !result.data) {
-      toast.error(result.message ?? "Could not start checkout. Please try again.");
+      toast.error(
+        result.message ?? "Could not start checkout. Please try again.",
+      );
       setIsProcessing(false);
       return;
     }
 
     const { publicId, token } = result.data;
+    const checkedOutIds = items.map((item) => item.id);
 
-    await clearCart();
+    await Promise.all(checkedOutIds.map((id) => removeCartItem(id)));
+    deselectMany(checkedOutIds);
 
     const goToOrderStatus = () => router.push(ROUTES.ORDER_DETAIL(publicId));
 
@@ -78,7 +93,8 @@ export default function CheckoutPage() {
       <Container>
         <Link
           href={ROUTES.CART}
-          className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-accent transition-colors mb-6">
+          className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-accent transition-colors mb-6"
+        >
           <ArrowLeft size={16} />
           Back to Cart
         </Link>
@@ -101,13 +117,15 @@ export default function CheckoutPage() {
               Nothing to check out
             </h2>
             <p className="text-muted-foreground mb-6">
-              Your cart is empty.
+              {cart.length === 0
+                ? "Your cart is empty."
+                : "No items are selected for checkout."}
             </p>
             <Link
-              href={ROUTES.SHOP}
+              href={cart.length === 0 ? ROUTES.SHOP : ROUTES.CART}
               className="px-6 py-3 bg-accent text-white font-semibold rounded-xl hover:bg-accent-hover transition-colors"
             >
-              Browse Laptops
+              {cart.length === 0 ? "Browse Laptops" : "Back to Cart"}
             </Link>
           </div>
         ) : (

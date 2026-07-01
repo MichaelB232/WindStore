@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Loader2, Check } from "lucide-react";
+import { Loader2, Check, Minus, Plus } from "lucide-react";
 import { toast } from "sonner";
 import {
   ProductDetail,
@@ -10,6 +10,7 @@ import {
 import { formatPrice } from "@/src/utils/utils";
 import { addToCart } from "@/src/services/cart/cart.service";
 import { useAuth } from "@/src/hooks/useAuth";
+import { Input } from "@/src/components/ui/shadcn/input";
 
 type DetailConfigurationProps = {
   laptop: ProductDetail;
@@ -37,14 +38,45 @@ export default function DetailConfiguration({
   const [cartState, setCartState] = useState<"idle" | "loading" | "added">(
     "idle",
   );
+  
+  const [quantity, setQuantity] = useState(1);
   const { user } = useAuth();
+
+  const maxQty = laptop.stock;
+
+  const clampQty = (value: number) => {
+    if (Number.isNaN(value)) return 1;
+    if (maxQty <= 0) return 1;
+    return Math.min(Math.max(Math.trunc(value), 1), maxQty);
+  };
+  const effectiveQty = quantity < 1 ? 1 : quantity;
+
+  const handleQuantityInputChange = (raw: string) => {
+    if (raw === "") {
+      setQuantity(0);
+      return;
+    }
+    const parsed = Number(raw);
+    setQuantity(Number.isNaN(parsed) ? 0 : Math.trunc(parsed));
+  };
+
+  const handleQuantityBlur = () => {
+    setQuantity((prev) => clampQty(prev));
+  };
+
+  const decrementQty = () =>
+    setQuantity((prev) => Math.max(clampQty(prev) - 1, 1));
+
+  const incrementQty = () =>
+    setQuantity((prev) => Math.min(clampQty(prev) + 1, maxQty));
 
   const basePrice = parseFloat(laptop.basePrice);
   const addonsTotal = Object.values(selected).reduce(
     (sum, cfg) => sum + parseFloat(cfg.priceModifier),
     0,
   );
-  const total = basePrice + addonsTotal;
+  const unitTotal = basePrice + addonsTotal;
+  const total = unitTotal * effectiveQty;
 
   const handleAddToCart = async () => {
     if (cartState !== "idle" || laptop.stock === 0) return;
@@ -57,10 +89,13 @@ export default function DetailConfiguration({
     const firstSelected = Object.values(selected)[0];
     if (!firstSelected) return;
 
+    const qtyToSubmit = clampQty(quantity);
+
     setCartState("loading");
-    const result = await addToCart(laptop.id, firstSelected.id);
+    const result = await addToCart(laptop.id, firstSelected.id, qtyToSubmit);
     if (result.success) {
       setCartState("added");
+      setQuantity(1);
       setTimeout(() => setCartState("idle"), 2000);
     } else {
       setCartState("idle");
@@ -163,10 +198,51 @@ export default function DetailConfiguration({
               : "Out of Stock"}
           </p>
 
+          {/* Quantity selector */}
+          <div className="mt-6">
+            <span className="text-sm font-medium text-muted-foreground">
+              Quantity
+            </span>
+            <div className="mt-2 flex items-center gap-3">
+              <button
+                type="button"
+                onClick={decrementQty}
+                disabled={laptop.stock === 0 || effectiveQty <= 1}
+                aria-label="Decrease quantity"
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-border transition-colors hover:border-accent hover:bg-accent/5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-border disabled:hover:bg-transparent cursor-pointer"
+              >
+                <Minus size={16} />
+              </button>
+
+              <Input
+                type="number"
+                inputMode="numeric"
+                min={1}
+                max={maxQty || undefined}
+                disabled={laptop.stock === 0}
+                value={quantity === 0 ? "" : quantity}
+                onChange={(e) => handleQuantityInputChange(e.target.value)}
+                onBlur={handleQuantityBlur}
+                aria-label="Quantity"
+                className="h-10 flex-1 text-center text-base font-semibold"
+              />
+
+              <button
+                type="button"
+                onClick={incrementQty}
+                disabled={laptop.stock === 0 || effectiveQty >= maxQty}
+                aria-label="Increase quantity"
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-border transition-colors hover:border-accent hover:bg-accent/5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-border disabled:hover:bg-transparent cursor-pointer"
+              >
+                <Plus size={16} />
+              </button>
+            </div>
+          </div>
+
           <button
             onClick={handleAddToCart}
             disabled={laptop.stock === 0 || cartState !== "idle"}
-            className={`mt-8 w-full rounded-2xl py-4 font-semibold text-white transition-all flex items-center justify-center gap-2
+            className={`mt-6 w-full rounded-2xl py-4 font-semibold text-white transition-all flex items-center justify-center gap-2
               ${
                 cartState === "added"
                   ? "bg-green-500"
@@ -181,7 +257,7 @@ export default function DetailConfiguration({
               ? "Adding…"
               : cartState === "added"
                 ? "Added to Cart!"
-                : "Add to Cart"}
+                : `Add ${effectiveQty} to Cart`}
           </button>
         </aside>
       </div>

@@ -1,10 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
-import { ChevronDown, ChevronUp, Trash2 } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronUp,
+  PackageX,
+  TriangleAlert,
+  Trash2,
+} from "lucide-react";
 import { CartItem } from "@/src/lib/producttype/ProductType";
+import { getCartStockInfo } from "@/src/lib/cart/cartStock";
 import { formatPrice } from "@/src/utils/utils";
+import { useCartSelection } from "@/src/services/cart/context/CartSelectionContext";
 type CartCardProps = {
   item: CartItem;
   onRemove: (cartItemId: number) => void;
@@ -17,6 +25,7 @@ export default function CartCard({ item, onRemove }: CartCardProps) {
   const [removing, setRemoving] = useState(false);
 
   const { product, productConfig, quantity } = item;
+  const { isSelected, toggle, deselectMany } = useCartSelection();
 
   const basePrice = parseFloat(product.basePrice);
   const configPrice = productConfig
@@ -24,6 +33,23 @@ export default function CartCard({ item, onRemove }: CartCardProps) {
     : 0;
   const unitPrice = basePrice + configPrice;
   const totalPrice = unitPrice * quantity;
+
+  const {
+    status: stockStatus,
+    availableStock,
+    isBlocked,
+  } = getCartStockInfo(item);
+  const checked = isSelected(item.id) && !isBlocked;
+
+  // If this item becomes stock-blocked (e.g. after a refresh lowers the
+  // available stock) while it's still selected, drop it from the selection
+  // instead of silently carrying an invalid item into checkout totals.
+  useEffect(() => {
+    if (isBlocked && isSelected(item.id)) {
+      deselectMany([item.id]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isBlocked, item.id]);
 
   const specEntries = [
     ["CPU", product.specs.processor],
@@ -40,9 +66,29 @@ export default function CartCard({ item, onRemove }: CartCardProps) {
   };
 
   return (
-    <div className="w-full rounded-3xl bg-white shadow-card overflow-hidden mb-5 transition ease-in duration-200 hover:shadow-card-hover ">
+    <div
+      className={`w-full rounded-3xl bg-white shadow-card overflow-hidden mb-5 transition ease-in duration-200 hover:shadow-card-hover ${
+        isBlocked ? "opacity-75" : ""
+      }`}
+    >
       {/* Header */}
       <div className="flex items-center">
+        {/* Selection checkbox */}
+        <div className="pl-8 shrink-0 self-stretch flex items-center">
+          <input
+            type="checkbox"
+            checked={checked}
+            disabled={isBlocked}
+            onChange={() => toggle(item.id)}
+            aria-label={
+              isBlocked
+                ? `${product.name} can't be checked out right now`
+                : `Select ${product.name} for checkout`
+            }
+            className="size-5 shrink-0 rounded border-gray-300 accent-accent disabled:cursor-not-allowed disabled:opacity-40"
+          />
+        </div>
+
         <Link
           href={`${ROUTES.LAPTOP}/${item.product.slug}`}
           className="flex flex-1 items-center gap-6 p-8 "
@@ -106,6 +152,26 @@ export default function CartCard({ item, onRemove }: CartCardProps) {
           {isExpanded ? <ChevronUp size={24} /> : <ChevronDown size={24} />}
         </button>
       </div>
+
+      {/* Stock warning banners */}
+      {stockStatus === "out_of_stock" && (
+        <div className="mx-8 mb-6 flex items-center gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3">
+          <PackageX size={18} className="text-red-600 shrink-0" />
+          <span className="text-sm text-red-700">
+            Out of stock. This item won&apos;t be included in checkout.
+          </span>
+        </div>
+      )}
+
+      {stockStatus === "insufficient_stock" && (
+        <div className="mx-8 mb-6 flex items-center gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3">
+          <TriangleAlert size={18} className="text-amber-600 shrink-0" />
+          <span className="text-sm text-amber-700">
+            Only {availableStock} left in stock — you have {quantity} in your
+            cart. Lower the quantity to continue with this item.
+          </span>
+        </div>
+      )}
 
       {/* Expanded details */}
       {isExpanded && (

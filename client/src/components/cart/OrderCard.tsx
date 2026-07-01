@@ -9,6 +9,8 @@ type OrderCardProps = {
 };
 
 export default function OrderCard({ items }: OrderCardProps) {
+  const hasSelection = items.length > 0;
+
   const totalQty = items.reduce((sum, item) => sum + item.quantity, 0);
 
   const subtotal = items.reduce((sum, item) => {
@@ -22,8 +24,6 @@ export default function OrderCard({ items }: OrderCardProps) {
 
   const total = subtotal + upgradesTotal;
 
-  const allInStock = items.every((item) => item.product !== null);
-
   return (
     <aside className="rounded-3xl bg-white p-8 shadow-card">
       <h2 className="font-display text-4xl font-bold">Order Summary</h2>
@@ -31,7 +31,7 @@ export default function OrderCard({ items }: OrderCardProps) {
       <div className="mt-10 space-y-6">
         <div className="flex justify-between text-sm">
           <span className="text-muted-foreground">
-            Subtotal ({totalQty} {totalQty === 1 ? "item" : "items"})
+            Subtotal ({totalQty} {totalQty === 1 ? "item" : "items"} selected)
           </span>
           <span className="font-medium">{formatPrice(subtotal)}</span>
         </div>
@@ -63,20 +63,38 @@ export default function OrderCard({ items }: OrderCardProps) {
         </div>
       </div>
 
-      {allInStock && (
+      {hasSelection ? (
         <div className="mt-8 flex items-center gap-3 rounded-xl bg-muted px-4 py-3">
           <Package size={18} className="text-accent" />
-          <span className="text-sm">In Stock — Ready to Ship</span>
+          <span className="text-sm">In Stock</span>
+        </div>
+      ) : (
+        <div className="mt-8 flex items-center gap-3 rounded-xl bg-muted px-4 py-3">
+          <Package size={18} className="text-muted-foreground" />
+          <span className="text-sm text-muted-foreground">
+            Select at least one item to checkout
+          </span>
         </div>
       )}
 
-      <Link
-        href={ROUTES.CHECKOUT}
-        className="mt-8 flex w-full items-center justify-center gap-3 rounded-2xl bg-accent py-5 font-semibold text-white transition-all duration-200 hover:bg-accent-hover hover:shadow-card-hover cursor-pointer"
-      >
-        Proceed to Checkout
-        <ArrowRight size={20} />
-      </Link>
+      {hasSelection ? (
+        <Link
+          href={ROUTES.CHECKOUT}
+          className="mt-8 flex w-full items-center justify-center gap-3 rounded-2xl bg-accent py-5 font-semibold text-white transition-all duration-200 hover:bg-accent-hover hover:shadow-card-hover cursor-pointer"
+        >
+          Proceed to Checkout
+          <ArrowRight size={20} />
+        </Link>
+      ) : (
+        <button
+          type="button"
+          disabled
+          className="mt-8 flex w-full items-center justify-center gap-3 rounded-2xl bg-accent py-5 font-semibold text-white opacity-50 cursor-not-allowed"
+        >
+          Proceed to Checkout
+          <ArrowRight size={20} />
+        </button>
+      )}
 
       <div className="mt-6 flex items-center justify-center gap-2 text-sm text-muted-foreground">
         <Lock size={14} />
