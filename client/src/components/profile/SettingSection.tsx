@@ -7,6 +7,7 @@ import { useState } from "react";
 import UpdateValidators from "@/src/services/user/user.validator";
 import { updateProfile } from "@/src/services/user/user.service";
 import { toast } from "sonner";
+import DeleteAccountSection from "./DeleteAccountSection";
 
 export default function SettingSection() {
   const { user, refreshUser } = useAuth();
@@ -51,7 +52,7 @@ export default function SettingSection() {
         </p>
       </div>
 
-      <div className="form shadow-card p-5 rounded-xl">
+      <div className="form shadow-card p-5 rounded-xl mb-8">
         <div className="header flex gap-3 mb-6">
           <UserRound size={25} className="text-accent" />
           <p className="text-2xl font-bold font-display">
@@ -134,6 +135,9 @@ export default function SettingSection() {
           </form>
         </div>
       </div>
+      
+      <DeleteAccountSection user={user!}/>
+
     </section>
   );
 }
