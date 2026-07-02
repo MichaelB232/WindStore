@@ -11,7 +11,7 @@ export default function ProfileLayout({
           <aside className="col-span-3">
             <ProfileSidebar />
           </aside>
-          <main className="col-span-9">{children}</main>
+          <main className="col-span-9 min-h-103">{children}</main>
         </div>
       </Container>
     </div>

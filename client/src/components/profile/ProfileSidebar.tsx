@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { CircleUserRound, ShoppingBag } from "lucide-react";
+import { CircleUserRound, ShoppingBag, Settings } from "lucide-react";
 import { ROUTES } from "@/src/routes/routes";
 
 const NAV_ITEMS = [
@@ -15,6 +15,11 @@ const NAV_ITEMS = [
     href: ROUTES.PROFILE_ORDER_HISTORY,
     label: "Order History",
     icon: ShoppingBag,
+  },
+  {
+    href: ROUTES.SETTING,
+    label: "Account Settings",
+    icon: Settings,
   },
 ];
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { Mail, ShoppingBag, ArrowRight } from "lucide-react";
+import { Mail, ShoppingBag, ArrowRight, Pencil } from "lucide-react";
 import Link from "next/link";
 import { useAuth } from "@/src/hooks/useAuth";
 import { getInitials, getAvatarHue } from "@/src/lib/producttype/ReviewType";
@@ -36,6 +36,14 @@ export default function OverviewSection() {
               <span className="truncate">{user.email}</span>
             </p>
           </div>
+        </div>
+        <div>
+          <Link href={ROUTES.SETTING}>
+            <button className="text-muted-foreground flex gap-3 items-center cursor-pointer transition duration-200 hover:text-black">
+              <Pencil size={18} />
+              Edit Profile
+            </button>
+          </Link>
         </div>
       </div>
 
