@@ -24,7 +24,7 @@ export function validateLoginForm(
   };
 
   if (!username.trim()) {
-    errors.username = "Email wajib diisi";
+    errors.username = "Username wajib diisi";
   }
 
   if (!password.trim()) {

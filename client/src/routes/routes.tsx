@@ -11,4 +11,5 @@ export const ROUTES = {
   CHECKOUT: "/checkout",
   ORDERS: "/orders",
   ORDER_DETAIL: (publicId: string) => `/orders/${publicId}`,
+  SETTING: "/profile/setting",
 };
