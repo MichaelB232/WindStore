@@ -26,3 +26,18 @@ export async function updateProfile(data: { username: string; email: string }) {
     data: result,
   };
 }
+
+export async function deleteUser(userId: number) {
+  const response = await fetch(`${BASE}/api/users/deleteMe`, {
+    method: "DELETE",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ userId }),
+  });
+
+  if (!response.ok) {
+    return response.json();
+  } else {
+    return response.json();
+  }
+}

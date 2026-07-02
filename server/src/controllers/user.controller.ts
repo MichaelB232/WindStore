@@ -53,12 +53,13 @@ export const updateMe = async (req: AuthRequest, res: Response) => {
 export const deleteUser = async (req: AuthRequest, res: Response) => {
   try {
     const id = Number(req.params.id);
+    const roleAdmin = "admin";
 
     // Prevent admin from deleting themselves
-    if (id === req.user!.id) {
+    if (roleAdmin === req.user!.role) {
       res
         .status(400)
-        .json({ success: false, message: "Cannot delete your own account" });
+        .json({ success: false, message: "Cannot delete admin account" });
       return;
     }
 
