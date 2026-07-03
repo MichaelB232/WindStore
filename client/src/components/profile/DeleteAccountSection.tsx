@@ -13,6 +13,7 @@ import { User } from "@/src/services/auth/context/AuthContext";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { ROUTES } from "@/src/routes/routes";
+import { useAuth } from "@/src/services/auth/context/AuthContext";
 
 interface DeleteAccountSectionProps {
   user: User;
@@ -22,6 +23,7 @@ export default function DeleteAccountSection({
   user,
 }: DeleteAccountSectionProps) {
   const router = useRouter();
+  const {logout} = useAuth();
 
   const handelDelete = async () => {
     const result = await deleteUser(user.id);
@@ -31,8 +33,10 @@ export default function DeleteAccountSection({
     }
 
     toast.success(result.message);
+    await logout();
     setTimeout(async () => {
       router.push(ROUTES.HOME);
+      router.refresh();
     }, 1500);
   };
   return (
