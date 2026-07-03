@@ -6,6 +6,7 @@ const router = Router();
 
 //Public
 router.get("/", ProductController.getAllProducts);
+router.get("/search", ProductController.searchProducts);
 router.get("/category/:categoryName", ProductController.getProductsByCategory);
 router.get("/:slug/reviews", ReviewController.getReviewsByProductSlug);
 router.get("/:slug", ProductController.getProductBySlug);
