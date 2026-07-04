@@ -1,3 +1,4 @@
+import { AppError } from "../lib/customError";
 import prisma from "../lib/prisma";
 
 // CREATE & UPDATE
@@ -18,6 +19,23 @@ export const updateUser = async (
 };
 // DELETE
 export const deleteUser = async (id: number) => {
+  const activeOrder = await prisma.order.findFirst({
+    where: { userId: id, status: { in: ["pending", "processing", "shipped"] } },
+  });
+
+  if (activeOrder) {
+    throw new AppError(
+      409,
+      "HAS_ACTIVE_ORDER",
+      "Cannot delete account with active orders. Please wait until your orders are completed or cancelled first..",
+    );
+  }
+
+  await prisma.order.deleteMany({
+    where: {
+      userId: id,
+    },
+  });
   return await prisma.user.delete({ where: { id } });
 };
 

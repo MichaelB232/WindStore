@@ -236,5 +236,18 @@ export const getProductEditData = async (req: AuthRequest, res: Response) => {
     res.status(500).json({ success: false, message: "Server error" });
   }
 };
+export const searchProducts = async (req: Request, res: Response) => {
+  try {
+    const query = req.query.q as string;
 
+    if (!query || query.length < 2) {
+      res.status(200).json({ success: true, data: [] });
+      return;
+    }
 
+    const products = await ProductService.searchProducts(query);
+    res.status(200).json({ success: true, data: products });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Server Error" });
+  }
+};

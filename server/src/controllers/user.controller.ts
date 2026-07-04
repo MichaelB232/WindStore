@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { AuthRequest } from "../middlewares/auth.middlewares";
 import * as UserService from "../services/user.service";
+import { AppError } from "../lib/customError";
 
 export const getAllUsers = async (req: Request, res: Response) => {
   try {
@@ -50,9 +51,43 @@ export const updateMe = async (req: AuthRequest, res: Response) => {
   }
 };
 
-export const deleteUser = async (req: AuthRequest, res: Response) => {
+export const deleteMe = async (req: AuthRequest, res: Response) => {
   try {
-    const id = Number(req.params.id);
+    const id = Number(req.user?.id);
+
+    await UserService.deleteUser(id);
+
+    res.clearCookie("token", {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+    });
+
+    
+    res
+      .status(200)
+      .json({ success: true, message: "Account deleted successfully" });
+  } catch (error: any) {
+    if (error instanceof AppError) {
+      if (error.code === "HAS_ACTIVE_ORDERS") {
+        res
+          .status(error.statusCode)
+          .json({ success: false, message: error.message });
+      }
+    }
+    if (error.code === "P2025") {
+      res.status(404).json({ success: false, message: "User not found" });
+      return;
+    }
+    console.error("deleteMe error:", error);
+    res.status(500).json({ success: false, message: "Server Error" });
+  }
+};
+
+export const deleteUser = async (req: AuthRequest, res: Response) => {
+  // delete account from admin side
+  try {
+    const id = Number(req.user?.id);
     const roleAdmin = "admin";
 
     // Prevent admin from deleting themselves
@@ -70,13 +105,6 @@ export const deleteUser = async (req: AuthRequest, res: Response) => {
   } catch (error: any) {
     if (error.code === "P2025") {
       res.status(404).json({ success: false, message: "User not found" });
-      return;
-    }
-    if (error.code === "P2003") {
-      res.status(409).json({
-        success: false,
-        message: "Cannot delete user that has orders",
-      });
       return;
     }
     res.status(500).json({ success: false, message: "Server Error" });

@@ -4,5 +4,5 @@ import * as UserController from "../controllers/user.controller";
 
 const router = Router();
 router.put("/me", authenticate, UserController.updateMe); // update own profile
-router.delete("/deleteMe", authenticate, UserController.deleteUser); // delete own account
+router.delete("/deleteMe", authenticate, UserController.deleteMe); // delete own account
 export default router;
