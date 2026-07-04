@@ -1,18 +1,29 @@
 import { Request, Response } from "express";
 import { AuthRequest } from "../middlewares/auth.middlewares";
 import * as PaymentService from "../services/payment.service";
-import { AppError } from "../lib/customError";
+import { AppError } from "../errors/AppError";
 
 export const checkout = async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.user!.id;
-    const { cartItems } = req.body;
+    const { cartItems, addressId } = req.body;
 
     if (!cartItems || cartItems.length === 0) {
       res.status(400).json({ success: false, message: "Cart is empty" });
       return;
     }
-    const result = await PaymentService.createPayment(userId, cartItems);
+    if (!addressId) {
+      res
+        .status(400)
+        .json({ success: false, message: "Delivery address is required" });
+      return;
+    }
+
+    const result = await PaymentService.createPayment(
+      userId,
+      addressId,
+      cartItems,
+    );
     res.status(201).json({
       success: true,
       data: {
@@ -34,14 +45,8 @@ export const checkout = async (req: AuthRequest, res: Response) => {
         res
           .status(error.statusCode)
           .json({ success: false, message: error.message });
+        return;
       }
-    }
-    if (error.message?.startsWith("CONFIG_NOT_FOUND")) {
-      res.status(404).json({
-        success: false,
-        message: "One of your cart items is no longer exist",
-      });
-      return;
     }
     res.status(500).json({ success: false, message: "Server Error" });
   }

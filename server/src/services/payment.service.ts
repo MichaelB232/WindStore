@@ -4,9 +4,10 @@ import { snap } from "../lib/midtrans";
 import { createOrder } from "./order.service";
 export const createPayment = async (
   userId: number,
+  addressId: number,
   cartItems: { productId: number; configId: number; quantity: number }[],
 ) => {
-  const order = await createOrder(userId, cartItems);
+  const order = await createOrder(userId, addressId, cartItems);
   const user = await prisma.user.findUnique({ where: { id: userId } });
 
   const transaction = await snap.createTransaction({
@@ -42,8 +43,8 @@ export const createPayment = async (
   });
   return {
     orderId: order.id,
-    publicId: order.publicId, 
-    token: transaction.token, 
+    publicId: order.publicId,
+    token: transaction.token,
     redirectUrl: transaction.redirect_url,
   };
 };

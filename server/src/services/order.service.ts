@@ -1,7 +1,8 @@
 import prisma from "../lib/prisma";
-import { AppError } from "../lib/customError";
+import { AppError } from "../errors/AppError";
 export const createOrder = async (
   userId: number,
+  addressId: number,
   cartItems: { productId: number; configId: number; quantity: number }[],
 ) => {
   return await prisma.$transaction(async (tx) => {
@@ -61,6 +62,7 @@ export const createOrder = async (
     const order = await tx.order.create({
       data: {
         userId,
+        addressId: Number(addressId),
         totalPrice,
         status: "pending",
         orderItems: { create: orderItemsData },

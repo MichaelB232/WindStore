@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { AuthRequest } from "../middlewares/auth.middlewares";
 import * as CartService from "../services/cart.service";
-import { AppError } from "../lib/customError";
+import { AppError } from "../errors/AppError";
 
 export const getCartByUser = async (req: AuthRequest, res: Response) => {
   try {

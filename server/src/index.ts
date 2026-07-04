@@ -3,6 +3,7 @@ dotenv.config();
 import express from "express";
 import cors from "cors";
 import userRoutes from "./routes/user.routes";
+import addressRoutes from "./routes/address.routes";
 import authRoutes from "./routes/auth.routes";
 import productRoutes from "./routes/product.routes";
 import shopRoutes from "./routes/shop.routes";
@@ -43,7 +44,9 @@ app.use("/api/orders", orderRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/configs", productConfigRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/address", addressRoutes);
 app.use("/api/admin", adminRoutes);
+
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
   console.log(`Server running on PORT ${PORT}`);

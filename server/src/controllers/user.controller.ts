@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { AuthRequest } from "../middlewares/auth.middlewares";
 import * as UserService from "../services/user.service";
-import { AppError } from "../lib/customError";
+import { AppError } from "../errors/AppError";
 
 export const getAllUsers = async (req: Request, res: Response) => {
   try {
@@ -63,7 +63,6 @@ export const deleteMe = async (req: AuthRequest, res: Response) => {
       secure: process.env.NODE_ENV === "production",
     });
 
-    
     res
       .status(200)
       .json({ success: true, message: "Account deleted successfully" });

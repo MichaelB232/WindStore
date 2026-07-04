@@ -246,6 +246,7 @@ paid        → paid but not yet processed
 
 ```json
 {
+  "addressId": 1,
   "cartItems": [
     {
       "productId": 1,
@@ -255,6 +256,8 @@ paid        → paid but not yet processed
   ]
 }
 ```
+
+> ⚠️ `addressId` is required! Get address IDs from `GET /api/addresses`
 
 ### Response
 
@@ -342,6 +345,62 @@ Add Midtrans script to `layout.tsx`:
 ### DELETE `/api/users/me`
 
 No body needed. Will fail if user has active (pending/processing/shipped) orders.
+
+---
+
+## Addresses `/api/addresses`
+
+| Method | Endpoint                     | Auth | Description            |
+| ------ | ---------------------------- | ---- | ---------------------- |
+| GET    | `/api/addresses`             | ✅   | Get all my addresses   |
+| GET    | `/api/addresses/:id`         | ✅   | Get specific address   |
+| POST   | `/api/addresses`             | ✅   | Create new address     |
+| PUT    | `/api/addresses/:id`         | ✅   | Update address         |
+| PATCH  | `/api/addresses/:id/default` | ✅   | Set address as default |
+| DELETE | `/api/addresses/:id`         | ✅   | Delete address         |
+
+### POST `/api/addresses`
+
+```json
+{
+  "label": "Home",
+  "recipientName": "John Doe",
+  "phone": "08123456789",
+  "province": "Jawa Tengah",
+  "city": "Semarang",
+  "district": "Semarang Selatan",
+  "postalCode": "50242",
+  "fullAddress": "Jl. Pandanaran No. 1 RT 02/RW 03",
+  "isDefault": true
+}
+```
+
+### PUT `/api/addresses/:id` (all fields optional)
+
+```json
+{
+  "label": "Office",
+  "recipientName": "John Doe",
+  "phone": "08987654321",
+  "province": "Jawa Tengah",
+  "city": "Semarang",
+  "district": "Semarang Tengah",
+  "postalCode": "50134",
+  "fullAddress": "Jl. Pemuda No. 10",
+  "isDefault": false
+}
+```
+
+### PATCH `/api/addresses/:id/default`
+
+No body needed. Sets this address as default and unsets all others.
+
+### Notes
+
+- First address created is automatically set as default
+- Setting a new default automatically unsets the previous default
+- Deleting the default address automatically promotes the next address as default
+- Address is linked to orders via `addressId` — deleting address sets `addressId` to null on orders (history preserved)
 
 ---
 

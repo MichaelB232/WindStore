@@ -1,4 +1,4 @@
-import { AppError } from "../lib/customError";
+import { AppError } from "../errors/AppError";
 import prisma from "../lib/prisma";
 
 export const getCartByUser = async (userId: number) => {
