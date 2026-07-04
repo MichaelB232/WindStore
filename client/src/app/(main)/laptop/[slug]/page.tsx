@@ -6,6 +6,12 @@ import DetailConfiguration from "@/src/components/laptop/DetailConfiguration";
 import { getProductBySlug } from "@/src/services/products/product.service";
 import DetailReviews from "@/src/components/laptop/DetailReviews";
 
+export const metadata = {
+  title: "Product Detail — WindStore",
+  description:
+    "Browse gaming, professional, AI-powered, and creator laptops from the world's leading Windows brands.",
+};
+
 interface LaptopPageProps {
   params: Promise<{ slug: string }>;
 }

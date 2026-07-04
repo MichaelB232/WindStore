@@ -1,21 +1,37 @@
-export default function BrandMarquee() {
-  const brands = [
-    "ASUS",
-    "Dell",
-    "HP",
-    "Lenovo",
-    "Microsoft",
-    "Acer",
-    "Samsung",
-    "Razer",
-    "MSI",
-    "LG",
-  ];
+import { getAllBrands } from "@/src/services/brand/brand.service";
 
-  const scrollBrands = [...brands, ...brands];
+// Fallback jika API belum tersedia
+const FALLBACK_BRANDS = [
+  "ASUS",
+  "Dell",
+  "HP",
+  "Lenovo",
+  "Microsoft",
+  "Acer",
+  "Samsung",
+  "Razer",
+  "MSI",
+  "LG",
+];
+
+export default async function BrandMarquee() {
+  let brandNames: string[] = [];
+
+  try {
+    const brands = await getAllBrands();
+    brandNames = brands.map((b) => b.name);
+  } catch {
+    brandNames = [];
+  }
+
+  // Fallback ke daftar statis jika API mengembalikan kosong
+  const names = brandNames.length > 0 ? brandNames : FALLBACK_BRANDS;
+
+  // Duplicate untuk efek marquee mulus (harus ≥ 2x agar loop tidak terlihat)
+  const scrollBrands = [...names, ...names];
 
   return (
-    <section id="brands ">
+    <section id="brands">
       <div className="relative border-b-2 border-t-2 border-border py-5">
         <div className="text-center mb-5">
           <h3 className="font-display font-bold tracking-widest text-2xl">
@@ -23,7 +39,7 @@ export default function BrandMarquee() {
           </h3>
         </div>
 
-        <div className="w-full relative inline-flex flex-nowrap overflow-hidden ">
+        <div className="w-full relative inline-flex flex-nowrap overflow-hidden">
           {/* Fade kiri */}
           <div className="absolute left-0 top-0 z-10 h-full w-24 bg-linear-to-r from-page to-transparent" />
 
@@ -34,7 +50,7 @@ export default function BrandMarquee() {
             {scrollBrands.map((brand, idx) => (
               <div
                 className="text-4xl font-bold font-body mx-8 text-transparent [-webkit-text-stroke:1px_#a1a1aa] hover:text-text-muted transition-colors 2s ease-in-out shrink-0 cursor-default"
-                key={idx}
+                key={`${brand}-${idx}`}
               >
                 {brand}
               </div>
