@@ -33,6 +33,8 @@ const slides = [
 ];
 
 export default function HeroSection() {
+
+  
   const [currentSlide, setCurrentSlide] = useState(0);
 
   const nextSlide = () => setCurrentSlide((p) => (p + 1) % slides.length);

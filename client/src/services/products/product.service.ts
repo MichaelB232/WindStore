@@ -9,9 +9,15 @@ export async function getProduct() {
 export async function getProductBySlug(slug: string) {
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/api/products/${slug}`,
-    { cache: "no-store" }
+    { cache: "no-store" },
   );
   if (!res.ok) return null;
   const json = await res.json();
-  return json.data ?? null;
+  const data = json.data ?? null;
+  if (!data) return null;
+
+  return {
+    ...data,
+    defaultConfig: data.productConfigs?.[0] ?? null,
+  };
 }

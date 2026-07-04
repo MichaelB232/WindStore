@@ -1,6 +1,12 @@
 import Container from "@/src/components/layout/Container";
 import ProfileSidebar from "@/src/components/profile/ProfileSidebar";
 
+export const metadata = {
+  title: "Profile — WindStore",
+  description:
+    "Browse gaming, professional, AI-powered, and creator laptops from the world's leading Windows brands.",
+};
+
 export default function ProfileLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
