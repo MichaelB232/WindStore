@@ -1,3 +1,6 @@
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
+
 export function parsePrice(basePrice: string): number {
   return parseFloat(basePrice);
 }
@@ -9,4 +12,9 @@ export function formatPrice(value: string | number): string {
     currency: "IDR",
     minimumFractionDigits: 0,
   }).format(amount);
+}
+
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
 }

@@ -236,6 +236,7 @@ export const getProductEditData = async (req: AuthRequest, res: Response) => {
     res.status(500).json({ success: false, message: "Server error" });
   }
 };
+
 export const searchProducts = async (req: Request, res: Response) => {
   try {
     const query = req.query.q as string;
