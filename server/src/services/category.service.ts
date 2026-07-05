@@ -1,11 +1,15 @@
 import prisma from "../lib/prisma";
 
-export async function getAllCategories(): Promise<string[]> {
-  const categories = await prisma.category.findMany({
-    select: { name: true },
-    orderBy: { name: "asc" },
+export async function getAllCategories() {
+  return prisma.category.findMany({
+    select: {
+      id: true,
+      name: true,
+    },
+    orderBy: {
+      name: "asc",
+    },
   });
-  return categories.map((c) => c.name);
 }
 export const getCategoryById = async (id: number) => {
   return await prisma.category.findUnique({ where: { id } });

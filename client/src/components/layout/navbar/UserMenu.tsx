@@ -10,6 +10,7 @@ import {
 } from "@/src/components/ui/shadcn/dropdown-menu";
 import Link from "next/link";
 import { ROUTES } from "@/src/routes/routes";
+import { ADMIN_ROUTES } from "@/src/routes/adminRoutes";
 import { useAuth } from "@/src/hooks/useAuth";
 import { useRouter } from "next/navigation";
 
@@ -75,6 +76,17 @@ export default function UserMenu({ isHomePage, scrolled }: UserMenuProps) {
             <DropdownMenuItem>Setting</DropdownMenuItem>
           </Link>
         </DropdownMenuGroup>
+
+        {user.role === "admin" && (
+          <>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              <Link href={ADMIN_ROUTES.DASHBOARD}>
+                <DropdownMenuItem>Admin Dashboard</DropdownMenuItem>
+              </Link>
+            </DropdownMenuGroup>
+          </>
+        )}
 
         <DropdownMenuSeparator />
         <DropdownMenuGroup>

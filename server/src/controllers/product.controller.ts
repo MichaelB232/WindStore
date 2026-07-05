@@ -214,7 +214,7 @@ export const getAllProductsAdmin = async (req: AuthRequest, res: Response) => {
 
 export const getProductsFormData = async (req: AuthRequest, res: Response) => {
   try {
-    const data = ProductService.getProductFormData();
+    const data = await ProductService.getProductFormData();
     res.status(200).json({ success: true, data: data });
   } catch (error) {
     res.status(500).json({ success: false, message: "Server error" });
