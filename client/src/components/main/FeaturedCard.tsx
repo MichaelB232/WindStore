@@ -150,7 +150,7 @@ export default function FeaturedCard({ product }: { product: Product }) {
         </div>
 
         {/* Price */}
-        <div className="font-mono font-bold text-2xl mb-5">
+        <div className="font-display font-bold text-2xl mb-5 ">
           {formatPrice(product.basePrice)}
         </div>
       </Link>

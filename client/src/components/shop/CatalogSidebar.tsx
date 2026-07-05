@@ -9,7 +9,9 @@ import {
   Palette,
   BriefcaseBusiness,
   GraduationCap,
+  Laptop
 } from "lucide-react";
+import { AdminCategory } from "@/src/lib/admin/AdminType";
 
 export type FilterState = {
   category: string;
@@ -23,7 +25,7 @@ type CatalogSidebarProps = {
   filters: FilterState;
   onFilterChange: (filters: FilterState) => void;
   brands: Brands[];
-  categories: string[];
+  categories: AdminCategory[];
   processors: string[];
 };
 
@@ -31,12 +33,12 @@ const PRICE_MIN = 0;
 const PRICE_MAX = 50_000_000;
 
 const CATEGORY_ICONS = {
-  "Gaming": Gamepad2,
-  "Business": BriefcaseBusiness,
-  "Ultrabook": GraduationCap,
-  "Creator": Palette,
-  "Budget": BanknoteCheck,
-}
+  Gaming: Gamepad2,
+  Business: BriefcaseBusiness,
+  Ultrabook: GraduationCap,
+  Creator: Palette,
+  Budget: BanknoteCheck,
+};
 
 export default function CatalogSidebar({
   filters,
@@ -109,13 +111,15 @@ export default function CatalogSidebar({
             Category
           </p>
           <div className="flex flex-col gap-0.5">
-            {categories.map((label) => {
-              const active = filters.category === label;
-              const Icon = CATEGORY_ICONS[label as keyof typeof CATEGORY_ICONS];
+            {categories.map((category) => {
+              const active = filters.category === category.name;
+              const Icon =
+                CATEGORY_ICONS[category.name as keyof typeof CATEGORY_ICONS] ??
+                Laptop;
               return (
                 <button
-                  key={label}
-                  onClick={() => setCategory(label)}
+                  key={category.id}
+                  onClick={() => setCategory(category.name)}
                   className={`flex items-center gap-2.5 w-full text-left px-3 py-2 rounded-xl text-sm transition-all duration-150 cursor-pointer ${
                     active
                       ? "bg-accent text-white font-semibold"
@@ -123,11 +127,11 @@ export default function CatalogSidebar({
                   }`}
                 >
                   <Icon size={20} />
-                  {label === "Gaming"
+                  {category.name === "Gaming"
                     ? "Gaming Laptops"
-                    : label === "Student"
+                    : category.name === "Student"
                       ? "Student Essentials"
-                      : label}
+                      : category.name}
                 </button>
               );
             })}
@@ -210,8 +214,7 @@ export default function CatalogSidebar({
                         ? "bg-accent border-accent"
                         : "border-border-strong group-hover:border-accent"
                     }`}
-                  >
-                  </span>
+                  ></span>
                   <span className="text-xs text-text-secondary group-hover:text-text-primary transition-colors">
                     {proc}
                   </span>

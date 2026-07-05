@@ -11,6 +11,7 @@ import Container from "../layout/Container";
 import { getAllProduct } from "@/src/services/shop/shop.service";
 import { ROUTES } from "@/src/routes/routes";
 import CategoryCard from "./CategoryCard";
+import { AdminCategory } from "@/src/lib/admin/AdminType";
 
 // Icon & deskripsi statis per nama kategori (dapat ditambah sesuai data DB)
 const CATEGORY_META: Record<
@@ -45,7 +46,7 @@ const DEFAULT_META = {
 };
 
 export default async function CategorySection() {
-  let categories: string[] = [];
+  let categories: AdminCategory[] = [];
 
   try {
     const json = await getAllProduct();
@@ -78,11 +79,14 @@ export default async function CategorySection() {
           </div>
 
           <ul className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-            {categories.map((name) => {
-              const meta = CATEGORY_META[name] ?? DEFAULT_META;
-              return <li key={name}>
-                <CategoryCard title={name} description={meta.description}/>
-              </li>;
+            {categories.map((category) => {
+              const meta = CATEGORY_META[category.name] ?? DEFAULT_META;
+
+              return (
+                <li key={category.id}>
+                  <CategoryCard title={category.name} description={meta.description} />
+                </li>
+              );
             })}
           </ul>
         </div>
