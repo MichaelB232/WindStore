@@ -21,3 +21,17 @@ export async function getProductBySlug(slug: string) {
     defaultConfig: data.productConfigs?.[0] ?? null,
   };
 }
+
+export async function getProductBySearch(query: string, signal?: AbortSignal) {
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/api/products/search?q=${encodeURIComponent(query)}`,
+    { signal },
+  );
+  if (!response.ok) {
+    throw new Error("Failed fetch to data");
+  }
+
+  const json = await response.json();
+
+  return Array.isArray(json) ? json : (json.data ?? []);
+}

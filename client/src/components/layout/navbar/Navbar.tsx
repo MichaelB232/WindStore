@@ -2,10 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import { Search, ShoppingCart } from "lucide-react";
+import { ShoppingCart } from "lucide-react";
 import Container from "@/src/components/layout/Container";
 import Link from "next/link";
 import UserMenu from "./UserMenu";
+import NavbarSearch from "./NavbarSearch";
 import { ROUTES } from "@/src/routes/routes";
 
 export default function Navbar() {
@@ -14,6 +15,8 @@ export default function Navbar() {
 
   const isHomePage = pathname === "/";
   const isTransparent = isHomePage && !scrolled;
+
+  // Scroll use effect
   useEffect(() => {
     if (!isHomePage) return;
     const checkScroll = () => setScrolled(window.scrollY > 50);
@@ -57,41 +60,7 @@ export default function Navbar() {
             {/* Right section: search, nav links, cart */}
             <div className="right flex items-center gap-7">
               {/* Search Bar */}
-              <div
-                className={`group searchBar flex items-center gap-2 rounded-xl border px-3 h-10
-                  transition-all duration-300
-                  focus-within:shadow-focus
-                  ${
-                    isTransparent
-                      ? // Border dan teks putih saat transparan
-                        "border-white/40 focus-within:border-white"
-                      : // Border gelap saat solid
-                        "border-text-muted focus-within:border-accent-hover"
-                  }
-                `}
-              >
-                <Search
-                  size={18}
-                  className={`shrink-0 transition-colors duration-300
-                    ${
-                      isTransparent
-                        ? "text-white/70 group-focus-within:text-white"
-                        : "text-text-secondary group-focus-within:text-accent-hover"
-                    }
-                  `}
-                />
-                <input
-                  type="search"
-                  placeholder="Cari laptop, brand..."
-                  className={`flex-1 bg-transparent outline-none border-none focus:ring-0 transition-colors duration-300
-                    ${
-                      isTransparent
-                        ? "placeholder:text-white/50 text-white"
-                        : "placeholder:text-text-muted text-text-primary"
-                    }
-                  `}
-                />
-              </div>
+              <NavbarSearch key={pathname} isTransparent={isTransparent} />
 
               {/* Shop Link */}
               <div className="shop">

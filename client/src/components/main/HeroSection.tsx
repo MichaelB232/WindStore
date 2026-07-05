@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import Image from "next/image";
+import Link from "next/link";
+import { ROUTES } from "@/src/routes/routes";
 
 const slides = [
   {
@@ -33,12 +35,11 @@ const slides = [
 ];
 
 export default function HeroSection() {
-
-  
   const [currentSlide, setCurrentSlide] = useState(0);
 
   const nextSlide = () => setCurrentSlide((p) => (p + 1) % slides.length);
-  const prevSlide = () => setCurrentSlide((p) => (p - 1 + slides.length) % slides.length);
+  const prevSlide = () =>
+    setCurrentSlide((p) => (p - 1 + slides.length) % slides.length);
 
   useEffect(() => {
     const timer = setInterval(nextSlide, 8000);
@@ -97,8 +98,11 @@ export default function HeroSection() {
                   {slides[currentSlide].subtitle}
                 </p>
 
-                <button className="bg-accent hover:bg-accent-hover text-text-inverse font-bold px-8 py-4 rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-focus">Explore Now
-                </button>
+                <Link href={ROUTES.SHOP}>
+                  <button className="bg-accent hover:bg-accent-hover text-text-inverse font-bold px-8 py-4 rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-focus">
+                    Explore Now
+                  </button>
+                </Link>
               </motion.div>
             </div>
           </div>

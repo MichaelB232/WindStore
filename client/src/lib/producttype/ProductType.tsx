@@ -52,6 +52,17 @@ export interface Brands {
   id: number;
 }
 
+// Navbar search types
+export interface SearchResult {
+  id: number;
+  name: string;
+  slug: string;
+  imageUrl: string;
+  basePrice: string;
+  brand: Brand;
+  category: Category;
+}
+
 export interface ShopSearchParams {
   category?: string;
   brand?: string;
