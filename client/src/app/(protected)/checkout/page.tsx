@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { ArrowLeft, ShoppingBag } from "lucide-react";
 import Container from "@/src/components/layout/Container";
 import CustomerInfoCard from "@/src/components/checkout/CustomerInfoCard";
+import AddressSelector from "@/src/components/checkout/AddressSelector";
 import CheckoutItemsList from "@/src/components/checkout/CheckoutItemsList";
 import CheckoutSummary from "@/src/components/checkout/CheckoutSummary";
 import { CartItem } from "@/src/lib/producttype/ProductType";
@@ -21,6 +22,9 @@ export default function CheckoutPage() {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [selectedAddressId, setSelectedAddressId] = useState<number | null>(
+    null,
+  );
 
   const router = useRouter();
   const { isReady, pay } = useMidtransSnap();
@@ -51,6 +55,11 @@ export default function CheckoutPage() {
       return;
     }
 
+    if (!selectedAddressId) {
+      toast.error("Please select or add a shipping address first.");
+      return;
+    }
+
     setIsProcessing(true);
 
     const result = await createCheckout(
@@ -59,6 +68,7 @@ export default function CheckoutPage() {
         configId: item.configId as number,
         quantity: item.quantity,
       })),
+      selectedAddressId,
     );
 
     if (!result.success || !result.data) {
@@ -139,6 +149,10 @@ export default function CheckoutPage() {
           <div className="grid grid-cols-12 gap-8">
             <div className="col-span-8 space-y-6">
               <CustomerInfoCard />
+              <AddressSelector
+                selectedAddressId={selectedAddressId}
+                onSelect={setSelectedAddressId}
+              />
               <CheckoutItemsList items={items} />
             </div>
             <div className="col-span-4">
@@ -147,6 +161,7 @@ export default function CheckoutPage() {
                   items={items}
                   isProcessing={isProcessing}
                   paymentReady={isReady}
+                  hasAddress={!!selectedAddressId}
                   onPay={handlePay}
                 />
               </div>

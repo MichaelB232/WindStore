@@ -1,18 +1,19 @@
 import {
   CheckoutPayload,
   CheckoutResult,
-} from "@/src/lib/producttype/OrderType";
+} from "@/src/lib/order/OrderType";
 
 const BASE = process.env.NEXT_PUBLIC_API_URL;
 
 export async function createCheckout(
   cartItems: CheckoutPayload[],
+  addressId: number,
 ): Promise<{ success: boolean; data?: CheckoutResult; message?: string }> {
   const res = await fetch(`${BASE}/api/payments/checkout`, {
     method: "POST",
     credentials: "include",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ cartItems }),
+    body: JSON.stringify({ addressId, cartItems }),
   });
 
   const json = await res.json();

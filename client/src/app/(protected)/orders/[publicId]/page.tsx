@@ -7,8 +7,9 @@ import { toast } from "sonner";
 import Container from "@/src/components/layout/Container";
 import OrderStatusBanner from "@/src/components/order/OrderStatusBanner";
 import OrderItemsSummary from "@/src/components/order/OrderItemsSummary";
+import OrderAddressCard from "@/src/components/order/OrderAddressCard";
 import PaymentDetailsCard from "@/src/components/order/PaymentDetailsCard";
-import { Order } from "@/src/lib/producttype/OrderType";
+import { Order } from "@/src/lib/order/OrderType";
 import { getOrderStatus } from "@/src/services/order/order.service";
 import { getPaymentToken } from "@/src/services/payment/payment.service";
 import { useMidtransSnap } from "@/src/hooks/useMidtransSnap";
@@ -90,7 +91,7 @@ export default function OrderStatusPage() {
           fetchOrder();
         },
         onClose: () => {
-          // user closed the popup without finishing — just refresh status
+          
           fetchOrder();
         },
         onError: () => {
@@ -146,6 +147,7 @@ export default function OrderStatusPage() {
               </div>
               <div className="col-span-4">
                 <div className="sticky top-24 space-y-4">
+                  <OrderAddressCard order={order} />
                   <PaymentDetailsCard order={order} />
 
                   {isPending && (

@@ -6,6 +6,17 @@ export const createOrder = async (
   cartItems: { productId: number; configId: number; quantity: number }[],
 ) => {
   return await prisma.$transaction(async (tx) => {
+    const address = await tx.address.findFirst({
+      where: { id: Number(addressId), userId },
+    });
+    if (!address) {
+      throw new AppError(
+        404,
+        "ADDRESS_NOT_FOUND",
+        "Delivery address not found",
+      );
+    }
+
     const configIds = cartItems.map((item) => Number(item.configId));
 
     const configs = await tx.productConfig.findMany({
@@ -84,6 +95,7 @@ export const findOrderStatus = async (publicId: string, userId: number) => {
         },
       },
       payments: true,
+      address: true,
     },
   });
 };

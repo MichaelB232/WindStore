@@ -9,11 +9,11 @@ import {
 } from "@/src/components/ui/shadcn/dialog";
 import { Button } from "../ui/shadcn/button";
 import { deleteUser } from "@/src/services/user/user.service";
-import { User } from "@/src/services/auth/context/AuthContext";
+import { User } from "@/src/services/auth/AuthContext";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { ROUTES } from "@/src/routes/routes";
-import { useAuth } from "@/src/services/auth/context/AuthContext";
+import { useAuth } from "@/src/services/auth/AuthContext";
 
 interface DeleteAccountSectionProps {
   user: User;

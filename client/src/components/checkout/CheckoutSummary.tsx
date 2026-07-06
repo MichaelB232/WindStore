@@ -6,6 +6,7 @@ type CheckoutSummaryProps = {
   items: CartItem[];
   isProcessing: boolean;
   paymentReady: boolean;
+  hasAddress?: boolean;
   onPay: () => void;
 };
 
@@ -13,6 +14,7 @@ export default function CheckoutSummary({
   items,
   isProcessing,
   paymentReady,
+  hasAddress = true,
   onPay,
 }: CheckoutSummaryProps) {
   const totalQty = items.reduce((sum, item) => sum + item.quantity, 0);
@@ -27,7 +29,7 @@ export default function CheckoutSummary({
   }, 0);
 
   const total = subtotal + upgradesTotal;
-  const disabled = isProcessing || !paymentReady;
+  const disabled = isProcessing || !paymentReady || !hasAddress;
 
   return (
     <aside className="rounded-3xl bg-white p-8 shadow-card">
@@ -78,6 +80,8 @@ export default function CheckoutSummary({
             <Loader2 size={20} className="animate-spin" />
             Processing…
           </>
+        ) : !hasAddress ? (
+          "Select a shipping address"
         ) : !paymentReady ? (
           <>
             <Loader2 size={20} className="animate-spin" />

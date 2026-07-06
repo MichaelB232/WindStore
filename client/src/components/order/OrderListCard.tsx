@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ChevronRight, Package } from "lucide-react";
-import { Order } from "@/src/lib/producttype/OrderType";
+import { Order } from "@/src/lib/order/OrderType";
 import { formatPrice } from "@/src/utils/utils";
 import { ROUTES } from "@/src/routes/routes";
 import {

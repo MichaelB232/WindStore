@@ -1,5 +1,5 @@
 import { CreditCard } from "lucide-react";
-import { Order } from "@/src/lib/producttype/OrderType";
+import { Order } from "@/src/lib/order/OrderType";
 import { formatPrice } from "@/src/utils/utils";
 
 type PaymentDetailsCardProps = {

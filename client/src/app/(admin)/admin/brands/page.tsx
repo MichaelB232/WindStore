@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Plus, Pencil, Trash2, Loader2, Building2 } from "lucide-react";
 import AdminTopbar from "@/src/components/admin/AdminTopbar";
