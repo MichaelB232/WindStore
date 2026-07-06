@@ -1,5 +1,5 @@
 import OrderItemRow from "@/src/components/order/OrderItemRow";
-import { Order } from "@/src/lib/producttype/OrderType";
+import { Order } from "@/src/lib/order/OrderType";
 import { formatPrice } from "@/src/utils/utils";
 
 type OrderItemsSummaryProps = {

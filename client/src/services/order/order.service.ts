@@ -1,4 +1,4 @@
-import { Order } from "@/src/lib/producttype/OrderType";
+import { Order } from "@/src/lib/order/OrderType";
 
 const BASE = process.env.NEXT_PUBLIC_API_URL;
 

@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { OrderItem } from "@/src/lib/producttype/OrderType";
+import { OrderItem } from "@/src/lib/order/OrderType";
 import { formatPrice } from "@/src/utils/utils";
 
 type OrderItemRowProps = {

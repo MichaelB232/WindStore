@@ -5,7 +5,7 @@ import Link from "next/link";
 import { PackageSearch } from "lucide-react";
 import Container from "@/src/components/layout/Container";
 import OrderListCard from "@/src/components/order/OrderListCard";
-import { Order } from "@/src/lib/producttype/OrderType";
+import { Order } from "@/src/lib/order/OrderType";
 import { getAllMyOrder } from "@/src/services/order/order.service";
 import { ROUTES } from "@/src/routes/routes";
 

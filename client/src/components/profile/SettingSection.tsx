@@ -8,6 +8,7 @@ import UpdateValidators from "@/src/services/user/user.validator";
 import { updateProfile } from "@/src/services/user/user.service";
 import { toast } from "sonner";
 import DeleteAccountSection from "./DeleteAccountSection";
+import AddressSection from "@/src/components/address/AddressSection";
 
 export default function SettingSection() {
   const { user, refreshUser } = useAuth();
@@ -135,9 +136,12 @@ export default function SettingSection() {
           </form>
         </div>
       </div>
-      
-      <DeleteAccountSection user={user!}/>
 
+      <div className="mb-8">
+        <AddressSection />
+      </div>
+
+      <DeleteAccountSection user={user!} />
     </section>
   );
 }

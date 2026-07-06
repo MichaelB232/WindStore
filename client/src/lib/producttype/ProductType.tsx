@@ -1,3 +1,5 @@
+import { AdminCategory } from "@/src/lib/admin/AdminType";
+
 export interface Specs {
   os: string;
   gpu: string;
@@ -77,7 +79,7 @@ export interface CatalogClientProps {
   brands: Brands[];
   products: Product[];
   processors: string[];
-  categories: string[];
+  categories: AdminCategory[];
   initialFilters: ShopSearchParams;
 }
 

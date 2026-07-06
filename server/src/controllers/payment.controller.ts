@@ -41,7 +41,10 @@ export const checkout = async (req: AuthRequest, res: Response) => {
           message: `Sorry, ${error.details.productName} only has ${error.details.availableStock} units left.`,
         });
       }
-      if (error.code === "CONFIG_NOT_FOUND") {
+      if (
+        error.code === "CONFIG_NOT_FOUND" ||
+        error.code === "ADDRESS_NOT_FOUND"
+      ) {
         res
           .status(error.statusCode)
           .json({ success: false, message: error.message });

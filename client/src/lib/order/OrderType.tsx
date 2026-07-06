@@ -1,3 +1,5 @@
+import { Address } from "@/src/lib/user/AddressType";
+
 export interface OrderProductSummary {
   name: string;
   imageUrl: string;
@@ -28,13 +30,14 @@ export interface OrderPayment {
 
 export interface Order {
   id: number;
-  publicId: string,
+  publicId: string;
   userId: number;
   totalPrice: string;
   status: string;
   createdAt?: string;
   orderItems: OrderItem[];
   payments: OrderPayment[];
+  address: Address | null;
 }
 
 export interface CheckoutResult {
@@ -48,4 +51,9 @@ export interface CheckoutPayload {
   productId: number;
   configId: number;
   quantity: number;
+}
+
+export interface CheckoutItemPayload {
+  addressId: number;
+  cartItems: CheckoutPayload[];
 }

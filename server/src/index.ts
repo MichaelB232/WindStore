@@ -44,7 +44,7 @@ app.use("/api/orders", orderRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/configs", productConfigRoutes);
 app.use("/api/users", userRoutes);
-app.use("/api/address", addressRoutes);
+app.use("/api/addresses", addressRoutes);
 app.use("/api/admin", adminRoutes);
 
 const PORT = process.env.PORT || 8000;

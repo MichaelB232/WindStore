@@ -5,7 +5,7 @@ import { Button } from "@/src/components/ui/shadcn/button";
 import { Input } from "@/src/components/ui/shadcn/input";
 import { User, Mail, Lock } from "lucide-react";
 import { useState } from "react";
-import { validateRegisterForm } from "@/src/services/auth/validators/auth.validator";
+import { validateRegisterForm } from "@/src/services/auth/auth.validator";
 import { register } from "@/src/services/auth/auth.service";
 import { ROUTES } from "@/src/routes/routes";
 import { useRouter } from "next/navigation";
