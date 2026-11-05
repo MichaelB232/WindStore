@@ -119,9 +119,6 @@ export default function CatalogClient({
             >
               {visible.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-24 text-center">
-                  <span className="material-symbols-outlined text-5xl text-text-muted mb-3">
-                    search_off
-                  </span>
                   <h3 className="font-display font-bold text-lg text-text-primary mb-1">
                     No laptops found
                   </h3>

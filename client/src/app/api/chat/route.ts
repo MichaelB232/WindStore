@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          reply: `Maaf, terjadi gangguan pada server agent AI: ${errText || agentRes.statusText}`,
+          reply: `Maaf, terjadi gangguan pada server agent AI`,
         },
         { status: agentRes.status }
       );

@@ -121,7 +121,7 @@ export const releaseExpiredOrders = async () => {
   const expiredOrders = await prisma.order.findMany({
     where: {
       status: "pending",
-      createdAt: { lte: new Date(Date.now() - 0.5 * 60 * 1000) },
+      createdAt: { lte: new Date(Date.now() - 15 * 60 * 1000) },
     },
     include: { orderItems: true },
   });

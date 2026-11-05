@@ -88,15 +88,15 @@ export default function CheckoutPage() {
     pay(token, {
       onSuccess: async () => {
         deselectMany(checkedOutIds);
-        goToOrderStatus;
+        goToOrderStatus();
       },
       onPending: () => {
         deselectMany(checkedOutIds);
-        goToOrderStatus;
+        goToOrderStatus();
       },
       onClose: () => {
         deselectMany(checkedOutIds);
-        goToOrderStatus;
+        goToOrderStatus();
       },
       onError: () => {
         toast.error("Payment failed. You can check your order status below.");

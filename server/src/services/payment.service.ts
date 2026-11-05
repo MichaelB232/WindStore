@@ -93,7 +93,7 @@ export const handleWebhook = async (notification: any) => {
       where: { id: orderId },
       include: { orderItems: true },
     });
-    if (order) {
+    if (order && order.status === "pending") {
       await prisma.$transaction(
         order.orderItems.map((item) =>
           prisma.product.update({
@@ -119,7 +119,6 @@ export const handleWebhook = async (notification: any) => {
   return { orderId, orderStatus, paymentStatus };
 };
 
-// Add this new function — generates/refreshes a snap token for an EXISTING pending order
 export const getPaymentToken = async (userId: number, publicId: string) => {
   const order = await prisma.order.findFirst({
     where: { publicId, userId },

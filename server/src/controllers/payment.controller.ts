@@ -59,7 +59,7 @@ export const webhook = async (req: Request, res: Response) => {
   try {
     const notification = req.body;
 
-    const result = PaymentService.handleWebhook(notification);
+    const result = await PaymentService.handleWebhook(notification);
     res.status(200).json({ success: true, data: result });
   } catch (error) {
     console.error("Webhook error:", error);
