@@ -26,7 +26,7 @@ export default function NavbarSearchResults({
 }: NavbarSearchResultsProps) {
   return (
     <div
-      className="absolute top-[calc(100%+10px)] left-0 w-104 max-w-[calc(100vw-2rem)]
+      className="absolute top-[calc(100%+10px)] right-0 w-[calc(100vw-2rem)] sm:w-104 max-w-[calc(100vw-2rem)]
         bg-white border border-border rounded-2xl shadow-card-hover overflow-hidden z-50
         animate-in fade-in-0 zoom-in-95 slide-in-from-top-1 duration-150"
     >

@@ -60,25 +60,25 @@ export default async function CategorySection() {
   return (
     <section id="ShopCategory" className="border-b border-border">
       <Container>
-        <div className="mt-10 mb-10">
-          <div className="flex items-end justify-between mb-8">
+        <div className="mt-8 sm:mt-10 mb-8 sm:mb-10">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-6 sm:mb-8">
             <div>
-              <h2 className="text-4xl font-display font-bold">
+              <h2 className="text-2xl sm:text-4xl font-display font-bold">
                 Shop by Category
               </h2>
-              <p className="text-xl text-text-muted mt-1">
+              <p className="text-sm sm:text-xl text-text-muted mt-1">
                 Find the perfect build for your needs
               </p>
             </div>
             <Link
               href={ROUTES.SHOP}
-              className="font-display font-semibold text-accent hover:text-accent-hover transition-colors text-sm"
+              className="font-display font-semibold text-accent hover:text-accent-hover transition-colors text-sm shrink-0"
             >
               Browse All →
             </Link>
           </div>
 
-          <ul className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+          <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
             {categories.map((category) => {
               const meta = CATEGORY_META[category.name] ?? DEFAULT_META;
 

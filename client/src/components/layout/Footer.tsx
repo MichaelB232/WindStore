@@ -7,7 +7,7 @@ import Container from "./Container";
 import { ROUTES } from "@/src/routes/routes";
 import { getAllProduct } from "@/src/services/shop/shop.service";
 import { AdminCategory } from "@/src/lib/admin/AdminType";
-import Image from "next/image";
+
 function GithubIcon({ className }: { className?: string }) {
   return (
     <svg
@@ -59,15 +59,15 @@ export default function Footer() {
   }, []);
 
   return (
-    <footer className="bg-dark pt-20 pb-8 border-t border-border-dark relative overflow-hidden">
+    <footer className="bg-dark pt-16 sm:pt-20 pb-8 border-t border-border-dark relative overflow-hidden">
       <div className="absolute top-0 left-0 w-full h-px bg-linear-to-r from-transparent via-accent/20 to-transparent"></div>
 
-      <div className="container mx-auto px-4 md:px-6 relative z-10">
+      <div className="relative z-10">
         <Container>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8 mb-16">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-8 mb-12 sm:mb-16">
             {/* Column 1: Brand */}
             <div>
-              <div className="flex items-center gap-2 mb-6">
+              <div className="flex items-center gap-2 mb-4 sm:mb-6">
                 <Link
                   href={ROUTES.HOME}
                   className="font-display font-bold text-2xl tracking-tight text-text-inverse"
@@ -75,12 +75,12 @@ export default function Footer() {
                   WindStore
                 </Link>
               </div>
-              <p className="text-text-dark-secondary mb-6 text-sm leading-relaxed max-w-sm">
+              <p className="text-text-dark-secondary mb-6 text-xs sm:text-sm leading-relaxed max-w-sm">
                 The ultimate destination for premium Windows laptops. Customize
                 your build and conquer your workflow.
               </p>
-              <div className="">
-                <h4 className="font-display font-bold text-text-inverse mb-6 text-lg">
+              <div>
+                <h4 className="font-display font-bold text-text-inverse mb-4 sm:mb-6 text-base sm:text-lg">
                   Connect With Developers
                 </h4>
                 <div className="flex gap-4">
@@ -103,14 +103,14 @@ export default function Footer() {
 
             {/* Column 2: Shop */}
             <div>
-              <h4 className="font-display font-bold text-text-inverse mb-6 text-lg">
+              <h4 className="font-display font-bold text-text-inverse mb-4 sm:mb-6 text-base sm:text-lg">
                 Shop
               </h4>
-              <ul className="flex flex-col gap-3">
+              <ul className="flex flex-col gap-2.5 sm:gap-3">
                 <li>
                   <Link
                     href={ROUTES.SHOP}
-                    className="text-text-dark-secondary hover:text-accent transition-colors text-sm"
+                    className="text-text-dark-secondary hover:text-accent transition-colors text-xs sm:text-sm"
                   >
                     All Laptops
                   </Link>
@@ -119,7 +119,7 @@ export default function Footer() {
                   <li key={category.id}>
                     <Link
                       href={`${ROUTES.SHOP}?category=${encodeURIComponent(category.name)}`}
-                      className="text-text-dark-secondary hover:text-accent transition-colors text-sm"
+                      className="text-text-dark-secondary hover:text-accent transition-colors text-xs sm:text-sm"
                     >
                       {category.name}
                     </Link>
@@ -130,15 +130,15 @@ export default function Footer() {
 
             {/* Column 3: Support */}
             <div>
-              <h4 className="font-display font-bold text-text-inverse mb-6 text-lg">
+              <h4 className="font-display font-bold text-text-inverse mb-4 sm:mb-6 text-base sm:text-lg">
                 Support
               </h4>
-              <ul className="flex flex-col gap-3">
+              <ul className="flex flex-col gap-2.5 sm:gap-3">
                 {SUPPORT_LINKS.map(({ label, href, icon: Icon }) => (
                   <li key={href}>
                     <Link
                       href={href}
-                      className="flex items-center gap-2 text-text-dark-secondary hover:text-accent transition-colors text-sm"
+                      className="flex items-center gap-2 text-text-dark-secondary hover:text-accent transition-colors text-xs sm:text-sm"
                     >
                       <Icon className="w-4 h-4" />
                       {label}
@@ -150,10 +150,10 @@ export default function Footer() {
 
             {/* Column 4: Newsletter */}
             <div>
-              <h4 className="font-display font-bold text-text-inverse mb-6 text-lg">
+              <h4 className="font-display font-bold text-text-inverse mb-4 sm:mb-6 text-base sm:text-lg">
                 Stay Updated
               </h4>
-              <p className="text-text-dark-secondary mb-4 text-sm">
+              <p className="text-text-dark-secondary mb-4 text-xs sm:text-sm">
                 Subscribe to get special offers, free giveaways, and
                 once-in-a-lifetime deals.
               </p>
@@ -163,7 +163,7 @@ export default function Footer() {
                   disabled
                   placeholder="Enter your email"
                   aria-disabled="true"
-                  className="bg-white/5 border border-border-dark rounded-lg py-2 px-4 text-sm text-text-inverse placeholder:text-text-dark-muted focus:outline-none w-full cursor-not-allowed opacity-70"
+                  className="bg-white/5 border border-border-dark rounded-lg py-2 px-3 sm:px-4 text-xs sm:text-sm text-text-inverse placeholder:text-text-dark-muted focus:outline-none w-full cursor-not-allowed opacity-70"
                 />
                 <button
                   type="button"
@@ -171,10 +171,10 @@ export default function Footer() {
                   aria-disabled="true"
                   className="bg-white/5 text-text-dark-muted p-2.5 rounded-lg shrink-0 cursor-not-allowed"
                 >
-                  <Clock className="w-5 h-5" />
+                  <Clock className="w-4 h-4 sm:w-5 sm:h-5" />
                 </button>
               </div>
-              <p className="text-text-dark-muted text-xs mt-2 italic">
+              <p className="text-text-dark-muted text-[11px] sm:text-xs mt-2 italic">
                 Newsletter is coming soon.
               </p>
             </div>
@@ -182,11 +182,11 @@ export default function Footer() {
         </Container>
       </div>
       <div className="pt-8 border-t border-border-dark text-center px-4 max-w-4xl mx-auto space-y-2">
-        <p className="text-text-dark-muted text-sm">
+        <p className="text-text-dark-muted text-xs sm:text-sm">
           &copy; {new Date().getFullYear()} WindStore. All rights reserved.
         </p>
-        <p className="text-text-dark-muted/70 text-xs leading-relaxed">
-          Disclaimer:This website is a collaborative portfolio project created for demonstration purposes only. All product images, brand names, and logos belong to their respective owners (ASUS, Lenovo, Acer, Dell, etc.). No real commercial transactions are conducted.
+        <p className="text-text-dark-muted/70 text-[11px] sm:text-xs leading-relaxed">
+          Disclaimer: This website is a collaborative portfolio project created for demonstration purposes only. All product images, brand names, and logos belong to their respective owners (ASUS, Lenovo, Acer, Dell, etc.). No real commercial transactions are conducted.
         </p>
       </div>
     </footer>

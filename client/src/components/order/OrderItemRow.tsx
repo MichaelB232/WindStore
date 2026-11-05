@@ -22,47 +22,49 @@ export default function OrderItemRow({
 
   return (
     <>
-      <div className="flex items-center gap-6 py-6 border-b border-border last:border-b-0">
-        <div className="relative size-20 shrink-0 overflow-hidden rounded-xl bg-muted">
-          <Image
-            src={item.product.imageUrl}
-            alt={item.product.name}
-            fill
-            sizes="80px"
-            className="object-contain"
-            unoptimized
-          />
-        </div>
+      <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6 py-4 sm:py-6 border-b border-border last:border-b-0">
+        <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
+          <div className="relative size-16 sm:size-20 shrink-0 overflow-hidden rounded-xl bg-muted">
+            <Image
+              src={item.product.imageUrl}
+              alt={item.product.name}
+              fill
+              sizes="80px"
+              className="object-contain"
+              unoptimized
+            />
+          </div>
 
-        <div className="flex-1 min-w-0">
-          <h3 className="text-lg font-bold font-display truncate">
-            {item.product.name}
-          </h3>
-          {item.productConfig && (
-            <p className="mt-1 text-sm text-muted-foreground">
-              {item.productConfig.configName}
+          <div className="flex-1 min-w-0">
+            <h3 className="text-sm sm:text-lg font-bold font-display truncate">
+              {item.product.name}
+            </h3>
+            {item.productConfig && (
+              <p className="mt-0.5 sm:mt-1 text-xs sm:text-sm text-muted-foreground truncate">
+                {item.productConfig.configName}
+              </p>
+            )}
+            <p className="mt-0.5 sm:mt-1 text-xs text-muted-foreground">
+              Qty: {item.quantity}
             </p>
-          )}
-          <p className="mt-1 text-xs text-muted-foreground">
-            Qty: {item.quantity}
-          </p>
 
-          {isPaid && (
-            <div className="mt-2.5">
-              <button
-                type="button"
-                onClick={() => setReviewOpen(true)}
-                className="inline-flex items-center gap-1.5 rounded-xl border border-accent/40 bg-accent/5 px-3 py-1.5 text-xs font-semibold text-accent hover:bg-accent hover:text-white transition-all cursor-pointer shadow-2xs"
-              >
-                <Star size={13} className="fill-accent/20" />
-                Beri Ulasan
-              </button>
-            </div>
-          )}
+            {isPaid && (
+              <div className="mt-2">
+                <button
+                  type="button"
+                  onClick={() => setReviewOpen(true)}
+                  className="inline-flex items-center gap-1.5 rounded-xl border border-accent/40 bg-accent/5 px-2.5 py-1 text-xs font-semibold text-accent hover:bg-accent hover:text-white transition-all cursor-pointer shadow-2xs"
+                >
+                  <Star size={13} className="fill-accent/20" />
+                  Beri Ulasan
+                </button>
+              </div>
+            )}
+          </div>
         </div>
 
-        <div className="text-right shrink-0">
-          <p className="text-xl font-bold text-accent">
+        <div className="text-left sm:text-right shrink-0">
+          <p className="text-lg sm:text-xl font-bold text-accent">
             {formatPrice(totalPrice)}
           </p>
           {item.quantity > 1 && (

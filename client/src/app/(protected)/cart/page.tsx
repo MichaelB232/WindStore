@@ -27,8 +27,6 @@ export default function CartPage() {
     getCart()
       .then((data) => {
         setItems(data);
-        // Default to selecting every item that's actually purchasable, so
-        // the user doesn't have to manually check off a fresh cart.
         const selectableIds = data
           .filter((item) => !getCartStockInfo(item).isBlocked)
           .map((item) => item.id);
@@ -68,9 +66,9 @@ export default function CartPage() {
   return (
     <main className="py-24 w-full">
       <Container>
-        <div className="mb-10 flex items-end justify-between">
+        <div className="mb-10 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
           <div>
-            <h1 className="font-bold font-display text-4xl">Your Cart</h1>
+            <h1 className="font-bold font-display text-3xl sm:text-4xl">Your Cart</h1>
             <p className="text-sm font-sans text-muted-foreground mt-1">
               Review your selected items and configurations
             </p>
@@ -119,14 +117,14 @@ export default function CartPage() {
             </Link>
           </div>
         ) : (
-          <div className="grid grid-cols-12 gap-8">
-            <div className="col-span-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <div className="col-span-1 lg:col-span-8">
               {items.map((item) => (
                 <CartCard key={item.id} item={item} onRemove={handleRemove} />
               ))}
             </div>
-            <div className="col-span-4">
-              <div className="sticky top-24">
+            <div className="col-span-1 lg:col-span-4">
+              <div className="lg:sticky lg:top-24">
                 <OrderCard
                   items={items.filter((item) => selectedIds.has(item.id))}
                 />

@@ -101,7 +101,6 @@ export default function OrderStatusPage() {
           fetchOrder();
         },
         onClose: () => {
-          
           fetchOrder();
         },
         onError: () => {
@@ -120,7 +119,7 @@ export default function OrderStatusPage() {
   const isPending = order?.status?.toLowerCase() === "pending";
 
   return (
-    <main className="py-24 w-full">
+    <main className="py-20 sm:py-24 w-full">
       <Container>
         {loading ? (
           <div className="flex justify-center items-center py-32 text-muted-foreground">
@@ -143,7 +142,7 @@ export default function OrderStatusPage() {
             </Link>
           </div>
         ) : (
-          <div className="space-y-8">
+          <div className="space-y-6 sm:space-y-8">
             <OrderStatusBanner
               status={order.status}
               publicId={order.publicId}
@@ -151,17 +150,17 @@ export default function OrderStatusPage() {
               refreshing={refreshing}
             />
 
-            <div className="grid grid-cols-12 gap-8">
-              <div className="col-span-8">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+              <div className="col-span-1 lg:col-span-8">
                 <OrderItemsSummary order={order} />
               </div>
-              <div className="col-span-4">
-                <div className="sticky top-24 space-y-4">
+              <div className="col-span-1 lg:col-span-4">
+                <div className="lg:sticky lg:top-24 space-y-4">
                   <OrderAddressCard order={order} />
                   <PaymentDetailsCard order={order} />
 
                   {isPending && (
-                    <div className="border rounded-xl p-5 bg-white">
+                    <div className="border rounded-2xl sm:rounded-3xl p-5 bg-white shadow-card">
                       <p className="text-sm text-muted-foreground mb-3">
                         Your payment hasn&apos;t been completed yet. Click below
                         to pay with QRIS, Virtual Account, or card.
@@ -169,7 +168,7 @@ export default function OrderStatusPage() {
                       <button
                         onClick={handlePayNow}
                         disabled={!isReady || payingNow}
-                        className="w-full px-6 py-3 bg-accent text-white font-semibold rounded-xl hover:bg-accent-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full px-6 py-3 bg-accent text-white font-semibold rounded-xl hover:bg-accent-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                       >
                         {payingNow ? "Opening payment…" : "Complete Payment"}
                       </button>

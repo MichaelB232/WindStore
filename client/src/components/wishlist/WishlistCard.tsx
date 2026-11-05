@@ -7,7 +7,6 @@ import { Heart, ShoppingCart, Check, Loader2 } from "lucide-react";
 import { WishlistItem } from "@/src/lib/producttype/ProductType";
 import { formatPrice } from "@/src/utils/utils";
 import { removeFromWishlist } from "@/src/services/wishlist/wishlist.service";
-import { addToCart } from "@/src/services/cart/cart.service";
 import { ROUTES } from "@/src/routes/routes";
 
 type WishlistCardProps = {
@@ -34,21 +33,12 @@ export default function WishlistCard({ item, onRemove }: WishlistCardProps) {
     onRemove(product.id);
   };
 
-  const handleMoveToCart = async () => {
-    if (cartState !== "idle") return;
-    setCartState("loading");
-    // Redirect to product page since configId is required by schema
-    // We signal "added" briefly to show feedback then let user configure
-    setCartState("added");
-    setTimeout(() => setCartState("idle"), 1500);
-  };
-
   return (
-    <div className="group bg-white border border-border rounded-2xl overflow-hidden shadow-card flex flex-row hover:shadow-card-hover hover:border-border-strong transition-all duration-300">
+    <div className="group bg-white border border-border rounded-2xl overflow-hidden shadow-card flex flex-col sm:flex-row hover:shadow-card-hover hover:border-border-strong transition-all duration-300">
       {/* Image */}
       <Link
         href={`${ROUTES.LAPTOP}/${product.slug}`}
-        className="relative w-44 shrink-0 bg-surface-alt flex items-center justify-center p-4"
+        className="relative w-full sm:w-44 h-40 sm:h-auto shrink-0 bg-surface-alt flex items-center justify-center p-4"
       >
         {product.badge && (
           <span
@@ -68,14 +58,14 @@ export default function WishlistCard({ item, onRemove }: WishlistCardProps) {
       </Link>
 
       {/* Content */}
-      <div className="flex flex-1 min-w-0 flex-col md:flex-row p-5 gap-4">
+      <div className="flex flex-1 min-w-0 flex-col sm:flex-row p-4 sm:p-5 gap-4">
         {/* Info */}
         <div className="flex-1 min-w-0">
           <p className="font-mono text-[10px] text-accent uppercase tracking-widest mb-1 font-semibold">
             {product.brand.name}
           </p>
           <Link href={`${ROUTES.LAPTOP}/${product.slug}`}>
-            <h3 className="font-display font-bold text-lg text-text-primary mb-1 leading-snug hover:text-accent transition-colors">
+            <h3 className="font-display font-bold text-base sm:text-lg text-text-primary mb-1 leading-snug hover:text-accent transition-colors">
               {product.name}
             </h3>
           </Link>
@@ -97,14 +87,14 @@ export default function WishlistCard({ item, onRemove }: WishlistCardProps) {
         </div>
 
         {/* Price + Actions */}
-        <div className="flex flex-col items-start md:items-end justify-between md:border-l border-border md:pl-5 w-full md:w-44 shrink-0 gap-3">
-          <p className="font-display font-bold text-2xl text-accent leading-none">
+        <div className="flex flex-col items-start sm:items-end justify-between sm:border-l border-border sm:pl-5 w-full sm:w-44 shrink-0 gap-3 pt-3 sm:pt-0 border-t sm:border-t-0">
+          <p className="font-display font-bold text-xl sm:text-2xl text-accent leading-none">
             {formatPrice(product.basePrice)}
           </p>
 
           <div className="flex flex-col gap-2 w-full">
             <Link href={`${ROUTES.LAPTOP}/${product.slug}`} className="w-full">
-              <button className="w-full py-2 bg-accent hover:bg-accent-hover text-white font-semibold text-sm rounded-xl transition-colors cursor-pointer">
+              <button className="w-full py-2 bg-accent hover:bg-accent-hover text-white font-semibold text-xs sm:text-sm rounded-xl transition-colors cursor-pointer">
                 Customize Build
               </button>
             </Link>
@@ -114,7 +104,7 @@ export default function WishlistCard({ item, onRemove }: WishlistCardProps) {
                 className="flex-1"
               >
                 <button
-                  className={`w-full py-1.5 flex items-center justify-center gap-1.5 border rounded-xl text-sm transition-all duration-150 cursor-pointer
+                  className={`w-full py-1.5 flex items-center justify-center gap-1.5 border rounded-xl text-xs sm:text-sm transition-all duration-150 cursor-pointer
                     ${
                       cartState === "added"
                         ? "border-green-500 bg-green-50 text-green-600"

@@ -51,10 +51,10 @@ export default function ReviewStats({ reviews }: { reviews: Review[] }) {
       : 0;
 
   return (
-    <div className="rounded-3xl border border-border bg-surface p-6 shadow-card sticky top-24 space-y-6">
+    <div className="rounded-2xl sm:rounded-3xl border border-border bg-surface p-5 sm:p-6 shadow-card lg:sticky lg:top-24 space-y-6">
       {/* Big score */}
       <div className="flex items-end gap-3">
-        <span className="text-6xl font-display font-bold text-text-primary leading-none">
+        <span className="text-5xl sm:text-6xl font-display font-bold text-text-primary leading-none">
           {avg.toFixed(1)}
         </span>
         <div className="mb-1 space-y-1">

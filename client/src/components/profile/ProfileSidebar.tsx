@@ -28,20 +28,20 @@ export default function ProfileSidebar() {
 
   return (
     <nav className="w-full">
-      <ol className="flex flex-col gap-2">
+      <ol className="flex flex-row overflow-x-auto lg:flex-col gap-2 pb-2 lg:pb-0 scrollbar-none">
         {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
           const active = pathname === href;
           return (
-            <li key={href}>
+            <li key={href} className="shrink-0 lg:shrink">
               <Link
                 href={href}
-                className={`flex items-center gap-4 rounded-xl px-4 py-3 text-sm font-medium transition-colors ${
+                className={`flex items-center gap-2.5 sm:gap-4 rounded-xl px-3.5 sm:px-4 py-2.5 sm:py-3 text-xs sm:text-sm font-medium transition-colors whitespace-nowrap ${
                   active
-                    ? "bg-accent-muted text-accent"
-                    : "text-text-secondary hover:bg-surface-alt hover:text-text-primary"
+                    ? "bg-accent-muted text-accent font-semibold"
+                    : "text-text-secondary hover:bg-surface-alt hover:text-text-primary bg-white lg:bg-transparent border lg:border-none border-border"
                 }`}
               >
-                <Icon size={20} />
+                <Icon size={18} className="shrink-0" />
                 <p>{label}</p>
               </Link>
             </li>

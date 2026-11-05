@@ -118,7 +118,7 @@ export default function CheckoutPage() {
         </Link>
 
         <div className="mb-10">
-          <h1 className="font-bold font-display text-4xl">Checkout</h1>
+          <h1 className="font-bold font-display text-3xl sm:text-4xl">Checkout</h1>
           <p className="text-sm font-sans text-muted-foreground mt-1">
             Review your order and complete your payment
           </p>
@@ -147,8 +147,8 @@ export default function CheckoutPage() {
             </Link>
           </div>
         ) : (
-          <div className="grid grid-cols-12 gap-8">
-            <div className="col-span-8 space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <div className="col-span-1 lg:col-span-8 space-y-6">
               <CustomerInfoCard />
               <AddressSelector
                 selectedAddressId={selectedAddressId}
@@ -156,8 +156,8 @@ export default function CheckoutPage() {
               />
               <CheckoutItemsList items={items} />
             </div>
-            <div className="col-span-4">
-              <div className="sticky top-24 space-y-4">
+            <div className="col-span-1 lg:col-span-4">
+              <div className="lg:sticky lg:top-24 space-y-4">
                 <CheckoutSummary
                   items={items}
                   isProcessing={isProcessing}

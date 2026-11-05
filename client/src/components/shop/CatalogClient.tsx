@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter, usePathname } from "next/navigation";
+import { X } from "lucide-react";
 import CatalogSidebar, { FilterState } from "./CatalogSidebar";
 import CatalogHero from "./CatalogHero";
 import CatalogSortBar, { ViewMode } from "./CatalogSortBar";
@@ -40,6 +41,7 @@ export default function CatalogClient({
   const router = useRouter();
   const pathname = usePathname();
   const [isPending, startTransition] = useTransition();
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
   const [filters, setFilters] = useState<FilterState>({
     category: initialFilters?.category ?? "",
@@ -53,6 +55,14 @@ export default function CatalogClient({
   const [sortBy, setSortBy] = useState(initialFilters?.sortBy ?? "featured");
   const [viewMode, setViewMode] = useState<ViewMode>("grid");
   const [visibleCount, setVisibleCount] = useState(8);
+
+  const hasActiveFilters = Boolean(
+    filters.category ||
+    filters.brands.length > 0 ||
+    filters.processors.length > 0 ||
+    filters.priceMin !== PRICE_MIN ||
+    filters.priceMax !== PRICE_MAX
+  );
 
   const navigate = (nextFilters: FilterState, nextSort: string) => {
     startTransition(() => {
@@ -90,9 +100,10 @@ export default function CatalogClient({
   const hasMore = visibleCount < products.length;
 
   return (
-    <main className="max-w-screen-2xl px-4 md:px-8 pt-24 pb-16 min-h-screen">
+    <main className="max-w-screen-2xl px-2 sm:px-4 md:px-8 pt-20 sm:pt-24 pb-16 min-h-screen">
       <Container>
         <div className="flex gap-6 shrink-0 items-start">
+          {/* Desktop Sidebar */}
           <div className="hidden lg:block w-55 self-start sticky top-20">
             <CatalogSidebar
               filters={filters}
@@ -112,6 +123,8 @@ export default function CatalogClient({
               viewMode={viewMode}
               onSortChange={handleSortChange}
               onViewChange={setViewMode}
+              onToggleMobileFilters={() => setMobileFiltersOpen(true)}
+              hasActiveFilters={hasActiveFilters}
             />
 
             <div
@@ -133,7 +146,7 @@ export default function CatalogClient({
                   </button>
                 </div>
               ) : viewMode === "grid" ? (
-                <div className="grid grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
                   {visible.map((p) => (
                     <CatalogCard key={p.id} product={p} />
                   ))}
@@ -160,6 +173,38 @@ export default function CatalogClient({
           </div>
         </div>
       </Container>
+
+      {/* Mobile Filters Drawer */}
+      {mobileFiltersOpen && (
+        <div className="fixed inset-0 z-50 flex lg:hidden">
+          <div
+            className="fixed inset-0 bg-black/50 backdrop-blur-xs transition-opacity"
+            onClick={() => setMobileFiltersOpen(false)}
+          />
+          <div className="relative ml-auto flex h-full w-full max-w-xs flex-col bg-page p-6 shadow-xl overflow-y-auto">
+            <div className="flex items-center justify-between pb-4 border-b border-border mb-4">
+              <h3 className="font-display font-bold text-lg">Filters</h3>
+              <button
+                type="button"
+                onClick={() => setMobileFiltersOpen(false)}
+                className="p-1 rounded-lg hover:bg-surface-alt transition-colors text-text-muted hover:text-text-primary cursor-pointer"
+                aria-label="Close filters"
+              >
+                <X size={20} />
+              </button>
+            </div>
+            <CatalogSidebar
+              filters={filters}
+              onFilterChange={(next) => {
+                handleFilterChange(next);
+              }}
+              brands={brands}
+              categories={categories}
+              processors={processors}
+            />
+          </div>
+        </div>
+      )}
     </main>
   );
 }

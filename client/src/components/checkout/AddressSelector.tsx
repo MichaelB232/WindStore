@@ -43,9 +43,9 @@ export default function AddressSelector({
   };
 
   return (
-    <div className="rounded-3xl bg-white p-8 shadow-card">
-      <div className="flex items-center justify-between gap-3 mb-6">
-        <h2 className="font-display text-2xl font-bold">Shipping Address</h2>
+    <div className="rounded-2xl sm:rounded-3xl bg-white p-5 sm:p-8 shadow-card">
+      <div className="flex items-center justify-between gap-3 mb-4 sm:mb-6">
+        <h2 className="font-display text-xl sm:text-2xl font-bold">Shipping Address</h2>
         <AddressFormDialog
           mode="create"
           onSaved={handleCreated}
@@ -66,8 +66,8 @@ export default function AddressSelector({
       ) : addresses.length === 0 ? (
         <div className="flex flex-col items-center text-center py-8 border border-dashed border-gray-200 rounded-xl">
           <MapPin size={32} className="text-muted-foreground mb-2" />
-          <p className="font-medium">No saved address</p>
-          <p className="text-sm text-muted-foreground mt-1">
+          <p className="font-medium text-sm sm:text-base">No saved address</p>
+          <p className="text-xs sm:text-sm text-muted-foreground mt-1">
             Add a shipping address to continue with checkout.
           </p>
         </div>
@@ -80,7 +80,7 @@ export default function AddressSelector({
                 key={address.id}
                 type="button"
                 onClick={() => onSelect(address.id)}
-                className={`flex items-start gap-3 rounded-xl border p-4 text-left transition-colors cursor-pointer ${
+                className={`flex items-start gap-3 rounded-xl border p-3 sm:p-4 text-left transition-colors cursor-pointer ${
                   selected
                     ? "border-accent bg-accent-muted/30"
                     : "border-gray-200 hover:border-gray-300"
@@ -95,21 +95,20 @@ export default function AddressSelector({
                 >
                   {selected && <CheckCircle2 size={14} className="fill-accent text-white" />}
                 </div>
-                <div className="min-w-0">
+                <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <p className="font-semibold">{address.label}</p>
+                    <p className="font-semibold text-sm sm:text-base">{address.label}</p>
                     {address.isDefault && (
-                      <span className="rounded-full bg-accent px-2 py-0.5 text-xs font-medium text-white">
+                      <span className="rounded-full bg-accent/10 text-accent px-2 py-0.5 text-[10px] font-semibold">
                         Default
                       </span>
                     )}
                   </div>
-                  <p className="text-sm text-gray-700 mt-0.5">
-                    {address.recipientName} · {address.phone}
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    {address.recipientName} • {address.phone}
                   </p>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    {address.fullAddress}, {address.district}, {address.city},{" "}
-                    {address.province} {address.postalCode}
+                  <p className="text-xs text-gray-600 mt-1 line-clamp-2">
+                    {address.fullAddress}, {address.city}, {address.province} {address.postalCode}
                   </p>
                 </div>
               </button>

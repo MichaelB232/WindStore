@@ -8,19 +8,19 @@ export default function CatalogHero() {
         <div className="absolute bottom-0 right-20 w-40 h-40 bg-[--color-violet]/8 rounded-full blur-2xl" />
       </div>
 
-      <div className="relative z-10 px-8 py-8">
-        <h1 className="font-display font-bold text-3xl md:text-4xl text-[--color-text-primary] leading-tight mb-2">
+      <div className="relative z-10 px-5 sm:px-8 py-6 sm:py-8">
+        <h1 className="font-display font-bold text-2xl sm:text-3xl md:text-4xl text-[--color-text-primary] leading-tight mb-2">
           Explore All Products
         </h1>
-        <p className="text-sm text-[--color-text-secondary] max-w-md leading-relaxed mb-5">
+        <p className="text-xs sm:text-sm text-[--color-text-secondary] max-w-md leading-relaxed mb-5">
           Browse gaming, professional, AI-powered, and creator laptops from the world&apos;s
           leading Windows brands.
         </p>
-        <div className="flex items-center gap-3">
-          <button className="px-5 py-2.5 bg-accent text-white font-semibold text-sm rounded-xl transition-colors duration-150 cursor-default shadow-sm">
+        <div className="flex flex-wrap items-center gap-3">
+          <button className="px-5 py-2.5 bg-accent text-white font-semibold text-xs sm:text-sm rounded-xl transition-colors duration-150 cursor-default shadow-sm">
             Shop Now
           </button>
-          <button className="px-5 py-2.5 bg-transparent hover:bg-[--color-accent-muted] text-[--color-accent] font-semibold text-sm rounded-xl border border-[--color-accent] transition-colors duration-150 cursor-default">
+          <button className="px-5 py-2.5 bg-transparent hover:bg-[--color-accent-muted] text-[--color-accent] font-semibold text-xs sm:text-sm rounded-xl border border-[--color-accent] transition-colors duration-150 cursor-default">
             Build Your Own Laptop
           </button>
         </div>

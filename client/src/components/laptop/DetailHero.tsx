@@ -43,11 +43,11 @@ export default function DetailHero({ laptop }: DetailHeroProps) {
 
   return (
     <section id="detail-hero">
-      <div className="grid grid-cols-12 gap-10">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10">
         {/* Left — gallery */}
-        <div className="col-span-7">
+        <div className="col-span-1 lg:col-span-7">
           <div className="space-y-4">
-            <div className="w-full aspect-16/10 rounded-xl bg-white shadow-card border border-border p-8">
+            <div className="w-full aspect-16/10 rounded-xl bg-white shadow-card border border-border p-4 sm:p-8">
               <div className="relative w-full h-full">
                 <Image
                   src={images[activeIdx]}
@@ -60,12 +60,12 @@ export default function DetailHero({ laptop }: DetailHeroProps) {
               </div>
             </div>
 
-            <div className="grid grid-cols-4 gap-3">
+            <div className="grid grid-cols-4 gap-2 sm:gap-3">
               {images.slice(0, 4).map((src, idx) => (
                 <button
                   key={idx}
                   onClick={() => setActiveIdx(idx)}
-                  className={`aspect-16/10 overflow-hidden rounded-md border p-3 bg-white shadow-card transition-all cursor-pointer ${
+                  className={`aspect-16/10 overflow-hidden rounded-md border p-1.5 sm:p-3 bg-white shadow-card transition-all cursor-pointer ${
                     activeIdx === idx
                       ? "border-accent ring-1 ring-accent"
                       : "border-border hover:border-accent"
@@ -87,13 +87,13 @@ export default function DetailHero({ laptop }: DetailHeroProps) {
         </div>
 
         {/* Right — info */}
-        <div className="col-span-5 flex flex-col justify-center">
+        <div className="col-span-1 lg:col-span-5 flex flex-col justify-center">
           <p className="font-mono text-xs text-accent uppercase tracking-widest mb-2 font-semibold">
             {laptop.brand.name}
           </p>
-          <h1 className="text-5xl font-bold tracking-tight">{laptop.name}</h1>
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight">{laptop.name}</h1>
           <p className="mt-3 text-muted-foreground">{laptop.motto}</p>
-          <p className="mt-8 text-3xl font-bold text-accent">
+          <p className="mt-6 sm:mt-8 text-2xl sm:text-3xl font-bold text-accent">
             {formatPrice(laptop.basePrice)}
           </p>
 
@@ -101,24 +101,24 @@ export default function DetailHero({ laptop }: DetailHeroProps) {
             {specChips.map((spec) => (
               <span
                 key={spec}
-                className="font-mono text-sm bg-surface-alt text-text-secondary px-2 py-0.5 rounded"
+                className="font-mono text-xs sm:text-sm bg-surface-alt text-text-secondary px-2 py-0.5 rounded"
               >
                 {spec}
               </span>
             ))}
           </div>
 
-          <div className="mt-10 flex gap-3">
+          <div className="mt-8 sm:mt-10 flex gap-3">
             <Link
               href="#detail-configuration"
-              className="flex-1 rounded-xl bg-accent py-4 font-semibold text-center text-white transition duration-200 ease-in hover:bg-accent-hover hover:cursor-pointer hover:shadow-card-hover"
+              className="flex-1 rounded-xl bg-accent py-3.5 sm:py-4 font-semibold text-center text-white transition duration-200 ease-in hover:bg-accent-hover hover:cursor-pointer hover:shadow-card-hover"
             >
               Configure Now
             </Link>
             <button
               onClick={handleWishlist}
               title={wishlisted ? "Remove from wishlist" : "Save to wishlist"}
-              className={`size-14 rounded-xl border flex justify-center items-center backdrop-blur-sm transition-all duration-200 cursor-pointer shadow-sm
+              className={`size-12 sm:size-14 rounded-xl border flex justify-center items-center backdrop-blur-sm transition-all duration-200 cursor-pointer shadow-sm
                 ${wishlisted ? "border-danger/40 bg-red-50 text-danger" : "border-border bg-white/90 text-text-muted hover:text-danger hover:bg-white"}`}
             >
               <Heart size={20} className={wishlisted ? "fill-current" : ""} />

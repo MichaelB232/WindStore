@@ -133,7 +133,6 @@ export default function DetailConfiguration({
         return;
       }
 
-      // Ambil keranjang terbaru untuk memilih hanya item ini saat checkout
       const cart = await getCart();
       const targetItem = cart.find(
         (item) =>
@@ -153,28 +152,28 @@ export default function DetailConfiguration({
   };
 
   return (
-    <section id="detail-configuration" className="mt-20">
+    <section id="detail-configuration" className="mt-16 sm:mt-20">
       {/* Header */}
       <div className="text-center">
-        <h2 className="font-display text-5xl font-bold">
+        <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold">
           Build Your {laptop.brand.name}
         </h2>
-        <p className="mt-3 text-lg text-muted-foreground">
+        <p className="mt-3 text-base sm:text-lg text-muted-foreground">
           Customize your setup for peak performance.
         </p>
       </div>
 
       {/* Content */}
-      <div className="mt-12 grid grid-cols-12 gap-8">
+      <div className="mt-10 sm:mt-12 grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* Config options */}
-        <div className="col-span-8 space-y-8">
+        <div className="col-span-1 lg:col-span-8 space-y-6 sm:space-y-8">
           {Object.entries(groups).map(([type, cfgs]) => (
             <div
               key={type}
-              className="rounded-3xl border border-border bg-card p-6 shadow-card"
+              className="rounded-3xl border border-border bg-card p-4 sm:p-6 shadow-card"
             >
-              <h3 className="mb-6 text-3xl font-semibold">{type}</h3>
-              <div className="grid grid-cols-3 gap-4">
+              <h3 className="mb-4 sm:mb-6 text-xl sm:text-2xl font-semibold capitalize">{type}</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
                 {cfgs.map((cfg) => {
                   const isSelected =
                     selected[type]?.configName === cfg.configName;
@@ -185,14 +184,14 @@ export default function DetailConfiguration({
                       onClick={() =>
                         setSelected((prev) => ({ ...prev, [type]: cfg }))
                       }
-                      className={`rounded-2xl border-2 p-4 text-left transition-all cursor-pointer ${
+                      className={`rounded-2xl border-2 p-3.5 sm:p-4 text-left transition-all cursor-pointer ${
                         isSelected
                           ? "border-accent bg-accent/5"
                           : "border-border hover:border-accent"
                       }`}
                     >
-                      <p className="font-semibold">{cfg.configName}</p>
-                      <p className="mt-2 text-muted-foreground text-sm">
+                      <p className="font-semibold text-sm sm:text-base">{cfg.configName}</p>
+                      <p className="mt-1.5 sm:mt-2 text-muted-foreground text-xs sm:text-sm">
                         {modifier === 0
                           ? "Included"
                           : `+ ${formatPrice(cfg.priceModifier)}`}
@@ -206,12 +205,12 @@ export default function DetailConfiguration({
         </div>
 
         {/* Summary */}
-        <aside className="col-span-4 h-fit rounded-3xl border border-border bg-card p-6 shadow-card sticky top-24">
-          <h3 className="text-3xl font-semibold">Summary</h3>
+        <aside className="col-span-1 lg:col-span-4 h-fit rounded-3xl border border-border bg-card p-5 sm:p-6 shadow-card lg:sticky lg:top-24">
+          <h3 className="text-xl sm:text-2xl font-semibold">Summary</h3>
 
-          <div className="my-6 border-t border-border" />
+          <div className="my-4 sm:my-6 border-t border-border" />
 
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Base Price</span>
               <span className="font-medium">
@@ -231,11 +230,11 @@ export default function DetailConfiguration({
             ))}
           </div>
 
-          <div className="my-8 border-t border-border" />
+          <div className="my-6 sm:my-8 border-t border-border" />
 
           <div className="flex items-end justify-between">
-            <span className="text-3xl font-semibold">Total</span>
-            <span className="text-2xl font-bold font-display text-accent">
+            <span className="text-2xl sm:text-3xl font-semibold">Total</span>
+            <span className="text-xl sm:text-2xl font-bold font-display text-accent">
               {formatPrice(total)}
             </span>
           </div>
@@ -291,14 +290,13 @@ export default function DetailConfiguration({
 
           {/* Action Buttons */}
           <div className="mt-6 space-y-3">
-            {/* Tombol Beli Sekarang */}
             <button
               type="button"
               onClick={handleBuyNow}
               disabled={
                 laptop.stock === 0 || buyNowLoading || cartState !== "idle"
               }
-              className="w-full rounded-2xl bg-accent py-4 font-semibold text-white shadow-card transition-all duration-200 hover:bg-accent-hover hover:shadow-card-hover disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full rounded-2xl bg-accent py-3.5 sm:py-4 font-semibold text-white shadow-card transition-all duration-200 hover:bg-accent-hover hover:shadow-card-hover disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 cursor-pointer"
             >
               {buyNowLoading ? (
                 <>
@@ -313,14 +311,13 @@ export default function DetailConfiguration({
               )}
             </button>
 
-            {/* Tombol Tambah ke Keranjang */}
             <button
               type="button"
               onClick={handleAddToCart}
               disabled={
                 laptop.stock === 0 || cartState !== "idle" || buyNowLoading
               }
-              className={`w-full rounded-2xl border-2 border-accent py-3.5 font-semibold transition-all flex items-center justify-center gap-2
+              className={`w-full rounded-2xl border-2 border-accent py-3 sm:py-3.5 font-semibold transition-all flex items-center justify-center gap-2
                 ${
                   cartState === "added"
                     ? "bg-green-500 border-green-500 text-white"

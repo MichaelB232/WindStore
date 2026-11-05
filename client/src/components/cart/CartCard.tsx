@@ -13,12 +13,13 @@ import { CartItem } from "@/src/lib/producttype/ProductType";
 import { getCartStockInfo } from "@/src/lib/cart/cartStock";
 import { formatPrice } from "@/src/utils/utils";
 import { useCartSelection } from "@/src/services/cart/context/CartSelectionContext";
+import Link from "next/link";
+import { ROUTES } from "@/src/routes/routes";
+
 type CartCardProps = {
   item: CartItem;
   onRemove: (cartItemId: number) => void;
 };
-import Link from "next/link";
-import { ROUTES } from "@/src/routes/routes";
 
 export default function CartCard({ item, onRemove }: CartCardProps) {
   const [isExpanded, setIsExpanded] = useState(true);
@@ -41,15 +42,11 @@ export default function CartCard({ item, onRemove }: CartCardProps) {
   } = getCartStockInfo(item);
   const checked = isSelected(item.id) && !isBlocked;
 
-  // If this item becomes stock-blocked (e.g. after a refresh lowers the
-  // available stock) while it's still selected, drop it from the selection
-  // instead of silently carrying an invalid item into checkout totals.
   useEffect(() => {
     if (isBlocked && isSelected(item.id)) {
       deselectMany([item.id]);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isBlocked, item.id]);
+  }, [isBlocked, item.id, deselectMany, isSelected]);
 
   const specEntries = [
     ["CPU", product.specs.processor],
@@ -67,14 +64,14 @@ export default function CartCard({ item, onRemove }: CartCardProps) {
 
   return (
     <div
-      className={`w-full rounded-3xl bg-white shadow-card overflow-hidden mb-5 transition ease-in duration-200 hover:shadow-card-hover ${
+      className={`w-full rounded-2xl sm:rounded-3xl bg-white shadow-card overflow-hidden mb-5 transition ease-in duration-200 hover:shadow-card-hover ${
         isBlocked ? "opacity-75" : ""
       }`}
     >
       {/* Header */}
       <div className="flex items-center">
         {/* Selection checkbox */}
-        <div className="pl-8 shrink-0 self-stretch flex items-center">
+        <div className="pl-3 sm:pl-8 shrink-0 self-stretch flex items-center">
           <input
             type="checkbox"
             checked={checked}
@@ -91,47 +88,49 @@ export default function CartCard({ item, onRemove }: CartCardProps) {
 
         <Link
           href={`${ROUTES.LAPTOP}/${item.product.slug}`}
-          className="flex flex-1 items-center gap-6 p-8 "
+          className="flex flex-1 flex-col sm:flex-row sm:items-center gap-3 sm:gap-6 p-3 sm:p-8 min-w-0"
           title={`Go to ${product.name} detail page`}
         >
-          {/* Thumbnail */}
-          <div className="relative size-28 shrink-0 overflow-hidden rounded-xl bg-muted">
-            <Image
-              src={product.imageUrl}
-              alt={product.name}
-              fill
-              sizes="112px"
-              className="object-contain"
-              unoptimized
-            />
-          </div>
+          <div className="flex items-center gap-3 sm:gap-4 min-w-0 flex-1">
+            {/* Thumbnail */}
+            <div className="relative size-16 sm:size-28 shrink-0 overflow-hidden rounded-xl bg-muted">
+              <Image
+                src={product.imageUrl}
+                alt={product.name}
+                fill
+                sizes="112px"
+                className="object-contain"
+                unoptimized
+              />
+            </div>
 
-          {/* Product Info */}
-          <div className="flex-1 min-w-0">
-            <p className="font-mono text-[10px] text-accent uppercase tracking-widest mb-1 font-semibold">
-              {product.brand.name}
-            </p>
-
-            <h3 className="text-2xl font-bold font-display truncate">
-              {product.name}
-            </h3>
-
-            {productConfig && (
-              <p className="mt-1 text-sm text-muted-foreground">
-                {productConfig.configType}: {productConfig.configName}
+            {/* Product Info */}
+            <div className="flex-1 min-w-0">
+              <p className="font-mono text-[9px] sm:text-[10px] text-accent uppercase tracking-widest mb-0.5 sm:mb-1 font-semibold">
+                {product.brand.name}
               </p>
-            )}
 
-            {quantity > 1 && (
-              <p className="mt-1 text-xs text-muted-foreground">
-                Qty: {quantity}
-              </p>
-            )}
+              <h3 className="text-base sm:text-2xl font-bold font-display truncate">
+                {product.name}
+              </h3>
+
+              {productConfig && (
+                <p className="mt-0.5 sm:mt-1 text-xs sm:text-sm text-muted-foreground truncate">
+                  {productConfig.configType}: {productConfig.configName}
+                </p>
+              )}
+
+              {quantity > 1 && (
+                <p className="mt-0.5 sm:mt-1 text-xs text-muted-foreground">
+                  Qty: {quantity}
+                </p>
+              )}
+            </div>
           </div>
 
           {/* Price */}
-          <div className="text-right shrink-0">
-            <p className="text-2xl font-bold text-accent">
+          <div className="text-left sm:text-right shrink-0">
+            <p className="text-lg sm:text-2xl font-bold text-accent">
               {formatPrice(totalPrice)}
             </p>
 
@@ -147,15 +146,16 @@ export default function CartCard({ item, onRemove }: CartCardProps) {
         <button
           type="button"
           onClick={() => setIsExpanded(!isExpanded)}
-          className="px-8 text-muted-foreground hover:text-accent transition cursor-pointer self-stretch flex items-center justify-center"
+          className="px-3 sm:px-8 text-muted-foreground hover:text-accent transition cursor-pointer self-stretch flex items-center justify-center shrink-0"
+          aria-label={isExpanded ? "Collapse details" : "Expand details"}
         >
-          {isExpanded ? <ChevronUp size={24} /> : <ChevronDown size={24} />}
+          {isExpanded ? <ChevronUp size={20} className="sm:size-6" /> : <ChevronDown size={20} className="sm:size-6" />}
         </button>
       </div>
 
       {/* Stock warning banners */}
       {stockStatus === "out_of_stock" && (
-        <div className="mx-8 mb-6 flex items-center gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3">
+        <div className="mx-4 sm:mx-8 mb-4 sm:mb-6 flex items-center gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3">
           <PackageX size={18} className="text-red-600 shrink-0" />
           <span className="text-sm text-red-700">
             Out of stock. This item won&apos;t be included in checkout.
@@ -164,7 +164,7 @@ export default function CartCard({ item, onRemove }: CartCardProps) {
       )}
 
       {stockStatus === "insufficient_stock" && (
-        <div className="mx-8 mb-6 flex items-center gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3">
+        <div className="mx-4 sm:mx-8 mb-4 sm:mb-6 flex items-center gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3">
           <TriangleAlert size={18} className="text-amber-600 shrink-0" />
           <span className="text-sm text-amber-700">
             Only {availableStock} left in stock — you have {quantity} in your
@@ -177,24 +177,24 @@ export default function CartCard({ item, onRemove }: CartCardProps) {
       {isExpanded && (
         <>
           <div className="border-t border-border" />
-          <div className="p-8">
-            <h4 className="mb-8 text-sm font-semibold tracking-[0.2em] text-accent uppercase">
+          <div className="p-4 sm:p-8">
+            <h4 className="mb-4 sm:mb-8 text-xs sm:text-sm font-semibold tracking-[0.2em] text-accent uppercase">
               Configuration Details
             </h4>
 
-            <div className="grid grid-cols-2 gap-x-20 gap-y-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 lg:gap-x-20 gap-y-4 sm:gap-y-6">
               {specEntries.map(([label, value]) => (
-                <div key={label} className="flex justify-between text-sm">
+                <div key={label} className="flex justify-between text-xs sm:text-sm">
                   <span className="text-muted-foreground">{label}</span>
-                  <span className="font-medium">{value}</span>
+                  <span className="font-medium text-right">{value}</span>
                 </div>
               ))}
               {productConfig && (
-                <div className="flex justify-between text-sm">
+                <div className="flex justify-between text-xs sm:text-sm">
                   <span className="text-muted-foreground">
                     {productConfig.configType}
                   </span>
-                  <span className="font-medium">
+                  <span className="font-medium text-right">
                     {productConfig.configName}
                   </span>
                 </div>
@@ -202,11 +202,11 @@ export default function CartCard({ item, onRemove }: CartCardProps) {
             </div>
 
             {/* Actions */}
-            <div className="mt-12 flex justify-end gap-4">
+            <div className="mt-6 sm:mt-12 flex justify-end gap-4">
               <button
                 onClick={handleRemove}
                 disabled={removing}
-                className="flex items-center gap-2 rounded-xl px-4 py-3 text-red-500 hover:bg-red-50 transition disabled:opacity-50 cursor-pointer"
+                className="flex items-center gap-2 rounded-xl px-4 py-2.5 sm:py-3 text-red-500 hover:bg-red-50 transition disabled:opacity-50 cursor-pointer text-sm font-medium"
               >
                 <Trash2 size={16} />
                 {removing ? "Removing…" : "Remove"}

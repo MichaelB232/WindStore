@@ -25,9 +25,23 @@ import { startExpiredOrdersJob } from "./jobs/releaseExpiredOrders.job";
 const app = express();
 
 app.use(helmet());
+
+const allowedOrigins = [
+  process.env.CLIENT_URL,
+  "http://localhost:3000",
+  "http://127.0.0.1:3000",
+].filter(Boolean) as string[];
+
 app.use(
   cors({
-    origin: process.env.CLIENT_URL,
+    origin: (origin, callback) => {
+      // Allow requests with no origin (like mobile apps, curl, server-to-server)
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(null, true); // Keep permissive for portfolio demo
+      }
+    },
     credentials: true,
   })
 );

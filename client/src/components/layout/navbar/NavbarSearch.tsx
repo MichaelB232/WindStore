@@ -116,7 +116,7 @@ export default function NavbarSearch({
   return (
     <div ref={searchWrapperRef} className="relative">
       <div
-        className={`group searchBar flex items-center gap-2 rounded-xl border px-3 h-10 w-64
+        className={`group searchBar flex items-center gap-1.5 sm:gap-2 rounded-xl border px-2.5 sm:px-3 h-9 sm:h-10 w-32 xs:w-40 sm:w-48 md:w-64
           transition-all duration-300
           focus-within:shadow-focus
           ${
@@ -129,8 +129,8 @@ export default function NavbarSearch({
         `}
       >
         <Search
-          size={18}
-          className={`shrink-0 transition-colors duration-300
+          size={16}
+          className={`shrink-0 transition-colors duration-300 sm:w-[18px] sm:h-[18px]
             ${
               isTransparent
                 ? "text-white/70 group-focus-within:text-white"
@@ -154,8 +154,8 @@ export default function NavbarSearch({
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
           onKeyDown={handleKeyDown}
-          placeholder="Cari laptop, brand..."
-          className={`flex-1 min-w-0 bg-transparent outline-none border-none focus:ring-0 transition-colors duration-300
+          placeholder="Cari laptop..."
+          className={`flex-1 min-w-0 bg-transparent outline-none border-none focus:ring-0 transition-colors duration-300 text-xs sm:text-sm
             ${
               isTransparent
                 ? "placeholder:text-white/50 text-white"

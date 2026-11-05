@@ -11,13 +11,13 @@ export default function ProfileLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <div className="py-24 w-full">
+    <div className="py-20 sm:py-24 w-full">
       <Container>
-        <div className="grid grid-cols-12 gap-8">
-          <aside className="col-span-3">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
+          <aside className="col-span-1 lg:col-span-3">
             <ProfileSidebar />
           </aside>
-          <main className="col-span-9 min-h-103">{children}</main>
+          <main className="col-span-1 lg:col-span-9 min-h-103">{children}</main>
         </div>
       </Container>
     </div>

@@ -27,29 +27,26 @@ export const addProductToCart = async (
     select: { stock: true, name: true },
   });
   if (!product) {
-    throw new Error("PRODUCT_NOT_FOUND");
+    throw new AppError(404, "PRODUCT_NOT_FOUND", "Product not found");
   }
   const existingCart = await prisma.cartItem.findFirst({
     where: { userId, productId, configId: productConfigId },
   });
 
-  const totalQuantity = existingCart
-    ? quantity !== undefined
-      ? quantity
-      : existingCart.quantity + 1
-    : qty;
+  const nextQuantity = existingCart ? existingCart.quantity + qty : qty;
 
-  if (totalQuantity > product.stock) {
-    throw new AppError(401, "INSUFFICIENT_STOCK", "Not Enough Stock", {
+  if (nextQuantity > product.stock) {
+    throw new AppError(400, "INSUFFICIENT_STOCK", "Not Enough Stock", {
       productName: product.name,
       availableStock: product.stock,
     });
   }
+
   // increment the qty
   if (existingCart) {
     return await prisma.cartItem.update({
       where: { id: existingCart.id },
-      data: { quantity: { increment: quantity } },
+      data: { quantity: { increment: qty } },
     });
   }
 
@@ -58,7 +55,7 @@ export const addProductToCart = async (
       userId,
       productId,
       configId: productConfigId,
-      quantity,
+      quantity: qty,
     },
   });
 };

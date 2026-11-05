@@ -10,13 +10,13 @@ export default function PaymentDetailsCard({ order }: PaymentDetailsCardProps) {
   const payment = order.payments[0];
 
   return (
-    <aside className="rounded-3xl bg-white p-8 shadow-card">
-      <h2 className="font-display text-2xl font-bold mb-6 flex items-center gap-2">
+    <aside className="rounded-2xl sm:rounded-3xl bg-white p-5 sm:p-8 shadow-card">
+      <h2 className="font-display text-xl sm:text-2xl font-bold mb-4 sm:mb-6 flex items-center gap-2">
         <CreditCard size={20} className="text-accent" />
         Payment Details
       </h2>
 
-      <div className="space-y-4 text-sm">
+      <div className="space-y-3 sm:space-y-4 text-xs sm:text-sm">
         <div className="flex justify-between">
           <span className="text-muted-foreground">Amount</span>
           <span className="font-medium">{formatPrice(order.totalPrice)}</span>

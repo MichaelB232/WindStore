@@ -42,10 +42,10 @@ export default function Navbar() {
         `}
       >
         <Container>
-          <div className="flex justify-between items-center h-20">
+          <div className="flex justify-between items-center h-16 sm:h-20 gap-2">
             {/* Logo / Brand */}
-            <div className="left py-3">
-              <h1 className="font-display text-2xl font-bold">
+            <div className="left py-3 shrink-0">
+              <h1 className="font-display text-xl sm:text-2xl font-bold">
                 <Link
                   href={ROUTES.HOME}
                   className={`transition-colors duration-300
@@ -58,7 +58,7 @@ export default function Navbar() {
             </div>
 
             {/* Right section: search, nav links, cart */}
-            <div className="right flex items-center gap-7">
+            <div className="right flex items-center gap-2.5 sm:gap-4 md:gap-7">
               {/* Search Bar */}
               <NavbarSearch key={pathname} isTransparent={isTransparent} />
 
@@ -66,7 +66,7 @@ export default function Navbar() {
               <div className="shop">
                 <Link
                   href={ROUTES.SHOP}
-                  className={`text-xl font-bold transition-colors duration-300
+                  className={`text-sm sm:text-base md:text-xl font-bold transition-colors duration-300
                     ${
                       isTransparent
                         ? "text-white hover:text-accent"
@@ -80,9 +80,9 @@ export default function Navbar() {
 
               {/* Cart Icon */}
               <div className="cart">
-                <Link href={ROUTES.CART}>
+                <Link href={ROUTES.CART} aria-label="Shopping Cart">
                   <ShoppingCart
-                    className={`transition-colors duration-300
+                    className={`size-5 sm:size-6 transition-colors duration-300
                       ${
                         isTransparent
                           ? "text-white hover:text-accent"
@@ -94,7 +94,7 @@ export default function Navbar() {
               </div>
 
               {/* Profile */}
-              <div className="">
+              <div className="shrink-0">
                 <UserMenu isHomePage={isHomePage} scrolled={scrolled} />
               </div>
             </div>

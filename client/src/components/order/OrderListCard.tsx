@@ -36,23 +36,23 @@ export default function OrderListCard({ order }: OrderListCardProps) {
   return (
     <Link
       href={ROUTES.ORDER_DETAIL(order.publicId)}
-      className="group block w-full rounded-3xl bg-white shadow-card overflow-hidden transition ease-in duration-200 hover:shadow-card-hover"
+      className="group block w-full rounded-2xl sm:rounded-3xl bg-white shadow-card overflow-hidden transition ease-in duration-200 hover:shadow-card-hover"
     >
       {/* Header */}
-      <div className="flex items-center justify-between gap-4 px-8 pt-6 pb-4 border-b border-border">
-        <div className="flex items-center gap-3 min-w-0">
+      <div className="flex flex-wrap sm:flex-nowrap items-center justify-between gap-2 sm:gap-4 px-4 sm:px-8 pt-4 sm:pt-6 pb-3 sm:pb-4 border-b border-border">
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
           <Package size={16} className="text-muted-foreground shrink-0" />
-          <p className="text-sm font-mono uppercase tracking-widest text-muted-foreground truncate">
+          <p className="text-xs sm:text-sm font-mono uppercase tracking-widest text-muted-foreground truncate">
             Order #{order.publicId}
           </p>
           <span className="text-muted-foreground/40">•</span>
-          <p className="text-sm text-muted-foreground whitespace-nowrap">
+          <p className="text-xs sm:text-sm text-muted-foreground whitespace-nowrap">
             {formatDate(order.createdAt)}
           </p>
         </div>
 
         <span
-          className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold whitespace-nowrap shrink-0 ${statusConfig.bg} ${statusConfig.color}`}
+          className={`inline-flex items-center gap-1.5 rounded-full px-2.5 sm:px-3 py-1 text-xs font-semibold whitespace-nowrap shrink-0 ${statusConfig.bg} ${statusConfig.color}`}
         >
           <span className={`size-1.5 rounded-full ${statusConfig.dot}`} />
           {statusConfig.label}
@@ -60,51 +60,53 @@ export default function OrderListCard({ order }: OrderListCardProps) {
       </div>
 
       {/* Body */}
-      <div className="flex items-center gap-6 p-8">
-        {/* Item thumbnails */}
-        <div className="flex -space-x-4 shrink-0">
-          {previewItems.map((item) => (
-            <div
-              key={item.id}
-              className="relative size-20 overflow-hidden rounded-xl bg-muted ring-4 ring-white"
-            >
-              <Image
-                src={item.product.imageUrl}
-                alt={item.product.name}
-                fill
-                sizes="80px"
-                className="object-contain"
-                unoptimized
-              />
-            </div>
-          ))}
-          {extraCount > 0 && (
-            <div className="relative size-20 flex items-center justify-center rounded-xl bg-surface-alt ring-4 ring-white text-sm font-semibold text-muted-foreground">
-              +{extraCount}
-            </div>
-          )}
-        </div>
+      <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6 p-4 sm:p-8">
+        <div className="flex items-center gap-4 min-w-0 flex-1">
+          {/* Item thumbnails */}
+          <div className="flex -space-x-3 sm:-space-x-4 shrink-0">
+            {previewItems.map((item) => (
+              <div
+                key={item.id}
+                className="relative size-16 sm:size-20 overflow-hidden rounded-xl bg-muted ring-2 sm:ring-4 ring-white"
+              >
+                <Image
+                  src={item.product.imageUrl}
+                  alt={item.product.name}
+                  fill
+                  sizes="80px"
+                  className="object-contain"
+                  unoptimized
+                />
+              </div>
+            ))}
+            {extraCount > 0 && (
+              <div className="relative size-16 sm:size-20 flex items-center justify-center rounded-xl bg-surface-alt ring-2 sm:ring-4 ring-white text-xs sm:text-sm font-semibold text-muted-foreground">
+                +{extraCount}
+              </div>
+            )}
+          </div>
 
-        {/* Info */}
-        <div className="flex-1 min-w-0">
-          <h3 className="text-lg font-bold font-display truncate">
-            {previewItems[0]?.product.name}
-            {order.orderItems.length > 1 &&
-              ` + ${order.orderItems.length - 1} more`}
-          </h3>
-          {previewItems[0]?.productConfig && (
-            <p className="mt-1 text-sm text-muted-foreground truncate">
-              {previewItems[0].productConfig.configName}
+          {/* Info */}
+          <div className="flex-1 min-w-0">
+            <h3 className="text-base sm:text-lg font-bold font-display truncate">
+              {previewItems[0]?.product.name}
+              {order.orderItems.length > 1 &&
+                ` + ${order.orderItems.length - 1} more`}
+            </h3>
+            {previewItems[0]?.productConfig && (
+              <p className="mt-0.5 sm:mt-1 text-xs sm:text-sm text-muted-foreground truncate">
+                {previewItems[0].productConfig.configName}
+              </p>
+            )}
+            <p className="mt-0.5 sm:mt-1 text-xs text-muted-foreground">
+              {itemCount} {itemCount === 1 ? "item" : "items"}
             </p>
-          )}
-          <p className="mt-1 text-xs text-muted-foreground">
-            {itemCount} {itemCount === 1 ? "item" : "items"}
-          </p>
+          </div>
         </div>
 
         {/* Payment + Price */}
-        <div className="flex flex-col items-end gap-2 shrink-0 text-right">
-          <p className="text-xl font-bold text-accent">
+        <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-start gap-2 shrink-0 sm:text-right pt-3 sm:pt-0 border-t sm:border-t-0">
+          <p className="text-lg sm:text-xl font-bold text-accent">
             {formatPrice(order.totalPrice)}
           </p>
           <span
@@ -117,7 +119,7 @@ export default function OrderListCard({ order }: OrderListCardProps) {
 
         <ChevronRight
           size={20}
-          className="text-muted-foreground group-hover:text-accent group-hover:translate-x-0.5 transition shrink-0"
+          className="text-muted-foreground group-hover:text-accent group-hover:translate-x-0.5 transition shrink-0 hidden sm:block"
         />
       </div>
     </Link>

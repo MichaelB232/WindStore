@@ -40,12 +40,12 @@ export default function DetailReviews({ laptop }: Props) {
   const total = reviews.length;
 
   return (
-    <section id="review-section" className="mt-20">
+    <section id="review-section" className="mt-12 sm:mt-20">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-3xl font-display font-bold">Customer Reviews</h2>
+        <h2 className="text-2xl sm:text-3xl font-display font-bold">Customer Reviews</h2>
         {total > 0 && (
-          <span className="text-sm text-text-muted">
+          <span className="text-xs sm:text-sm text-text-muted">
             {total} {total === 1 ? "review" : "reviews"}
           </span>
         )}
@@ -61,24 +61,24 @@ export default function DetailReviews({ laptop }: Props) {
 
       {/* Loading */}
       {loading && (
-        <div className="rounded-3xl border border-border bg-surface p-10 text-center text-text-muted shadow-card animate-pulse">
+        <div className="rounded-2xl sm:rounded-3xl border border-border bg-surface p-8 sm:p-10 text-center text-text-muted shadow-card animate-pulse">
           Fetching reviews…
         </div>
       )}
 
       {/* Error */}
       {!loading && error && (
-        <div className="rounded-3xl border border-danger/30 bg-danger-bg p-8 text-center text-danger text-sm">
+        <div className="rounded-2xl sm:rounded-3xl border border-danger/30 bg-danger-bg p-6 sm:p-8 text-center text-danger text-sm">
           Could not load reviews. Please try again later.
         </div>
       )}
 
       {/* Empty */}
       {!loading && !error && total === 0 && (
-        <div className="rounded-3xl border border-border bg-surface p-12 text-center shadow-card">
+        <div className="rounded-2xl sm:rounded-3xl border border-border bg-surface p-8 sm:p-12 text-center shadow-card">
           <MessageSquare size={40} className="mx-auto mb-4 text-text-muted" />
           <p className="font-semibold text-text-primary">No reviews yet</p>
-          <p className="mt-1 text-sm text-text-muted">
+          <p className="mt-1 text-xs sm:text-sm text-text-muted">
             Be the first to share your experience with this laptop.
           </p>
         </div>
@@ -86,11 +86,11 @@ export default function DetailReviews({ laptop }: Props) {
 
       {/* Main content */}
       {!loading && !error && total > 0 && (
-        <div className="grid grid-cols-12 gap-8">
-          <div className="col-span-4">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          <div className="col-span-1 lg:col-span-4">
             <ReviewStats reviews={reviews} />
           </div>
-          <div className="col-span-8">
+          <div className="col-span-1 lg:col-span-8">
             <ReviewList reviews={reviews} />
           </div>
         </div>

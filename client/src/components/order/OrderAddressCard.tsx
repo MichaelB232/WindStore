@@ -9,8 +9,8 @@ export default function OrderAddressCard({ order }: OrderAddressCardProps) {
   const address = order.address;
 
   return (
-    <aside className="rounded-3xl bg-white p-8 shadow-card">
-      <h2 className="font-display text-2xl font-bold mb-6 flex items-center gap-2">
+    <aside className="rounded-2xl sm:rounded-3xl bg-white p-5 sm:p-8 shadow-card">
+      <h2 className="font-display text-xl sm:text-2xl font-bold mb-4 sm:mb-6 flex items-center gap-2">
         <MapPin size={20} className="text-accent" />
         Shipping Address
       </h2>
@@ -21,9 +21,9 @@ export default function OrderAddressCard({ order }: OrderAddressCardProps) {
           removed from your saved addresses after this order was placed.
         </p>
       ) : (
-        <div className="space-y-3 text-sm">
+        <div className="space-y-3 text-xs sm:text-sm">
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="font-display font-bold text-base">
+            <span className="font-display font-bold text-sm sm:text-base">
               {address.label}
             </span>
           </div>

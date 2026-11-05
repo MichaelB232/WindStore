@@ -25,7 +25,7 @@ export default function UserMenu({ isHomePage, scrolled }: UserMenuProps) {
   const { user, loading, logout } = useAuth();
   const userIcon = (
     <User
-      className={`transition-colors duration-300
+      className={`size-5 sm:size-6 transition-colors duration-300 cursor-pointer
                       ${
                         isTransparent
                           ? "text-white hover:text-accent"
@@ -49,17 +49,20 @@ export default function UserMenu({ isHomePage, scrolled }: UserMenuProps) {
   }
 
   if (!user) {
-    return <Link href={ROUTES.LOGIN}>{userIcon}</Link>;
+    return (
+      <Link href={ROUTES.LOGIN} aria-label="Login">
+        {userIcon}
+      </Link>
+    );
   }
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>{userIcon}</DropdownMenuTrigger>
 
-      <DropdownMenuContent className="w-40" align="end">
+      <DropdownMenuContent className="w-56" align="end">
         <DropdownMenuGroup>
-          {/* (Icon/image) + Nama */}
-          <DropdownMenuLabel>{user.username}</DropdownMenuLabel>
-          <DropdownMenuLabel>{user.email}</DropdownMenuLabel>
+          <DropdownMenuLabel className="truncate font-semibold">{user.username}</DropdownMenuLabel>
+          <DropdownMenuLabel className="truncate text-xs font-normal text-muted-foreground">{user.email}</DropdownMenuLabel>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
@@ -90,7 +93,7 @@ export default function UserMenu({ isHomePage, scrolled }: UserMenuProps) {
 
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem onClick={handleLogout}>Log out</DropdownMenuItem>
+          <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-500 focus:text-red-600 focus:bg-red-50">Log out</DropdownMenuItem>
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>

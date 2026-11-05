@@ -76,30 +76,30 @@ export default function HeroSection() {
 
           {/* Content */}
           <div className="absolute inset-0 flex items-center">
-            <div className="container mx-auto px-6 md:px-12 xl:px-20 relative z-10">
+            <div className="container mx-auto px-4 sm:px-6 md:px-12 xl:px-20 relative z-10">
               <motion.div
                 initial={{ y: 30, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.3, duration: 0.6 }}
                 className="max-w-2xl"
               >
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 mb-3">
                   <div className="w-6 h-px bg-accent" />
 
-                  <h2 className="text-accent font-medium tracking-wider uppercase">
+                  <h2 className="text-accent text-xs sm:text-sm font-medium tracking-wider uppercase">
                     {slides[currentSlide].brand}
                   </h2>
                 </div>
 
-                <h1 className="font-heading text-5xl md:text-7xl font-bold text-text-inverse mb-6 leading-tight">
+                <h1 className="font-heading text-3xl sm:text-5xl md:text-7xl font-bold text-text-inverse mb-4 sm:mb-6 leading-tight">
                   {slides[currentSlide].title}
                 </h1>
-                <p className="text-white/80 text-lg md:text-xl mb-8 max-w-lg leading-relaxed">
+                <p className="text-white/80 text-sm sm:text-lg md:text-xl mb-6 sm:mb-8 max-w-lg leading-relaxed">
                   {slides[currentSlide].subtitle}
                 </p>
 
                 <Link href={ROUTES.SHOP}>
-                  <button className="bg-accent hover:bg-accent-hover text-text-inverse font-bold px-8 py-4 rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-focus">
+                  <button className="bg-accent hover:bg-accent-hover text-text-inverse font-bold px-6 py-3 sm:px-8 sm:py-4 text-sm sm:text-base rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-focus">
                     Explore Now
                   </button>
                 </Link>
@@ -110,16 +110,16 @@ export default function HeroSection() {
       </AnimatePresence>
 
       {/* Navigation Controls */}
-      <div className="absolute bottom-10 left-0 w-full z-20">
-        <div className="container mx-auto px-6 md:px-12 xl:px-20 flex justify-between items-center">
-          <div className="flex gap-3">
+      <div className="absolute bottom-6 sm:bottom-10 left-0 w-full z-20">
+        <div className="container mx-auto px-4 sm:px-6 md:px-12 xl:px-20 flex justify-between items-center">
+          <div className="flex gap-2 sm:gap-3">
             {slides.map((_, idx) => (
               <button
                 key={idx}
                 onClick={() => setCurrentSlide(idx)}
                 className={`h-2 rounded-full transition-all duration-300 ${
                   currentSlide === idx
-                    ? "w-10 bg-accent"
+                    ? "w-8 sm:w-10 bg-accent"
                     : "w-2 bg-white/30 hover:bg-white/50"
                 }`}
                 aria-label={`Go to slide ${idx + 1}`}
@@ -127,18 +127,20 @@ export default function HeroSection() {
             ))}
           </div>
 
-          <div className="flex gap-4">
+          <div className="flex gap-3 sm:gap-4">
             <button
               onClick={prevSlide}
-              className="w-12 h-12 rounded-full glass-card flex items-center justify-center text-white hover:text-accent-hover hover:border-[#00D4FF]/50 transition-colors group"
+              aria-label="Previous slide"
+              className="w-10 h-10 sm:w-12 sm:h-12 rounded-full glass-card flex items-center justify-center text-white hover:text-accent-hover hover:border-[#00D4FF]/50 transition-colors group cursor-pointer"
             >
-              <ChevronLeft className="w-6 h-6 group-hover:-translate-x-1 transition-transform" />
+              <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 group-hover:-translate-x-1 transition-transform" />
             </button>
             <button
               onClick={nextSlide}
-              className="w-12 h-12 rounded-full glass-card flex items-center justify-center text-white hover:text-accent-hover hover:border-[#00D4FF]/50 transition-colors group"
+              aria-label="Next slide"
+              className="w-10 h-10 sm:w-12 sm:h-12 rounded-full glass-card flex items-center justify-center text-white hover:text-accent-hover hover:border-[#00D4FF]/50 transition-colors group cursor-pointer"
             >
-              <ChevronRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
+              <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 group-hover:translate-x-1 transition-transform" />
             </button>
           </div>
         </div>
