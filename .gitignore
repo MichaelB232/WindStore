@@ -1,2 +1,53 @@
+# Environment variables
 .env
 .env.local
+.env.*.local
+!.env.example
+
+# Dependencies
+node_modules/
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+env/
+venv/
+ENV/
+
+# Python testing & cache
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Client build & outputs (Next.js)
+client/.next/
+client/out/
+client/build/
+client/.pnpm-debug.log*
+
+# Server build & outputs (Express / Prisma)
+server/dist/
+server/build/
+/generated/prisma
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# IDE & Editor
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Docker / Database persistence
+postgres_data/

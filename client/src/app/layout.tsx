@@ -5,6 +5,7 @@ import { WishlistProvider } from "@/src/services/wishlist/context/WishlistContex
 import { CartSelectionProvider } from "@/src/services/cart/context/CartSelectionContext";
 import "./globals.css";
 import { Toaster } from "sonner";
+import ChatWidget from "@/src/components/chat/ChatWidget";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -40,7 +41,10 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col">
         <AuthProvider>
           <WishlistProvider>
-            <CartSelectionProvider>{children}</CartSelectionProvider>
+            <CartSelectionProvider>
+              {children}
+              <ChatWidget />
+            </CartSelectionProvider>
           </WishlistProvider>
           <Toaster />
         </AuthProvider>
