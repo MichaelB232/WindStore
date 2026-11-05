@@ -81,7 +81,7 @@ export default function Footer() {
               </p>
               <div className="">
                 <h4 className="font-display font-bold text-text-inverse mb-6 text-lg">
-                  Connect With Developer
+                  Connect With Developers
                 </h4>
                 <div className="flex gap-4">
                   {SOCIAL_LINKS.map((social) => (
@@ -181,9 +181,12 @@ export default function Footer() {
           </div>
         </Container>
       </div>
-      <div className="pt-8 border-t border-border-dark text-center">
+      <div className="pt-8 border-t border-border-dark text-center px-4 max-w-4xl mx-auto space-y-2">
         <p className="text-text-dark-muted text-sm">
           &copy; {new Date().getFullYear()} WindStore. All rights reserved.
+        </p>
+        <p className="text-text-dark-muted/70 text-xs leading-relaxed">
+          Disclaimer:This website is a collaborative portfolio project created for demonstration purposes only. All product images, brand names, and logos belong to their respective owners (ASUS, Lenovo, Acer, Dell, etc.). No real commercial transactions are conducted.
         </p>
       </div>
     </footer>
