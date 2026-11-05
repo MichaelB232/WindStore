@@ -1,139 +1,110 @@
-# WindStore
+# WindStore 💻🚀
 
-WindStore is a full-stack e-commerce platform for premium Windows laptops. Customers can browse laptops by category/brand/processor, pick a build configuration, save items to a wishlist, check out with real payment processing (Midtrans), and track their orders — while admins manage the full product catalog from a dedicated dashboard.
+**WindStore** adalah platform e-commerce full-stack modern untuk penjualan laptop berbasis Windows premium. Pengguna dapat menelusuri katalog laptop, melakukan kustomisasi varian komponen (RAM, Storage, OS, Garansi), membeli langsung (*Direct Checkout*) atau melalui keranjang, melakukan pembayaran nyata via payment gateway **Midtrans Snap**, serta memberikan ulasan terverifikasi setelah pesanan selesai. Dilengkapi pula dengan dashboard admin khusus untuk manajemen katalog, stok, dan moderasi.
 
-The project is a monorepo with two independently deployable apps:
+Proyek ini dibangun menggunakan arsitektur monorepo yang bersih dan modular:
 
 ```
-windstore/
-├── client/     # Next.js 16 (App Router) storefront + admin dashboard
-└── server/     # Express + Prisma (PostgreSQL) REST API
+WindStore/
+├── client/           # Next.js 16 (App Router), React 19, Tailwind CSS 4, shadcn/ui
+├── server/           # Node.js, Express 5, TypeScript, Prisma ORM (@prisma/adapter-pg)
+├── docs/             # Dokumentasi teknis terpusat (Setup, API, PRD)
+│   ├── setup.md      # Panduan instalasi, konfigurasi env, & pengujian lokal
+│   ├── api.md        # Dokumentasi lengkap seluruh endpoint REST API
+│   └── prd.md        # Product Requirements Document & arsitektur flow
+└── docker-compose.yml# Container database PostgreSQL (Port 5433)
 ```
-
-Each app has its own README with setup details specific to it:
-
-- [`client/README.md`](./client/README.md) — frontend setup, routes, environment variables
-- [`server/README.md`](./server/README.md) — API reference, data model, environment variables
 
 ---
 
-## Tech Stack
+## 📚 Dokumentasi Teknis
 
-| Layer    | Stack                                                                                     |
-| -------- | ------------------------------------------------------------------------------------------ |
-| Frontend | Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4, shadcn/ui, Radix UI, Embla Carousel, Motion, Sonner (toasts) |
-| Backend  | Node.js, Express 5, TypeScript, Prisma ORM (`@prisma/adapter-pg`)                          |
-| Database | PostgreSQL                                                                                |
-| Auth     | JWT stored in an `httpOnly` cookie, bcrypt password hashing                              |
-| Payments | Midtrans Snap (sandbox/production)                                                        |
-| Media    | Cloudinary (product image uploads via Multer, in-memory storage)                          |
-| Jobs     | `node-cron` — auto-cancels stale unpaid orders and restocks their items                   |
-| DevOps   | Docker + Docker Compose (optional, for containerized local development)                   |
+Semua dokumentasi teknis telah dirapikan ke dalam direktori [`docs/`](./docs/):
 
-## Features
+* 🚀 **[Panduan Instalasi & Setup Lokal (docs/setup.md)](./docs/setup.md)** — Langkah instalasi lengkap, environment variables, kredensial Midtrans sandbox, dan troubleshooting.
+* 🔌 **[Dokumentasi REST API (docs/api.md)](./docs/api.md)** — Spesifikasi seluruh endpoint API, request/response body, autentikasi cookie JWT, dan error handling.
+* 📋 **[Product Requirements Document (docs/prd.md)](./docs/prd.md)** — Ruang lingkup fungsional, spesifikasi teknis, dan diagram alur transaksi.
 
-**Storefront**
-- Home page with hero, featured products, shop-by-category, and brand marquee
-- Shop/catalog page with filtering by category, brand, processor, and price range, plus sorting and a live search bar in the navbar
-- Product detail page with configuration picker (e.g. RAM/storage variants that change price), specs, and reviews
-- Cart, multi-address checkout, and order history with live payment status
-- Wishlist
-- User profile: edit account, manage addresses, view order history, delete account
+---
 
-**Admin dashboard** (role-gated, `role: "admin"` only)
-- Dashboard overview
-- Products (create/edit/delete, image upload, feature list, configuration variants)
-- Brands, Categories
-- Reviews moderation
-- User management
+## 🛠️ Tech Stack
 
-**Payments**
-- Checkout creates an `Order` + `Payment` and opens a Midtrans Snap transaction
-- Midtrans webhook verifies the request signature (SHA-512) and updates order/payment status
-- A cron job periodically cancels orders left `pending` too long and restores stock
+| Layer | Teknologi |
+| :--- | :--- |
+| **Frontend** | **Next.js 16 (App Router)**, **React 19**, TypeScript, **Tailwind CSS 4**, shadcn/ui, Radix UI, Lucide Icons, Sonner |
+| **Backend** | **Node.js**, **Express 5**, TypeScript, **Prisma ORM** (`@prisma/adapter-pg`) |
+| **Database** | **PostgreSQL 17** (via Docker container pada port `5433`) |
+| **Auth** | JWT (*JSON Web Token*) tersimpan aman di dalam `httpOnly` cookie, hashing password via bcrypt |
+| **Payments** | **Midtrans Snap** (Sandbox/Production) dengan verifikasi signature SHA-512 & *Active Status Sync* fallback |
+| **Media Storage**| **Cloudinary** (Upload gambar produk via Multer in-memory storage) |
+| **Concurrency** | *Pessimistic Row-Level Locking* (`SELECT FOR UPDATE`) & PostgreSQL Check Constraint (`stock >= 0`) |
+| **Background Jobs**| `node-cron` — otomatis membatalkan pesanan kedaluwarsa (>15 menit) dan mengembalikan stok barang |
 
-## Getting Started
+---
 
-You can run WindStore either natively (Node.js installed locally) or with Docker (no local Node.js/npm required). Pick whichever fits your workflow — both require the client and server running at the same time, since the client calls the server over HTTP.
+## ✨ Fitur Unggulan
 
-### Option A — Native (Node.js)
+### 🛍️ Storefront & Belanja
+- **Katalog & Filter Presisi:** Filter berdasarkan kategori, brand, tipe prosesor, dan rentang harga dengan sorting dan live search bar.
+- **Kustomisasi Konfigurasi (Build Your Setup):** Pemilihan varian RAM, SSD, dll. dengan penyesuaian harga (*price modifier*) dinamis.
+- **Beli Sekarang (Direct Checkout):** Tombol checkout instan pada produk yang langsung membawa pengguna ke pembayaran tanpa harus melalui keranjang manual.
+- **Multi-Item Keranjang Belanja:** Pemilihan parsial barang untuk di-checkout sewaktu-waktu.
+- **Buku Alamat Pengiriman:** Simpan beberapa alamat dan tetapkan alamat pengiriman utama (*default*).
+- **Payment Gateway Midtrans:** Mendukung Virtual Account (BCA, Mandiri, BNI, BRI), QRIS/GoPay, dan Kartu Kredit dengan 3DS OTP.
+- **Ulasan Pembeli Terverifikasi (Verified Buyer Reviews):** Hanya customer yang telah membeli dan menyelesaikan pesanan yang dapat memberikan rating dan ulasan, serta dapat **mengedit ulasan** mereka kapan saja.
 
-#### 1. Database
+### 🛡️ Keamanan & Kepatuhan Transaksi
+- **Pencegahan Race Condition Stok:** Transaksi checkout dilindungi dengan *Row-Level Locking* (`SELECT ... FOR UPDATE`) pada PostgreSQL agar stok tidak pernah minus meski di-checkout bersamaan di detik yang sama.
+- **Kepatuhan Audit Finansial (Soft Delete):** Penghapusan akun customer menggunakan *Soft Delete* (`isActive: false`), memastikan riwayat transaksi dan pembukuan pesanan yang sudah dibayar tetap utuh demi kepatuhan audit.
+- **Active Status Sync Fallback:** Status pesanan Midtrans otomatis tersinkronisasi saat halaman detail dibuka, memungkinkan pengujian mulus di `localhost` tanpa wajib setup tunnel Ngrok.
 
-Provision a PostgreSQL database (locally or hosted) and have its connection string ready for `server/.env`.
+### ⚙️ Admin Dashboard
+- **Katalog & Inventaris:** Tambah, edit, dan hapus laptop beserta upload multi-gambar ke Cloudinary.
+- **Preset Konfigurasi:** Atur harga tambahan per opsi RAM/Storage.
+- **Pantauan Pesanan & Pengguna:** Kelola status pesanan customer dan daftar pengguna terdaftar.
 
-#### 2. Server
+---
 
+## ⚡ Quickstart (Menjalankan Secara Lokal)
+
+### 1. Jalankan Database (Docker)
+```bash
+docker-compose up -d
+```
+> Database PostgreSQL berjalan pada `localhost:5433`.
+
+### 2. Setup Backend (Server)
 ```bash
 cd server
 npm install
-# create .env — see server/README.md for the full list of variables
-npx prisma migrate dev
-npm run dev
+cp .env.example .env     # Sesuaikan credential database & Midtrans
+npx prisma migrate dev  # Jalankan migrasi
+npm run seed            # Isi database dengan data awal
+npm run dev             # Berjalan di http://localhost:8000
 ```
 
-By default the API listens on `http://localhost:8000` (configurable via `PORT`).
-
-#### 3. Client
-
+### 3. Setup Frontend (Client)
 ```bash
-cd client
+cd ../client
 npm install
-# create .env.local — see client/README.md for the full list of variables
-npm run dev
+cp .env.example .env.local  # Pastikan NEXT_PUBLIC_API_URL=http://localhost:8000
+npm run dev                 # Berjalan di http://localhost:3000
 ```
 
-The storefront runs on `http://localhost:3000`, which is also the origin the server's CORS config expects (`credentials: true`).
+---
 
-#### 4. Create an admin user
+## 🔑 Akun Uji Coba Default
 
-New accounts register with `role: "customer"` by default. To access `/admin`, register a normal account and then promote it to `role: "admin"` directly in the database (there is no self-service admin signup).
+Setelah menjalankan `npm run seed`:
 
-### Option B — Docker
+| Role | Username / Identifier | Password | Akses |
+| :--- | :--- | :--- | :--- |
+| **Admin** | `admin` | `admin123` | Akses penuh dashboard `/admin` |
+| **Customer** | `johndoe` | `user123` | Belanja, kustomisasi, checkout, review produk |
+| **Customer** | `janedoe` | `user123` | Belanja dan checkout |
 
-Docker Compose spins up both apps in containers, so you don't need Node.js or npm installed locally. You still need a PostgreSQL connection string and the rest of each app's environment variables — see `client/README.md` and `server/README.md`.
+---
 
-#### Requirements
+## 📄 Lisensi
 
-- [Docker Desktop](https://www.docker.com/products/docker-desktop)
-
-#### 1. Clone the repository
-
-```bash
-git clone https://github.com/your-username/WindStore.git
-cd WindStore
-```
-
-#### 2. Configure environment variables
-
-Create `server/.env` and `client/.env.local` as described in each app's README before starting the containers.
-
-#### 3. Start the project
-
-```bash
-docker compose up --build
-```
-
-#### 4. Open in browser
-
-- Frontend: `http://localhost:5173`
-- Backend API: `http://localhost:5000`
-
-> **Note:** the ports above are for the Docker setup and differ from the native setup's `3000`/`8000`. When the client runs inside Docker, it should reach the server via the Docker network hostname (`http://server:5000/api`), **not** `localhost`.
-
-#### 5. Stop the project
-
-```bash
-docker compose down
-```
-
-#### 6. Create an admin user
-
-Same as the native setup: register a normal account, then promote it to `role: "admin"` directly in the database.
-
-## Repository Notes
-
-- The client and server are separate npm projects — install and run their dependencies independently.
-- Prices are stored and transferred as integers (`BigInt` on the server) representing the smallest currency unit; the client is responsible for formatting/display.
-- Cookies are used for auth (not `Authorization` headers), so the client always calls the API with `credentials: "include"`.
-- Docker is optional — it's provided for contributors who want a consistent environment without installing Node.js locally. See the `docker-compose.yml`, `server/Dockerfile`, and `client/Dockerfile` for the container definitions.
+Proyek ini dilisensikan di bawah lisensi [ISC](LICENSE).

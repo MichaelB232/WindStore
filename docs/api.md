@@ -296,24 +296,30 @@ Add Midtrans script to `layout.tsx`:
 
 ## Reviews `/api/reviews`
 
-| Method | Endpoint                  | Auth | Description              |
-| ------ | ------------------------- | ---- | ------------------------ |
-| GET    | `/api/reviews/:productId` | ❌   | Get reviews by productId |
-| POST   | `/api/reviews`            | ✅   | Add review               |
-| PUT    | `/api/reviews/:id`        | ✅   | Update own review        |
-| DELETE | `/api/reviews/:id`        | ✅   | Delete own review        |
+| Method | Endpoint                             | Auth | Description                                         |
+| ------ | ------------------------------------ | ---- | --------------------------------------------------- |
+| GET    | `/api/reviews/:productId`            | ❌   | Get reviews by productId                            |
+| GET    | `/api/reviews/:productId/can-review` | ✅   | Check if current user is eligible to review product |
+| POST   | `/api/reviews`                       | ✅   | Add review (Verified buyer only)                    |
+| PUT    | `/api/reviews/:id`                   | ✅   | Update own review                                   |
+| DELETE | `/api/reviews/:id`                   | ✅   | Delete own review                                   |
+
+### GET `/api/reviews/:productId/can-review`
+
+Returns `{ "canReview": boolean, "hasPurchased": boolean, "hasReviewed": boolean, "review": object | null }`.
 
 ### POST `/api/reviews`
 
 ```json
 {
   "productId": 1,
-  "rating": 4.5,
+  "rating": 5,
   "comment": "Great laptop!"
 }
 ```
 
-`rating` must be between 1-5. One review per product per user.
+> 🔒 **Verified Buyer Only:** Hanya user yang telah membeli produk tersebut dengan status order `paid`, `completed`, atau `shipped` yang diizinkan memberikan ulasan.
+> `rating` harus antara 1-5. Maksimal 1 ulasan per produk per user (dapat diedit via PUT).
 
 ### PUT `/api/reviews/:id`
 
@@ -328,10 +334,10 @@ Add Midtrans script to `layout.tsx`:
 
 ## Users `/api/users`
 
-| Method | Endpoint        | Auth | Description        |
-| ------ | --------------- | ---- | ------------------ |
-| PUT    | `/api/users/me` | ✅   | Update own profile |
-| DELETE | `/api/users/me` | ✅   | Delete own account |
+| Method | Endpoint              | Auth | Description                        |
+| ------ | --------------------- | ---- | ---------------------------------- |
+| PUT    | `/api/users/me`       | ✅   | Update own profile                 |
+| DELETE | `/api/users/deleteMe` | ✅   | Soft delete own account (isActive) |
 
 ### PUT `/api/users/me`
 
@@ -342,9 +348,9 @@ Add Midtrans script to `layout.tsx`:
 }
 ```
 
-### DELETE `/api/users/me`
+### DELETE `/api/users/deleteMe`
 
-No body needed. Will fail if user has active (pending/processing/shipped) orders.
+No body needed. Menggunakan **Soft Delete** (`isActive: false`) demi kepatuhan audit finansial (financial compliance). Riwayat pesanan yang sudah dibayar tetap tersimpan permanen. Gagal dengan kode 409 jika user memiliki pesanan yang masih aktif (`pending`/`processing`/`shipped`).
 
 ---
 
