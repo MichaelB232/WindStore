@@ -2,6 +2,7 @@ import prisma from "../lib/prisma";
 import crypto from "crypto";
 import { snap } from "../lib/midtrans";
 import { createOrder } from "./order.service";
+
 export const createPayment = async (
   userId: number,
   addressId: number,
@@ -10,9 +11,11 @@ export const createPayment = async (
   const order = await createOrder(userId, addressId, cartItems);
   const user = await prisma.user.findUnique({ where: { id: userId } });
 
+  const midtransOrderId = `ORDER-${order.id}-${Date.now()}`;
+
   const transaction = await snap.createTransaction({
     transaction_details: {
-      order_id: `ORDER-${order.id}-${Date.now()}`, //Must be Uniqueee
+      order_id: midtransOrderId, // Must be Unique
       gross_amount: Number(order.totalPrice),
     },
     customer_details: {
@@ -26,6 +29,7 @@ export const createPayment = async (
       quantity: item.quantity,
     })),
   } as any);
+
   const paymentMethod = await prisma.paymentMethod.findFirst({
     where: { code: "MIDTRANS" },
   });
@@ -38,9 +42,10 @@ export const createPayment = async (
       paymentMethodId: paymentMethod!.id,
       amount: order.totalPrice,
       status: "pending",
-      transactionId: transaction.token,
+      transactionId: midtransOrderId, 
     },
   });
+
   return {
     orderId: order.id,
     publicId: order.publicId,
@@ -59,7 +64,7 @@ export const handleWebhook = async (notification: any) => {
     fraud_status,
   } = notification;
 
-  const serverKey = process.env.MIDTRANS_SERVER_KEY || "";
+  const serverKey = process.env.MIDTRANS_SERVER_KEY;
 
   const stringToHash = `${order_id}${status_code}${gross_amount}${serverKey}`;
   const localSignature = crypto
@@ -98,7 +103,7 @@ export const handleWebhook = async (notification: any) => {
         order.orderItems.map((item) =>
           prisma.product.update({
             where: { id: item.productId },
-            data: { stock: { increment: item.quantity } }, //give back
+            data: { stock: { increment: item.quantity } }, // Kembalikan stok
           }),
         ),
       );
@@ -131,10 +136,11 @@ export const getPaymentToken = async (userId: number, publicId: string) => {
   }
 
   const user = await prisma.user.findUnique({ where: { id: userId } });
+  const midtransOrderId = `ORDER-${order.id}-${Date.now()}`;
 
   const transaction = await snap.createTransaction({
     transaction_details: {
-      order_id: `ORDER-${order.id}-${Date.now()}`,
+      order_id: midtransOrderId,
       gross_amount: Number(order.totalPrice),
     },
     customer_details: {
@@ -149,10 +155,10 @@ export const getPaymentToken = async (userId: number, publicId: string) => {
     })),
   } as any);
 
-  // Update the existing payment row instead of creating a duplicate
+  // Update payment row yang pending dengan midtransOrderId baru
   await prisma.payment.updateMany({
     where: { orderId: order.id, status: "pending" },
-    data: { transactionId: transaction.token },
+    data: { transactionId: midtransOrderId },
   });
 
   return {

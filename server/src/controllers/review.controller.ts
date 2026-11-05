@@ -28,6 +28,36 @@ export const getReviewsByProductSlug = async (req: Request, res: Response) => {
   }
 };
 
+export const checkCanReview = async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user!.id;
+    const productId = Number(req.params.productId);
+
+    if (!productId) {
+      res.status(400).json({ success: false, message: "Invalid product ID" });
+      return;
+    }
+
+    const hasPurchased = await ReviewService.hasUserPurchasedProduct(
+      userId,
+      productId,
+    );
+    const existing = await ReviewService.getUserReview(userId, productId);
+
+    res.status(200).json({
+      success: true,
+      data: {
+        canReview: hasPurchased && !existing,
+        hasPurchased,
+        hasReviewed: !!existing,
+        review: existing,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Server Error" });
+  }
+};
+
 export const createReview = async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.user!.id;
@@ -44,6 +74,19 @@ export const createReview = async (req: AuthRequest, res: Response) => {
       res
         .status(400)
         .json({ success: false, message: "Rating must be between 1 and 5" });
+      return;
+    }
+
+    // Hanya pembeli terverifikasi yang boleh mereview
+    const hasPurchased = await ReviewService.hasUserPurchasedProduct(
+      userId,
+      Number(productId),
+    );
+    if (!hasPurchased) {
+      res.status(403).json({
+        success: false,
+        message: "Hanya pengguna yang telah membeli produk ini yang dapat memberikan ulasan",
+      });
       return;
     }
 
@@ -98,14 +141,16 @@ export const updateReview = async (req: AuthRequest, res: Response) => {
       rating,
       comment,
     );
-    res.status(200).json({ success: true, data: review });
-  } catch (error: any) {
-    if (error.code === "P2025") {
+
+    if (!review) {
       res
         .status(404)
         .json({ success: false, message: "Review not found or not yours" });
       return;
     }
+
+    res.status(200).json({ success: true, data: review });
+  } catch (error: any) {
     res.status(500).json({ success: false, message: "Server Error" });
   }
 };
@@ -119,17 +164,17 @@ export const deleteReview = async (req: AuthRequest, res: Response) => {
     if (isAdmin) {
       await prisma.review.delete({ where: { id } });
     } else {
-      await ReviewService.deleteReview(id, userId);
+      const deleted = await ReviewService.deleteReview(id, userId);
+      if (!deleted) {
+        res
+          .status(404)
+          .json({ success: false, message: "Review not found or not yours" });
+        return;
+      }
     }
 
     res.status(200).json({ success: true, message: "Review deleted" });
   } catch (error: any) {
-    if (error.code === "P2025") {
-      res
-        .status(404)
-        .json({ success: false, message: "Review not found or not yours" });
-      return;
-    }
     res.status(500).json({ success: false, message: "Server Error" });
   }
 };

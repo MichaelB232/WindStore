@@ -30,9 +30,15 @@ export default function OrderStatusPage() {
   const { isReady, pay } = useMidtransSnap();
 
   const fetchOrder = useCallback(async () => {
-    const data = await getOrderStatus(publicId);
-    setOrder(data);
-    return data;
+    try {
+      const data = await getOrderStatus(publicId);
+      if (data) {
+        setOrder(data);
+      }
+      return data;
+    } catch {
+      return null;
+    }
   }, [publicId]);
 
   useEffect(() => {
@@ -40,15 +46,19 @@ export default function OrderStatusPage() {
     let timer: ReturnType<typeof setTimeout>;
 
     const poll = async () => {
-      const data = await fetchOrder();
-      if (cancelled) return;
-      setLoading(false);
+      try {
+        const data = await fetchOrder();
+        if (cancelled) return;
+        setLoading(false);
 
-      const isPending = !data || data.status?.toLowerCase() === "pending";
-      attemptsRef.current += 1;
+        const isPending = !data || data.status?.toLowerCase() === "pending";
+        attemptsRef.current += 1;
 
-      if (isPending && attemptsRef.current < MAX_POLL_ATTEMPTS) {
-        timer = setTimeout(poll, POLL_INTERVAL_MS);
+        if (isPending && attemptsRef.current < MAX_POLL_ATTEMPTS) {
+          timer = setTimeout(poll, POLL_INTERVAL_MS);
+        }
+      } catch {
+        if (!cancelled) setLoading(false);
       }
     };
 

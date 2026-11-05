@@ -7,6 +7,10 @@ type OrderItemsSummaryProps = {
 };
 
 export default function OrderItemsSummary({ order }: OrderItemsSummaryProps) {
+  const isPaid =
+    order.status?.toLowerCase() === "paid" ||
+    order.status?.toLowerCase() === "completed";
+
   return (
     <div className="rounded-3xl bg-white p-8 shadow-card">
       <h2 className="font-display text-2xl font-bold mb-2">Order Items</h2>
@@ -17,7 +21,7 @@ export default function OrderItemsSummary({ order }: OrderItemsSummaryProps) {
 
       <div>
         {order.orderItems.map((item) => (
-          <OrderItemRow key={item.id} item={item} />
+          <OrderItemRow key={item.id} item={item} isPaid={isPaid} />
         ))}
       </div>
 

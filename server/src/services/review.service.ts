@@ -28,6 +28,22 @@ export const getReviewsByProductSlug = async (slug: string) => {
   });
 };
 
+export const hasUserPurchasedProduct = async (
+  userId: number,
+  productId: number,
+) => {
+  const purchase = await prisma.orderItem.findFirst({
+    where: {
+      productId,
+      order: {
+        userId,
+        status: { in: ["paid", "completed", "shipped"] },
+      },
+    },
+  });
+  return !!purchase;
+};
+
 export const createReview = async (
   userId: number,
   productId: number,
@@ -45,15 +61,25 @@ export const updateReview = async (
   rating: number,
   comment?: string,
 ) => {
-  return await prisma.review.update({
+  const existing = await prisma.review.findFirst({
     where: { id, userId },
+  });
+  if (!existing) return null;
+
+  return await prisma.review.update({
+    where: { id },
     data: { rating, comment },
   });
 };
 
 export const deleteReview = async (id: number, userId: number) => {
+  const existing = await prisma.review.findFirst({
+    where: { id, userId },
+  });
+  if (!existing) return null;
+
   return await prisma.review.delete({
-    where: { id, userId }, // ← same here
+    where: { id },
   });
 };
 

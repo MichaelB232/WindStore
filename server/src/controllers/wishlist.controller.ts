@@ -41,6 +41,6 @@ export const removeFromWishlist = async (req: AuthRequest, res: Response) => {
     await WishlistService.removeWishlist(userId, Number(productId));
     res.status(200).json({ success: true, message: "Removed from wishlist" });
   } catch (error) {
-    res.status(500).json({ success: false, message: "Server Errorasda" });
+    res.status(500).json({ success: false, message: "Server Error" });
   }
 };

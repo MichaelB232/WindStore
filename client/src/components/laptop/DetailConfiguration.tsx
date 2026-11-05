@@ -1,15 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { Loader2, Check, Minus, Plus } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Loader2, Check, Minus, Plus, Zap, ShoppingCart } from "lucide-react";
 import { toast } from "sonner";
 import {
   ProductDetail,
   ProductConfig,
 } from "@/src/lib/producttype/ProductType";
 import { formatPrice } from "@/src/utils/utils";
-import { addToCart } from "@/src/services/cart/cart.service";
+import { addToCart, getCart } from "@/src/services/cart/cart.service";
 import { useAuth } from "@/src/hooks/useAuth";
+import { useCartSelection } from "@/src/services/cart/context/CartSelectionContext";
+import { ROUTES } from "@/src/routes/routes";
 import { Input } from "@/src/components/ui/shadcn/input";
 
 type DetailConfigurationProps = {
@@ -21,6 +24,10 @@ type SelectionMap = Record<string, ProductConfig>;
 export default function DetailConfiguration({
   laptop,
 }: DetailConfigurationProps) {
+  const router = useRouter();
+  const { user } = useAuth();
+  const { selectMany, clearSelection } = useCartSelection();
+
   const groups = laptop.productConfigs.reduce<Record<string, ProductConfig[]>>(
     (acc, cfg) => {
       if (!acc[cfg.configType]) acc[cfg.configType] = [];
@@ -38,9 +45,9 @@ export default function DetailConfiguration({
   const [cartState, setCartState] = useState<"idle" | "loading" | "added">(
     "idle",
   );
+  const [buyNowLoading, setBuyNowLoading] = useState(false);
   
   const [quantity, setQuantity] = useState(1);
-  const { user } = useAuth();
 
   const maxQty = laptop.stock;
 
@@ -79,10 +86,10 @@ export default function DetailConfiguration({
   const total = unitTotal * effectiveQty;
 
   const handleAddToCart = async () => {
-    if (cartState !== "idle" || laptop.stock === 0) return;
+    if (cartState !== "idle" || laptop.stock === 0 || buyNowLoading) return;
 
     if (!user) {
-      toast.error("Please log in to add items to your cart");
+      toast.error("Silakan login terlebih dahulu untuk menambahkan ke keranjang");
       return;
     }
 
@@ -98,7 +105,50 @@ export default function DetailConfiguration({
       setQuantity(1);
       setTimeout(() => setCartState("idle"), 2000);
     } else {
+      toast.error(result.message || "Gagal menambahkan item");
       setCartState("idle");
+    }
+  };
+
+  const handleBuyNow = async () => {
+    if (buyNowLoading || cartState !== "idle" || laptop.stock === 0) return;
+
+    if (!user) {
+      toast.error("Silakan login terlebih dahulu untuk melanjutkan pembelian");
+      router.push(`${ROUTES.LOGIN}?from=${encodeURIComponent(window.location.pathname)}`);
+      return;
+    }
+
+    const firstSelected = Object.values(selected)[0];
+    if (!firstSelected) return;
+
+    const qtyToSubmit = clampQty(quantity);
+    setBuyNowLoading(true);
+
+    try {
+      const result = await addToCart(laptop.id, firstSelected.id, qtyToSubmit);
+      if (!result.success) {
+        toast.error(result.message || "Gagal memproses pembelian");
+        setBuyNowLoading(false);
+        return;
+      }
+
+      // Ambil keranjang terbaru untuk memilih hanya item ini saat checkout
+      const cart = await getCart();
+      const targetItem = cart.find(
+        (item) =>
+          item.productId === laptop.id && item.configId === firstSelected.id,
+      );
+
+      if (targetItem) {
+        clearSelection();
+        selectMany([targetItem.id]);
+      }
+
+      router.push(ROUTES.CHECKOUT);
+    } catch {
+      toast.error("Terjadi kesalahan saat memproses checkout");
+      setBuyNowLoading(false);
     }
   };
 
@@ -185,7 +235,7 @@ export default function DetailConfiguration({
 
           <div className="flex items-end justify-between">
             <span className="text-3xl font-semibold">Total</span>
-            <span className="text-2xl font-bold font-display">
+            <span className="text-2xl font-bold font-display text-accent">
               {formatPrice(total)}
             </span>
           </div>
@@ -239,26 +289,60 @@ export default function DetailConfiguration({
             </div>
           </div>
 
-          <button
-            onClick={handleAddToCart}
-            disabled={laptop.stock === 0 || cartState !== "idle"}
-            className={`mt-6 w-full rounded-2xl py-4 font-semibold text-white transition-all flex items-center justify-center gap-2
-              ${
-                cartState === "added"
-                  ? "bg-green-500"
-                  : "bg-accent hover:bg-accent-hover"
-              } disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer`}
-          >
-            {cartState === "loading" && (
-              <Loader2 size={18} className="animate-spin" />
-            )}
-            {cartState === "added" && <Check size={18} />}
-            {cartState === "loading"
-              ? "Adding…"
-              : cartState === "added"
-                ? "Added to Cart!"
-                : `Add ${effectiveQty} to Cart`}
-          </button>
+          {/* Action Buttons */}
+          <div className="mt-6 space-y-3">
+            {/* Tombol Beli Sekarang */}
+            <button
+              type="button"
+              onClick={handleBuyNow}
+              disabled={
+                laptop.stock === 0 || buyNowLoading || cartState !== "idle"
+              }
+              className="w-full rounded-2xl bg-accent py-4 font-semibold text-white shadow-card transition-all duration-200 hover:bg-accent-hover hover:shadow-card-hover disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 cursor-pointer"
+            >
+              {buyNowLoading ? (
+                <>
+                  <Loader2 size={18} className="animate-spin" />
+                  Mengarahkan ke Pembayaran…
+                </>
+              ) : (
+                <>
+                  <Zap size={18} className="fill-white" />
+                  Beli Sekarang
+                </>
+              )}
+            </button>
+
+            {/* Tombol Tambah ke Keranjang */}
+            <button
+              type="button"
+              onClick={handleAddToCart}
+              disabled={
+                laptop.stock === 0 || cartState !== "idle" || buyNowLoading
+              }
+              className={`w-full rounded-2xl border-2 border-accent py-3.5 font-semibold transition-all flex items-center justify-center gap-2
+                ${
+                  cartState === "added"
+                    ? "bg-green-500 border-green-500 text-white"
+                    : "text-accent bg-transparent hover:bg-accent/5"
+                } disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer`}
+            >
+              {cartState === "loading" && (
+                <Loader2 size={18} className="animate-spin" />
+              )}
+              {cartState === "added" && <Check size={18} />}
+              {cartState === "loading"
+                ? "Menambahkan…"
+                : cartState === "added"
+                  ? "Berhasil Ditambahkan!"
+                  : (
+                    <>
+                      <ShoppingCart size={17} />
+                      Tambah ke Keranjang ({effectiveQty})
+                    </>
+                  )}
+            </button>
+          </div>
         </aside>
       </div>
     </section>

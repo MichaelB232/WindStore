@@ -1,6 +1,7 @@
 import { Prisma } from "@prisma/client";
 import prisma from "../lib/prisma";
 import { AppError } from "../errors/AppError";
+import { snap } from "../lib/midtrans";
 
 export const createOrder = async (
   userId: number,
@@ -140,7 +141,7 @@ export const createOrder = async (
 };
 
 export const findOrderStatus = async (publicId: string, userId: number) => {
-  return await prisma.order.findFirst({
+  const order = await prisma.order.findFirst({
     where: { publicId: publicId, userId: userId },
     include: {
       orderItems: {
@@ -153,6 +154,59 @@ export const findOrderStatus = async (publicId: string, userId: number) => {
       address: true,
     },
   });
+
+  if (!order) return null;
+
+  if (order.status.toLowerCase() === "pending" && order.payments.length > 0) {
+    const latestPayment = order.payments[order.payments.length - 1];
+    if (latestPayment.transactionId) {
+      try {
+        const midtransStatus: any = await (snap as any).transaction.status(
+          latestPayment.transactionId,
+        );
+
+        const trxStatus = midtransStatus?.transaction_status;
+        const fraudStatus = midtransStatus?.fraud_status;
+
+        if (trxStatus === "settlement" || trxStatus === "capture") {
+          if (fraudStatus === "accept" || !fraudStatus) {
+            await prisma.$transaction([
+              prisma.order.update({
+                where: { id: order.id },
+                data: { status: "paid" },
+              }),
+              prisma.payment.updateMany({
+                where: { orderId: order.id },
+                data: { status: "success" },
+              }),
+            ]);
+            order.status = "paid";
+            latestPayment.status = "success";
+          }
+        } else if (
+          trxStatus === "deny" ||
+          trxStatus === "cancel" ||
+          trxStatus === "expire"
+        ) {
+          await prisma.$transaction([
+            prisma.order.update({
+              where: { id: order.id },
+              data: { status: "cancelled" },
+            }),
+            prisma.payment.updateMany({
+              where: { orderId: order.id },
+              data: { status: "failed" },
+            }),
+          ]);
+          order.status = "cancelled";
+          latestPayment.status = "failed";
+        }
+      } catch (err) {
+      }
+    }
+  }
+
+  return order;
 };
 
 export const getMyOrders = async (userId: number) => {

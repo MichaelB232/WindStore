@@ -1,8 +1,15 @@
 import { Router } from "express";
-import { authenticate, authorizeAdmin } from "../middlewares/auth.middlewares";
+import { authenticate } from "../middlewares/auth.middlewares";
 import * as ReviewController from "../controllers/review.controller";
 import { writeLimiter } from "../middlewares/rateLimiter";
 const router = Router();
+
+// Protected can-review check
+router.get(
+  "/:productId/can-review",
+  authenticate,
+  ReviewController.checkCanReview,
+);
 
 // Public
 router.get("/:productId", ReviewController.getReviewsByProduct);
