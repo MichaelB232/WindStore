@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import {
   Bot,
@@ -11,7 +11,6 @@ import {
   ChevronDown,
   Wrench,
   Loader2,
-  ExternalLink,
 } from "lucide-react";
 
 interface ToolUsed {
@@ -35,6 +34,128 @@ const QUICK_PROMPTS = [
   "💼 Laptop ultrabook untuk kerja & kuliah",
 ];
 
+// Helper untuk merender Markdown bersih tanpa simbol mentah (###, **, *)
+function MarkdownMessage({ content }: { content: string }) {
+  const formatInline = (text: string): ReactNode[] => {
+    const tokens: ReactNode[] = [];
+    const regex = /(\*\*[^*]+\*\*|`[^`]+`|\*[^*]+\*)/g;
+    let lastIndex = 0;
+    let match: RegExpExecArray | null;
+
+    while ((match = regex.exec(text)) !== null) {
+      if (match.index > lastIndex) {
+        tokens.push(text.substring(lastIndex, match.index));
+      }
+      const token = match[0];
+      if (token.startsWith("**") && token.endsWith("**")) {
+        tokens.push(
+          <strong key={match.index} className="font-semibold text-white">
+            {token.slice(2, -2)}
+          </strong>
+        );
+      } else if (token.startsWith("`") && token.endsWith("`")) {
+        tokens.push(
+          <code
+            key={match.index}
+            className="px-1.5 py-0.5 rounded bg-white/10 text-indigo-300 font-mono text-[11.5px]"
+          >
+            {token.slice(1, -1)}
+          </code>
+        );
+      } else if (token.startsWith("*") && token.endsWith("*")) {
+        tokens.push(
+          <span key={match.index} className="text-indigo-200/90 italic">
+            {token.slice(1, -1)}
+          </span>
+        );
+      }
+      lastIndex = regex.lastIndex;
+    }
+
+    if (lastIndex < text.length) {
+      tokens.push(text.substring(lastIndex));
+    }
+
+    return tokens;
+  };
+
+  const lines = content.split("\n");
+  const renderedElements: ReactNode[] = [];
+
+  lines.forEach((rawLine, index) => {
+    const line = rawLine.trim();
+
+    if (!line) {
+      renderedElements.push(<div key={`empty-${index}`} className="h-2" />);
+      return;
+    }
+
+    // Heading (### atau ## atau #)
+    if (line.startsWith("#")) {
+      const cleanHeading = line
+        .replace(/^#+\s*/, "")
+        .replace(/^\*\*|\*\*$/g, "")
+        .trim();
+      renderedElements.push(
+        <div
+          key={`h-${index}`}
+          className="font-bold text-indigo-300 text-[13.5px] mt-2 mb-1 flex items-center gap-1.5 border-b border-white/10 pb-1"
+        >
+          <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 shrink-0"></span>
+          <span>{formatInline(cleanHeading)}</span>
+        </div>
+      );
+      return;
+    }
+
+    // Bullet points (* atau -)
+    if (line.startsWith("* ") || line.startsWith("- ")) {
+      const cleanItem = line.slice(2).trim();
+      renderedElements.push(
+        <div
+          key={`li-${index}`}
+          className="flex items-start gap-2 my-1 pl-1 text-[13px] leading-relaxed text-gray-200"
+        >
+          <span className="text-indigo-400 mt-1 shrink-0 text-xs">•</span>
+          <span className="flex-1">{formatInline(cleanItem)}</span>
+        </div>
+      );
+      return;
+    }
+
+    // Numbered list (contoh: 1. Item)
+    const numberedMatch = line.match(/^(\d+)\.\s+(.*)/);
+    if (numberedMatch) {
+      const num = numberedMatch[1];
+      const itemText = numberedMatch[2].trim();
+      renderedElements.push(
+        <div
+          key={`num-${index}`}
+          className="flex items-start gap-2 my-1 pl-1 text-[13px] leading-relaxed text-gray-200"
+        >
+          <span className="font-mono text-indigo-400 font-semibold text-xs shrink-0 mt-0.5">
+            {num}.
+          </span>
+          <span className="flex-1">{formatInline(itemText)}</span>
+        </div>
+      );
+      return;
+    }
+
+    // Normal paragraph line
+    renderedElements.push(
+      <p
+        key={`p-${index}`}
+        className="my-0.5 text-[13px] leading-relaxed text-gray-200"
+      >
+        {formatInline(line)}
+      </p>
+    );
+  });
+
+  return <div className="space-y-0.5">{renderedElements}</div>;
+}
+
 export default function ChatWidget() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
@@ -42,9 +163,6 @@ export default function ChatWidget() {
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [sessionId, setSessionId] = useState<string>("");
-  const [showToolsDetail, setShowToolsDetail] = useState<
-    Record<string, boolean>
-  >({});
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -213,6 +331,9 @@ export default function ChatWidget() {
                     Live Agent
                   </span>
                 </div>
+                <p className="text-[11px] text-gray-400">
+                  Gemini 2.5 Flash
+                </p>
               </div>
             </div>
 
@@ -281,7 +402,13 @@ export default function ChatWidget() {
                         : "bg-white/5 border border-white/10 text-gray-200 rounded-bl-xs"
                     }`}
                   >
-                    <div className="whitespace-pre-wrap">{msg.content}</div>
+
+                    {/* Content Rendering: Markdown formatting for assistant, plain for user */}
+                    {msg.role === "user" ? (
+                      <div className="whitespace-pre-wrap">{msg.content}</div>
+                    ) : (
+                      <MarkdownMessage content={msg.content} />
+                    )}
                   </div>
                   <span className="text-[10px] text-gray-500 mt-1 px-1">
                     {msg.timestamp}
@@ -296,7 +423,7 @@ export default function ChatWidget() {
                 <div className="rounded-2xl rounded-bl-xs bg-white/5 border border-white/10 px-4 py-3 text-xs text-gray-300 flex items-center gap-2.5 shadow-sm">
                   <Loader2 className="w-4 h-4 text-indigo-400 animate-spin" />
                   <span className="animate-pulse">
-                    Agent sedang menganalisis katalog
+                    Agent sedang menganalisis katalog...
                   </span>
                 </div>
               </div>
@@ -331,7 +458,7 @@ export default function ChatWidget() {
               </button>
             </form>
             <div className="mt-1.5 flex items-center justify-between text-[10px] text-gray-500 px-1">
-              <span>Data resmi dari WindStore Database</span>
+              <span>Data dari WindStore Database</span>
             </div>
           </div>
         </div>
