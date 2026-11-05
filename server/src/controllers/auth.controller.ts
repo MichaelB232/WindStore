@@ -2,8 +2,9 @@ import { Request, Response } from "express";
 import * as AuthService from "../services/user.service";
 import { generateToken } from "../lib/jwt";
 import bcrypt from "bcrypt";
-import { Prisma } from "@prisma/client";
 import { AuthRequest } from "../middlewares/auth.middlewares";
+
+const isProduction = process.env.NODE_ENV === "production";
 
 export const login = async (req: Request, res: Response) => {
   try {
@@ -37,8 +38,8 @@ export const login = async (req: Request, res: Response) => {
 
     res.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
+      secure: isProduction,
+      sameSite: isProduction ? "none" : "lax",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
@@ -121,8 +122,8 @@ export const me = async (req: AuthRequest, res: Response) => {
 export const logout = (req: Request, res: Response) => {
   res.clearCookie("token", {
     httpOnly: true,
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
+    sameSite: isProduction ? "none" : "lax",
+    secure: isProduction,
   });
 
   return res.status(200).json({

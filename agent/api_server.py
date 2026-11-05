@@ -143,6 +143,7 @@ def reset_endpoint(req: ResetRequest):
 
 if __name__ == "__main__":
     import uvicorn
-    port = int(os.getenv("AGENT_PORT", 8001))
+    port = int(os.getenv("PORT") or os.getenv("AGENT_PORT") or 8001)
+    is_prod = os.getenv("NODE_ENV") == "production" or os.getenv("ENV") == "production"
     print(f"Starting WindStore Agent API on port {port}...")
-    uvicorn.run("api_server:app", host="0.0.0.0", port=port, reload=True)
+    uvicorn.run("api_server:app", host="0.0.0.0", port=port, reload=not is_prod)

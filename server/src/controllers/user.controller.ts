@@ -57,10 +57,11 @@ export const deleteMe = async (req: AuthRequest, res: Response) => {
 
     await UserService.deleteUser(id);
 
+    const isProduction = process.env.NODE_ENV === "production";
     res.clearCookie("token", {
       httpOnly: true,
-      sameSite: "lax",
-      secure: process.env.NODE_ENV === "production",
+      sameSite: isProduction ? "none" : "lax",
+      secure: isProduction,
     });
 
     res

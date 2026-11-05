@@ -24,22 +24,35 @@ import { startExpiredOrdersJob } from "./jobs/releaseExpiredOrders.job";
 };
 const app = express();
 
+// Trust first proxy so secure cookies and rate-limiting work behind Railway/Render/Vercel
+app.set("trust proxy", 1);
+
 app.use(helmet());
 
 const allowedOrigins = [
   process.env.CLIENT_URL,
   "http://localhost:3000",
   "http://127.0.0.1:3000",
-].filter(Boolean) as string[];
+]
+  .filter(Boolean)
+  .map((url) => url!.replace(/\/$/, ""));
 
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow requests with no origin (like mobile apps, curl, server-to-server)
-      if (!origin || allowedOrigins.includes(origin)) {
+      // Allow requests with no origin (mobile apps, curl, server-to-server, AI agent)
+      if (!origin) {
+        callback(null, true);
+        return;
+      }
+      const normalizedOrigin = origin.replace(/\/$/, "");
+      if (
+        allowedOrigins.includes(normalizedOrigin) ||
+        normalizedOrigin.endsWith(".vercel.app")
+      ) {
         callback(null, true);
       } else {
-        callback(null, true); // Keep permissive for portfolio demo
+        callback(null, true); // Keep permissive fallback for portfolio demos
       }
     },
     credentials: true,
