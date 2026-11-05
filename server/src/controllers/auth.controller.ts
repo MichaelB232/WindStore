@@ -7,8 +7,9 @@ import { AuthRequest } from "../middlewares/auth.middlewares";
 
 export const login = async (req: Request, res: Response) => {
   try {
-    const { username, password } = req.body;
-    if (!username) {
+    const { identifier, password } = req.body;
+
+    if (!identifier) {
       res
         .status(400)
         .json({ success: false, message: "Username or email is required" });
@@ -18,7 +19,7 @@ export const login = async (req: Request, res: Response) => {
       res.status(400).json({ success: false, message: "Password is required" });
       return;
     }
-    const user = await AuthService.getUserByUsername(username);
+    const user = await AuthService.getUserByIdentifier(identifier);
     if (!user) {
       res.status(404).json({ success: false, message: "User not found" });
       return;

@@ -35,7 +35,7 @@ Base URL: `http://localhost:8000`
 
 ```json
 {
-  "username": "johndoe",
+  "identifier": "johndoe",
   "password": "123456"
 }
 ```

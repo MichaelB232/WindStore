@@ -22,6 +22,7 @@ model User {
   email        String     @unique
   passwordHash String     @map("password_hash") //Mapping ke nama kolom cammalCase vs snake_case
   role         Role
+  isActive     Boolean    @default(true) @map("is_active")
   createdAt    DateTime   @default(now()) @map("created_at")
   wishlists    Wishlist[]
   orders       Order[]

@@ -1,5 +1,7 @@
+import { Prisma } from "@prisma/client";
 import prisma from "../lib/prisma";
 import { AppError } from "../errors/AppError";
+
 export const createOrder = async (
   userId: number,
   addressId: number,
@@ -17,8 +19,50 @@ export const createOrder = async (
       );
     }
 
-    const configIds = cartItems.map((item) => Number(item.configId));
+    // 1. Urutkan product ID unik untuk mencegah deadlock antar transaksi konkuren
+    const uniqueProductIds = [
+      ...new Set(cartItems.map((item) => Number(item.productId))),
+    ].sort((a, b) => a - b);
 
+    // 2. Pessimistic Row-Level Locking (SELECT ... FOR UPDATE)
+    // Menjamin transaksi konkuren menunggu giliran dan selalu membaca stok ter-commit terbaru
+    const lockedProducts = await tx.$queryRaw<
+      Array<{ id: number; stock: number; name: string }>
+    >`
+      SELECT id, stock, name FROM "products"
+      WHERE id IN (${Prisma.join(uniqueProductIds)})
+      FOR UPDATE
+    `;
+
+    const lockedProductMap = new Map(lockedProducts.map((p) => [p.id, p]));
+
+    // 3. Akumulasi total kuantitas per produk (mencegah bug jika ada beberapa config produk yang sama)
+    const requiredQtyPerProduct = new Map<number, number>();
+    for (const item of cartItems) {
+      const pId = Number(item.productId);
+      requiredQtyPerProduct.set(
+        pId,
+        (requiredQtyPerProduct.get(pId) || 0) + Number(item.quantity),
+      );
+    }
+
+    // 4. Validasi stok berdasarkan data produk yang sudah dikunci
+    for (const [pId, requestedQty] of requiredQtyPerProduct.entries()) {
+      const product = lockedProductMap.get(pId);
+      if (!product) {
+        throw new AppError(404, "PRODUCT_NOT_FOUND", "Product not found");
+      }
+      if (requestedQty > product.stock) {
+        throw new AppError(409, "INSUFFICIENT_STOCK", "Not Enough Stock", {
+          productName: product.name,
+          availableStock: product.stock,
+          requestedQuantity: requestedQty,
+        });
+      }
+    }
+
+    // 5. Ambil data konfigurasi dan hitung total harga
+    const configIds = cartItems.map((item) => Number(item.configId));
     const configs = await tx.productConfig.findMany({
       where: { id: { in: configIds } },
       include: { product: true },
@@ -36,22 +80,14 @@ export const createOrder = async (
 
     for (const item of cartItems) {
       const config = configMap.get(Number(item.configId));
-      if (!config)
+      if (!config) {
         throw new AppError(
           404,
           "CONFIG_NOT_FOUND",
-          `Config is not found or no longer exist`,
+          "Config is not found or no longer exists",
         );
-      if (item.quantity > config.product.stock) {
-        throw new AppError(404, "INSUFFICIENT_STOCK", "Not Enough Stock", {
-          productName: config.product.name,
-          availableStock: config.product.stock,
-        });
       }
-    }
 
-    for (const item of cartItems) {
-      const config = configMap.get(Number(item.configId))!;
       const basePrice = BigInt(config.product.basePrice);
       const priceModifier = BigInt(config.priceModifier);
       const unitPrice = basePrice + priceModifier;
@@ -65,11 +101,29 @@ export const createOrder = async (
         quantity: Number(item.quantity),
         unitPrice,
       });
-      await tx.product.update({
-        where: { id: item.productId },
-        data: { stock: { decrement: item.quantity } },
-      });
     }
+
+    // 6. Atomic decrement dengan kondisi stock >= qty sebagai lapis keamanan ganda
+    for (const [pId, qty] of requiredQtyPerProduct.entries()) {
+      const updateResult = await tx.product.updateMany({
+        where: {
+          id: pId,
+          stock: { gte: qty },
+        },
+        data: {
+          stock: { decrement: qty },
+        },
+      });
+
+      if (updateResult.count === 0) {
+        const product = lockedProductMap.get(pId);
+        throw new AppError(409, "INSUFFICIENT_STOCK", "Not Enough Stock", {
+          productName: product?.name,
+        });
+      }
+    }
+
+    // 7. Simpan pesanan
     const order = await tx.order.create({
       data: {
         userId,
@@ -80,6 +134,7 @@ export const createOrder = async (
       },
       include: { orderItems: { include: { product: true } } },
     });
+
     return order;
   });
 };

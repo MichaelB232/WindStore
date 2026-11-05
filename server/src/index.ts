@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
 dotenv.config();
 import express from "express";
+import helmet from "helmet";
 import cors from "cors";
 import userRoutes from "./routes/user.routes";
 import addressRoutes from "./routes/address.routes";
@@ -25,9 +26,10 @@ const app = express();
 
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: process.env.CLIENT_URL,
     credentials: true,
   }),
+  helmet()
 );
 app.use(express.json());
 app.use(cookieParser());

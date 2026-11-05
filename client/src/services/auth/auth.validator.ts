@@ -1,5 +1,5 @@
 export interface LoginErrors {
-  username: string;
+  identifier: string;
   password: string;
   general: string;
 }
@@ -14,17 +14,17 @@ export interface RegisterErrors {
 }
 
 export function validateLoginForm(
-  username: string,
+  identifier: string,
   password: string,
 ): LoginErrors {
   const errors: LoginErrors = {
-    username: "",
+    identifier: "",
     password: "",
     general: "",
   };
 
-  if (!username.trim()) {
-    errors.username = "Username wajib diisi";
+  if (!identifier.trim()) {
+    errors.identifier = "Username atau email wajib diisi";
   }
 
   if (!password.trim()) {

@@ -68,11 +68,10 @@ export const deleteMe = async (req: AuthRequest, res: Response) => {
       .json({ success: true, message: "Account deleted successfully" });
   } catch (error: any) {
     if (error instanceof AppError) {
-      if (error.code === "HAS_ACTIVE_ORDERS") {
-        res
-          .status(error.statusCode)
-          .json({ success: false, message: error.message });
-      }
+      res
+        .status(error.statusCode)
+        .json({ success: false, message: error.message });
+      return;
     }
     if (error.code === "P2025") {
       res.status(404).json({ success: false, message: "User not found" });
@@ -86,14 +85,18 @@ export const deleteMe = async (req: AuthRequest, res: Response) => {
 export const deleteUser = async (req: AuthRequest, res: Response) => {
   // delete account from admin side
   try {
-    const id = Number(req.user?.id);
-    const roleAdmin = "admin";
+    const id = Number(req.params.id);
+
+    if (!id) {
+      res.status(400).json({ success: false, message: "Invalid user ID" });
+      return;
+    }
 
     // Prevent admin from deleting themselves
-    if (roleAdmin === req.user!.role) {
+    if (id === req.user!.id) {
       res
         .status(400)
-        .json({ success: false, message: "Cannot delete admin account" });
+        .json({ success: false, message: "Cannot delete own admin account" });
       return;
     }
 
@@ -102,6 +105,12 @@ export const deleteUser = async (req: AuthRequest, res: Response) => {
       .status(200)
       .json({ success: true, message: "User deleted successfully" });
   } catch (error: any) {
+    if (error instanceof AppError) {
+      res
+        .status(error.statusCode)
+        .json({ success: false, message: error.message });
+      return;
+    }
     if (error.code === "P2025") {
       res.status(404).json({ success: false, message: "User not found" });
       return;

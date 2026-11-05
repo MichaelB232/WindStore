@@ -25,7 +25,7 @@ export const getMyOrders = async (req: AuthRequest, res: Response) => {
     if (!orders) {
       res
         .status(404)
-        .json({ success: false, message: "Kau gapunya orderan apa" });
+        .json({ success: false, data: [] });
       return;
     }
     res.status(200).json({ success: true, data: orders });

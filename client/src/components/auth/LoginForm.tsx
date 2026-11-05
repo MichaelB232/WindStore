@@ -14,7 +14,7 @@ import { SuccessAlert } from "../ui/alert/successalert";
 import { DangerAlert } from "../ui/alert/dangeralert";
 
 export default function LoginForm() {
-  const [username, setUsername] = useState("");
+  const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
@@ -28,7 +28,7 @@ export default function LoginForm() {
   const isUnauthorized = searchParams.get("unauthorized") === "1";
 
   const [errors, setErrors] = useState({
-    username: "",
+    identifier: "",
     password: "",
     general: "",
   });
@@ -36,15 +36,15 @@ export default function LoginForm() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const validationErrors = validateLoginForm(username, password);
+    const validationErrors = validateLoginForm(identifier, password);
     setErrors(validationErrors);
-    if (validationErrors.username || validationErrors.password) return;
+    if (validationErrors.identifier || validationErrors.password) return;
 
     try {
       setIsLoading(true);
-      setErrors({ username: "", password: "", general: "" });
+      setErrors({ identifier: "", password: "", general: "" });
 
-      await login({ username, password });
+      await login({ identifier, password });
 
       setShowSuccess(true);
       
@@ -83,7 +83,7 @@ export default function LoginForm() {
         <div className="mb-6 animate-in fade-in slide-in-from-top-2 duration-300">
           <SuccessAlert
             title="Login Successful"
-            description={`Welcome back, ${username}! Redirecting you${from ? " back" : ""}…`}
+            description={`Welcome back, ${identifier}! Redirecting you${from ? " back" : ""}…`}
           />
         </div>
       )}
@@ -94,24 +94,24 @@ export default function LoginForm() {
       </p>
 
       <form className="space-y-4" onSubmit={handleSubmit}>
-        {/* Username */}
+        {/* Identifier (Username / Email) */}
         <div className="space-y-1.5">
           <label className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-            Username
+            Username or Email
           </label>
           <div className="relative">
             <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              value={identifier}
+              onChange={(e) => setIdentifier(e.target.value)}
               type="text"
-              placeholder="your username"
+              placeholder="username or email"
               className="pl-9"
               disabled={showSuccess}
             />
           </div>
-          {errors.username && (
-            <p className="text-sm text-danger">{errors.username}</p>
+          {errors.identifier && (
+            <p className="text-sm text-danger">{errors.identifier}</p>
           )}
         </div>
 

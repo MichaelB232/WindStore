@@ -10,6 +10,7 @@ import CustomerInfoCard from "@/src/components/checkout/CustomerInfoCard";
 import AddressSelector from "@/src/components/checkout/AddressSelector";
 import CheckoutItemsList from "@/src/components/checkout/CheckoutItemsList";
 import CheckoutSummary from "@/src/components/checkout/CheckoutSummary";
+import MidtransTestCard from "@/src/components/checkout/MidtransTestCard";
 import { CartItem } from "@/src/lib/producttype/ProductType";
 import { getCartStockInfo } from "@/src/lib/cart/cartStock";
 import { getCart, removeCartItem } from "@/src/services/cart/cart.service";
@@ -156,7 +157,7 @@ export default function CheckoutPage() {
               <CheckoutItemsList items={items} />
             </div>
             <div className="col-span-4">
-              <div className="sticky top-24">
+              <div className="sticky top-24 space-y-4">
                 <CheckoutSummary
                   items={items}
                   isProcessing={isProcessing}
@@ -164,6 +165,7 @@ export default function CheckoutPage() {
                   hasAddress={!!selectedAddressId}
                   onPay={handlePay}
                 />
+                <MidtransTestCard />
               </div>
             </div>
           </div>

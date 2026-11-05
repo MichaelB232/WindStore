@@ -1,4 +1,4 @@
-export async function login(data: { username: string; password: string }) {
+export async function login(data: { identifier: string; password: string }) {
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/api/auth/login`,
     {

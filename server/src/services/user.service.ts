@@ -17,7 +17,8 @@ export const updateUser = async (
 ) => {
   return await prisma.user.update({ where: { id }, data });
 };
-// DELETE
+
+// DELETE (Soft Delete for financial audit compliance)
 export const deleteUser = async (id: number) => {
   const activeOrder = await prisma.order.findFirst({
     where: { userId: id, status: { in: ["pending", "processing", "shipped"] } },
@@ -31,31 +32,41 @@ export const deleteUser = async (id: number) => {
     );
   }
 
-  await prisma.order.deleteMany({
-    where: {
-      userId: id,
-    },
+  // Soft delete: Menonaktifkan akun user tanpa menghapus riwayat order/pembayaran (audit compliance)
+  return await prisma.user.update({
+    where: { id },
+    data: { isActive: false },
   });
-  return await prisma.user.delete({ where: { id } });
 };
 
 // READ
 export const getAllUsers = async () => {
-  return await prisma.user.findMany();
+  return await prisma.user.findMany({
+    orderBy: { createdAt: "desc" },
+  });
 };
 
 export const getUserById = async (id: number) => {
-  return await prisma.user.findUnique({ where: { id } });
+  return await prisma.user.findFirst({ where: { id, isActive: true } });
 };
 
 export const getUserByUsername = async (username: string) => {
-  return await prisma.user.findFirst({ where: { username } });
+  return await prisma.user.findFirst({ where: { username, isActive: true } });
+};
+
+export const getUserByIdentifier = async (identifier: string) => {
+  return await prisma.user.findFirst({
+    where: {
+      OR: [{ username: identifier }, { email: identifier }],
+      isActive: true,
+    },
+  });
 };
 
 export const getUserByEmail = async (email: string) => {
-  return await prisma.user.findFirst({ where: { email } });
+  return await prisma.user.findFirst({ where: { email, isActive: true } });
 };
 
 export const getCustomers = async () => {
-  return await prisma.user.findMany({ where: { role: "customer" } });
+  return await prisma.user.findMany({ where: { role: "customer", isActive: true } });
 };
