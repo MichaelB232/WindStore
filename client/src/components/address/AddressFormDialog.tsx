@@ -2,15 +2,16 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
-import { Loader2, MapPin } from "lucide-react";
+import { MapPin, Sparkles } from "lucide-react";
+
 import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  DialogClose,
 } from "@/src/components/ui/shadcn/dialog";
 import { Button } from "@/src/components/ui/shadcn/button";
 import { Input } from "@/src/components/ui/shadcn/input";
@@ -48,21 +49,33 @@ const EMPTY_ERRORS: AddressErrors = {
   general: "",
 };
 
+const TEMPLATE_ADDRESS: AddressPayload = {
+  label: "Rumah (Demo Portfolio)",
+  recipientName: "Budi Santoso",
+  phone: "081234567890",
+  province: "DKI Jakarta",
+  city: "Jakarta Selatan",
+  district: "Kebayoran Baru",
+  postalCode: "12180",
+  fullAddress: "Jl. Sudirman Kav. 52-53, Gedung Bursa Efek Indonesia Tower 2 Lt. 17",
+  isDefault: true,
+};
+
 interface AddressFormDialogProps {
-  mode: "create" | "edit";
+  mode?: "create" | "edit";
+  trigger: React.ReactNode;
   address?: Address;
   onSaved: (address: Address) => void;
-  trigger: React.ReactNode;
 }
 
 export default function AddressFormDialog({
-  mode,
+  mode: propMode,
+  trigger,
   address,
   onSaved,
-  trigger,
 }: AddressFormDialogProps) {
+  const mode = propMode ?? (address ? "edit" : "create");
   const [open, setOpen] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
   const [form, setForm] = useState<AddressPayload>(
     address
       ? {
@@ -79,32 +92,42 @@ export default function AddressFormDialog({
       : EMPTY_FORM,
   );
   const [errors, setErrors] = useState<AddressErrors>(EMPTY_ERRORS);
+  const [submitting, setSubmitting] = useState(false);
 
-  const handleOpenChange = (next: boolean) => {
-    setOpen(next);
-    if (next) {
-      // reset form to the current address (or blank) each time it's opened
-      setForm(
-        address
-          ? {
-              label: address.label,
-              recipientName: address.recipientName,
-              phone: address.phone,
-              province: address.province,
-              city: address.city,
-              district: address.district,
-              postalCode: address.postalCode,
-              fullAddress: address.fullAddress,
-              isDefault: address.isDefault,
-            }
-          : EMPTY_FORM,
-      );
+  const handleOpenChange = (nextOpen: boolean) => {
+    setOpen(nextOpen);
+    if (!nextOpen) {
       setErrors(EMPTY_ERRORS);
+    } else {
+      if (address) {
+        setForm({
+          label: address.label,
+          recipientName: address.recipientName,
+          phone: address.phone,
+          province: address.province,
+          city: address.city,
+          district: address.district,
+          postalCode: address.postalCode,
+          fullAddress: address.fullAddress,
+          isDefault: address.isDefault,
+        });
+      } else {
+        setForm(EMPTY_FORM);
+      }
     }
   };
 
   const setField = (field: keyof AddressPayload, value: string | boolean) => {
     setForm((prev) => ({ ...prev, [field]: value }));
+    if (errors[field as keyof AddressErrors]) {
+      setErrors((prev) => ({ ...prev, [field]: "" }));
+    }
+  };
+
+  const handleFillTemplate = () => {
+    setForm(TEMPLATE_ADDRESS);
+    setErrors(EMPTY_ERRORS);
+    toast.info("Alamat demo otomatis terisi!");
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -145,200 +168,197 @@ export default function AddressFormDialog({
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <div className="flex gap-3 items-center">
-            <MapPin size={20} className="text-accent" />
-            <DialogTitle className="text-lg font-display">
-              {mode === "create" ? "Add New Address" : "Edit Address"}
-            </DialogTitle>
+          <div className="flex gap-3 items-center justify-between">
+            <div className="flex gap-3 items-center">
+              <MapPin size={20} className="text-accent" />
+              <DialogTitle className="text-lg font-display">
+                {mode === "create" ? "Add New Address" : "Edit Address"}
+              </DialogTitle>
+            </div>
+            {mode === "create" && (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleFillTemplate}
+                className="text-xs gap-1.5 h-8 border-accent/40 text-accent hover:bg-accent/10"
+              >
+                <Sparkles size={14} />
+                Isi Template Demo
+              </Button>
+            )}
           </div>
           <DialogDescription>
             {mode === "create"
-              ? "Add a new shipping address to your account."
+              ? "Tambahkan alamat pengiriman baru atau klik 'Isi Template Demo' untuk mengisi instan."
               : "Update the details of this shipping address."}
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="flex flex-col gap-1">
-              <label htmlFor="label" className="text-sm font-medium text-gray-700">
-                Label
-              </label>
-              <Input
-                id="label"
-                placeholder="Home, Office, etc."
-                value={form.label}
-                onChange={(e) => setField("label", e.target.value)}
-              />
-              {errors.label && (
-                <p className="text-danger text-xs">{errors.label}</p>
-              )}
-            </div>
+        <form onSubmit={handleSubmit} className="space-y-4 pt-1">
+          {errors.general && (
+            <p className="text-xs text-destructive">{errors.general}</p>
+          )}
 
-            <div className="flex flex-col gap-1">
-              <label
-                htmlFor="recipientName"
-                className="text-sm font-medium text-gray-700"
-              >
+          <div className="space-y-1.5">
+            <label className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">
+              Address Label
+            </label>
+            <Input
+              placeholder="e.g. Home, Office, Apartment"
+              value={form.label}
+              onChange={(e) => setField("label", e.target.value)}
+              className={errors.label ? "border-destructive" : ""}
+            />
+            {errors.label && (
+              <p className="text-xs text-destructive">{errors.label}</p>
+            )}
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <label className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">
                 Recipient Name
               </label>
               <Input
-                id="recipientName"
-                placeholder="John Doe"
+                placeholder="Full Name"
                 value={form.recipientName}
                 onChange={(e) => setField("recipientName", e.target.value)}
+                className={errors.recipientName ? "border-destructive" : ""}
               />
               {errors.recipientName && (
-                <p className="text-danger text-xs">{errors.recipientName}</p>
+                <p className="text-xs text-destructive">{errors.recipientName}</p>
+              )}
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">
+                Phone Number
+              </label>
+              <Input
+                placeholder="08xxxxxxxxxx"
+                value={form.phone}
+                onChange={(e) => setField("phone", e.target.value)}
+                className={errors.phone ? "border-destructive" : ""}
+              />
+              {errors.phone && (
+                <p className="text-xs text-destructive">{errors.phone}</p>
               )}
             </div>
           </div>
 
-          <div className="flex flex-col gap-1">
-            <label htmlFor="phone" className="text-sm font-medium text-gray-700">
-              Phone Number
-            </label>
-            <Input
-              id="phone"
-              placeholder="08123456789"
-              value={form.phone}
-              onChange={(e) => setField("phone", e.target.value)}
-            />
-            {errors.phone && (
-              <p className="text-danger text-xs">{errors.phone}</p>
-            )}
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div className="flex flex-col gap-1">
-              <label
-                htmlFor="province"
-                className="text-sm font-medium text-gray-700"
-              >
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <label className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">
                 Province
               </label>
               <Input
-                id="province"
-                placeholder="Jawa Tengah"
+                placeholder="e.g. DKI Jakarta"
                 value={form.province}
                 onChange={(e) => setField("province", e.target.value)}
+                className={errors.province ? "border-destructive" : ""}
               />
               {errors.province && (
-                <p className="text-danger text-xs">{errors.province}</p>
+                <p className="text-xs text-destructive">{errors.province}</p>
               )}
             </div>
 
-            <div className="flex flex-col gap-1">
-              <label htmlFor="city" className="text-sm font-medium text-gray-700">
-                City
+            <div className="space-y-1.5">
+              <label className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">
+                City / Regency
               </label>
               <Input
-                id="city"
-                placeholder="Semarang"
+                placeholder="e.g. Jakarta Selatan"
                 value={form.city}
                 onChange={(e) => setField("city", e.target.value)}
+                className={errors.city ? "border-destructive" : ""}
               />
               {errors.city && (
-                <p className="text-danger text-xs">{errors.city}</p>
+                <p className="text-xs text-destructive">{errors.city}</p>
               )}
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="flex flex-col gap-1">
-              <label
-                htmlFor="district"
-                className="text-sm font-medium text-gray-700"
-              >
-                District
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <label className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">
+                District / Sub-district
               </label>
               <Input
-                id="district"
-                placeholder="Semarang Selatan"
+                placeholder="e.g. Kebayoran Baru"
                 value={form.district}
                 onChange={(e) => setField("district", e.target.value)}
+                className={errors.district ? "border-destructive" : ""}
               />
               {errors.district && (
-                <p className="text-danger text-xs">{errors.district}</p>
+                <p className="text-xs text-destructive">{errors.district}</p>
               )}
             </div>
 
-            <div className="flex flex-col gap-1">
-              <label
-                htmlFor="postalCode"
-                className="text-sm font-medium text-gray-700"
-              >
+            <div className="space-y-1.5">
+              <label className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">
                 Postal Code
               </label>
               <Input
-                id="postalCode"
-                placeholder="50242"
+                placeholder="e.g. 12180"
                 value={form.postalCode}
                 onChange={(e) => setField("postalCode", e.target.value)}
+                className={errors.postalCode ? "border-destructive" : ""}
               />
               {errors.postalCode && (
-                <p className="text-danger text-xs">{errors.postalCode}</p>
+                <p className="text-xs text-destructive">{errors.postalCode}</p>
               )}
             </div>
           </div>
 
-          <div className="flex flex-col gap-1">
-            <label
-              htmlFor="fullAddress"
-              className="text-sm font-medium text-gray-700"
-            >
-              Full Address
+          <div className="space-y-1.5">
+            <label className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">
+              Full Street Address
             </label>
             <textarea
-              id="fullAddress"
-              placeholder="Jl. Pandanaran No. 1 RT 02/RW 03"
+              rows={3}
+              placeholder="Jl. Nama Jalan No. XX, RT/RW, Patokan..."
               value={form.fullAddress}
               onChange={(e) => setField("fullAddress", e.target.value)}
-              rows={3}
-              className="w-full rounded-lg border border-input bg-transparent px-2.5 py-2 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+              className={`w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 ${
+                errors.fullAddress ? "border-destructive" : ""
+              }`}
             />
             {errors.fullAddress && (
-              <p className="text-danger text-xs">{errors.fullAddress}</p>
+              <p className="text-xs text-destructive">{errors.fullAddress}</p>
             )}
           </div>
 
-          <label className="flex items-center gap-2 text-sm text-gray-700 select-none">
+          <div className="flex items-center gap-2 pt-1">
             <input
               type="checkbox"
-              checked={form.isDefault ?? false}
+              id="isDefault"
+              checked={form.isDefault}
               onChange={(e) => setField("isDefault", e.target.checked)}
-              className="size-4 rounded border-input accent-accent"
+              className="accent-accent w-4 h-4 rounded"
             />
-            Set as default address
-          </label>
+            <label htmlFor="isDefault" className="text-xs cursor-pointer select-none">
+              Jadikan alamat utama (Default Shipping Address)
+            </label>
+          </div>
 
-          {errors.general && (
-            <p className="text-danger text-sm">{errors.general}</p>
-          )}
-
-          <div className="flex gap-3 justify-end pt-2">
-            <DialogClose asChild>
-              <Button type="button" variant="outline">
-                Cancel
-              </Button>
-            </DialogClose>
+          <DialogFooter className="pt-2 gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setOpen(false)}
+              disabled={submitting}
+            >
+              Cancel
+            </Button>
             <Button
               type="submit"
               disabled={submitting}
-              className="bg-accent text-white hover:bg-accent-hover"
+              className="bg-accent text-accent-foreground hover:bg-accent/90"
             >
-              {submitting ? (
-                <>
-                  <Loader2 size={16} className="animate-spin" />
-                  Saving…
-                </>
-              ) : mode === "create" ? (
-                "Add Address"
-              ) : (
-                "Save Changes"
-              )}
+              {submitting ? "Saving..." : mode === "create" ? "Save Address" : "Update Address"}
             </Button>
-          </div>
+          </DialogFooter>
         </form>
       </DialogContent>
     </Dialog>

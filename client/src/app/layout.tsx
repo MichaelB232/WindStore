@@ -36,9 +36,10 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} ${bricolageGrotesque.variable}`}
     >
-      <body className="min-h-full flex flex-col">
+      <body className="min-h-full flex flex-col" suppressHydrationWarning>
         <AuthProvider>
           <WishlistProvider>
             <CartSelectionProvider>

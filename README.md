@@ -1,13 +1,14 @@
 # WindStore 💻🚀
 
-**WindStore** adalah platform e-commerce full-stack modern untuk penjualan laptop berbasis Windows premium. Pengguna dapat menelusuri katalog laptop, melakukan kustomisasi varian komponen (RAM, Storage, OS, Garansi), membeli langsung (*Direct Checkout*) atau melalui keranjang, melakukan pembayaran nyata via payment gateway **Midtrans Snap**, serta memberikan ulasan terverifikasi setelah pesanan selesai. Dilengkapi pula dengan dashboard admin khusus untuk manajemen katalog, stok, dan moderasi.
+**WindStore** adalah platform e-commerce full-stack modern untuk penjualan laptop berbasis Windows premium. Pengguna dapat menelusuri katalog laptop, melakukan kustomisasi varian komponen (RAM, Storage), membeli langsung (*Direct Checkout*) atau melalui keranjang, melakukan pembayaran nyata via payment gateway **Midtrans Snap**, serta berkonsultasi langsung dengan **AI Shopping Assistant** cerdas yang terintegrasi.
 
-Proyek ini dibangun menggunakan arsitektur monorepo yang bersih dan modular:
+Proyek ini dibangun secara kolaboratif oleh **Michael & Nicolaus** menggunakan arsitektur monorepo yang bersih dan modular:
 
-```
+```text
 WindStore/
 ├── client/           # Next.js 16 (App Router), React 19, Tailwind CSS 4, shadcn/ui
 ├── server/           # Node.js, Express 5, TypeScript, Prisma ORM (@prisma/adapter-pg)
+├── agent/            # Python FastAPI, Google Gemini 2.5 Flash, Tool-Calling Autonomous Agent
 ├── docs/             # Dokumentasi teknis terpusat (Setup, API, PRD)
 │   ├── setup.md      # Panduan instalasi, konfigurasi env, & pengujian lokal
 │   ├── api.md        # Dokumentasi lengkap seluruh endpoint REST API
@@ -17,13 +18,57 @@ WindStore/
 
 ---
 
-## 📚 Dokumentasi Teknis
+## 🚀 Panduan Menjalankan Aplikasi (Run Order)
 
-Semua dokumentasi teknis telah dirapikan ke dalam direktori [`docs/`](./docs/):
+Ikuti urutan di bawah ini untuk menjalankan seluruh ekosistem WindStore secara lokal:
 
-* 🚀 **[Panduan Instalasi & Setup Lokal (docs/setup.md)](./docs/setup.md)** — Langkah instalasi lengkap, environment variables, kredensial Midtrans sandbox, dan troubleshooting.
-* 🔌 **[Dokumentasi REST API (docs/api.md)](./docs/api.md)** — Spesifikasi seluruh endpoint API, request/response body, autentikasi cookie JWT, dan error handling.
-* 📋 **[Product Requirements Document (docs/prd.md)](./docs/prd.md)** — Ruang lingkup fungsional, spesifikasi teknis, dan diagram alur transaksi.
+### 1. Nyalakan Database PostgreSQL
+Jika menggunakan Docker lokal:
+```powershell
+docker compose up -d postgres
+```
+*(Database berjalan di `localhost:5433` sesuai konfigurasi `docker-compose.yml` & `server/.env`).*
+
+### 2. Jalankan Database Seeder (Cukup 1x Awal)
+Untuk mengisi 41 laptop resmi (ASUS, Lenovo, Dell, HP, MSI, Acer, Samsung) beserta varian dan foto Cloudinary:
+```powershell
+npm --prefix server run seed
+```
+
+### 3. Nyalakan Backend API (Express)
+Buka **Terminal Tab 1**:
+```powershell
+npm --prefix server run dev
+```
+* API berjalan di: `http://localhost:8000`
+
+### 4. Nyalakan AI Shopping Assistant (Python FastAPI)
+Buka **Terminal Tab 2**:
+```powershell
+python agent/api_server.py
+```
+* Agent API berjalan di: `http://localhost:8001`
+
+### 5. Nyalakan Frontend Client (Next.js)
+Buka **Terminal Tab 3**:
+```powershell
+npm --prefix client run dev
+```
+* Buka browser di: `http://localhost:3000`
+
+---
+
+## 🔑 Akun Uji Coba (Demo Accounts)
+
+Tersedia akun bawaan seeder untuk eksplorasi instan tanpa perlu mendaftar dari nol:
+
+| Role | Username | Password | Keterangan Akses |
+| :--- | :--- | :--- | :--- |
+| **Admin** | `admin` | `admin123` | Akses penuh dashboard `/admin` (Manajemen Produk, Kategori, Order, Moderasi) |
+| **Customer** | `johndoe` | `user123` | Akses belanja, wishlist, keranjang, review, & checkout Midtrans |
+| **Customer** | `janedoe` | `user123` | Akun pembeli alternatif |
+
+> **Fitur Praktis Portfolio:** Pada modal tambah alamat (*Add Address*), terdapat tombol **"Isi Template Demo"** sehingga penguji/recruiter tidak perlu mengetik alamat panjang saat mencoba checkout.
 
 ---
 
@@ -33,78 +78,23 @@ Semua dokumentasi teknis telah dirapikan ke dalam direktori [`docs/`](./docs/):
 | :--- | :--- |
 | **Frontend** | **Next.js 16 (App Router)**, **React 19**, TypeScript, **Tailwind CSS 4**, shadcn/ui, Radix UI, Lucide Icons, Sonner |
 | **Backend** | **Node.js**, **Express 5**, TypeScript, **Prisma ORM** (`@prisma/adapter-pg`) |
-| **Database** | **PostgreSQL 17** (via Docker container pada port `5433`) |
-| **Auth** | JWT (*JSON Web Token*) tersimpan aman di dalam `httpOnly` cookie, hashing password via bcrypt |
+| **AI Assistant** | **FastAPI (Python)**, **Google Gemini 2.5 Flash**, Function Calling Tools (`search_products`, `compare_products`, `get_store_info`) |
+| **Database** | **PostgreSQL 17** (via Docker container pada port `5433` atau cloud Postgres) |
+| **Auth** | JWT (*JSON Web Token*) tersimpan aman di dalam `httpOnly` cookie dengan mode cross-domain `SameSite=None; Secure` untuk cloud |
 | **Payments** | **Midtrans Snap** (Sandbox/Production) dengan verifikasi signature SHA-512 & *Active Status Sync* fallback |
-| **Media Storage**| **Cloudinary** (Upload gambar produk via Multer in-memory storage) |
-| **Concurrency** | *Pessimistic Row-Level Locking* (`SELECT FOR UPDATE`) & PostgreSQL Check Constraint (`stock >= 0`) |
+| **Media Storage**| **Cloudinary CDN** (Aset katalog produk resmi terorganisir per brand) |
 | **Background Jobs**| `node-cron` — otomatis membatalkan pesanan kedaluwarsa (>15 menit) dan mengembalikan stok barang |
 
 ---
 
-## ✨ Fitur Unggulan
+## 📚 Dokumentasi Lanjutan
 
-### 🛍️ Storefront & Belanja
-- **Katalog & Filter Presisi:** Filter berdasarkan kategori, brand, tipe prosesor, dan rentang harga dengan sorting dan live search bar.
-- **Kustomisasi Konfigurasi (Build Your Setup):** Pemilihan varian RAM, SSD, dll. dengan penyesuaian harga (*price modifier*) dinamis.
-- **Beli Sekarang (Direct Checkout):** Tombol checkout instan pada produk yang langsung membawa pengguna ke pembayaran tanpa harus melalui keranjang manual.
-- **Multi-Item Keranjang Belanja:** Pemilihan parsial barang untuk di-checkout sewaktu-waktu.
-- **Buku Alamat Pengiriman:** Simpan beberapa alamat dan tetapkan alamat pengiriman utama (*default*).
-- **Payment Gateway Midtrans:** Mendukung Virtual Account (BCA, Mandiri, BNI, BRI), QRIS/GoPay, dan Kartu Kredit dengan 3DS OTP.
-- **Ulasan Pembeli Terverifikasi (Verified Buyer Reviews):** Hanya customer yang telah membeli dan menyelesaikan pesanan yang dapat memberikan rating dan ulasan, serta dapat **mengedit ulasan** mereka kapan saja.
-
-### 🛡️ Keamanan & Kepatuhan Transaksi
-- **Pencegahan Race Condition Stok:** Transaksi checkout dilindungi dengan *Row-Level Locking* (`SELECT ... FOR UPDATE`) pada PostgreSQL agar stok tidak pernah minus meski di-checkout bersamaan di detik yang sama.
-- **Kepatuhan Audit Finansial (Soft Delete):** Penghapusan akun customer menggunakan *Soft Delete* (`isActive: false`), memastikan riwayat transaksi dan pembukuan pesanan yang sudah dibayar tetap utuh demi kepatuhan audit.
-- **Active Status Sync Fallback:** Status pesanan Midtrans otomatis tersinkronisasi saat halaman detail dibuka, memungkinkan pengujian mulus di `localhost` tanpa wajib setup tunnel Ngrok.
-
-### ⚙️ Admin Dashboard
-- **Katalog & Inventaris:** Tambah, edit, dan hapus laptop beserta upload multi-gambar ke Cloudinary.
-- **Preset Konfigurasi:** Atur harga tambahan per opsi RAM/Storage.
-- **Pantauan Pesanan & Pengguna:** Kelola status pesanan customer dan daftar pengguna terdaftar.
+* 🔌 **[Dokumentasi REST API (docs/api.md)](./docs/api.md)** — Spesifikasi seluruh endpoint API, request/response body, autentikasi cookie JWT, dan error handling.
+* 📋 **[Product Requirements Document (docs/prd.md)](./docs/prd.md)** — Ruang lingkup fungsional, arsitektur flow, dan spesifikasi sistem.
+* ⚙️ **[Panduan Setup & Troubleshooting (docs/setup.md)](./docs/setup.md)** — Detail konfigurasi environment variables untuk deployment Vercel & Railway.
 
 ---
 
-## ⚡ Quickstart (Menjalankan Secara Lokal)
+## ⚖️ Disclaimer
 
-### 1. Jalankan Database (Docker)
-```bash
-docker-compose up -d
-```
-> Database PostgreSQL berjalan pada `localhost:5433`.
-
-### 2. Setup Backend (Server)
-```bash
-cd server
-npm install
-cp .env.example .env     # Sesuaikan credential database & Midtrans
-npx prisma migrate dev  # Jalankan migrasi
-npm run seed            # Isi database dengan data awal
-npm run dev             # Berjalan di http://localhost:8000
-```
-
-### 3. Setup Frontend (Client)
-```bash
-cd ../client
-npm install
-cp .env.example .env.local  # Pastikan NEXT_PUBLIC_API_URL=http://localhost:8000
-npm run dev                 # Berjalan di http://localhost:3000
-```
-
----
-
-## 🔑 Akun Uji Coba Default
-
-Setelah menjalankan `npm run seed`:
-
-| Role | Username / Identifier | Password | Akses |
-| :--- | :--- | :--- | :--- |
-| **Admin** | `admin` | `admin123` | Akses penuh dashboard `/admin` |
-| **Customer** | `johndoe` | `user123` | Belanja, kustomisasi, checkout, review produk |
-| **Customer** | `janedoe` | `user123` | Belanja dan checkout |
-
----
-
-## 📄 Lisensi
-
-Proyek ini dilisensikan di bawah lisensi [ISC](LICENSE).
+*This website is a collaborative portfolio project created by Michael & Nicolaus for demonstration purposes only. All product images, brand names, and logos belong to their respective owners (ASUS, Lenovo, Dell, HP, Acer, MSI, Samsung). No real commercial transactions are conducted.*
